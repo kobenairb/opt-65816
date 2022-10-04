@@ -1,0 +1,25 @@
+{
+    "editor.fontSize": 16,
+    "terminal.integrated.fontSize": 16,
+    "files.trimTrailingWhitespace": true,
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": false,
+    "[makefile]": {
+        "editor.insertSpaces": false,
+        "editor.detectIndentation": false,
+    },
+    "[c]": {
+        "editor.formatOnSave": true,
+        "editor.semanticHighlighting.enabled": true,
+    },
+    "C_Cpp.dimInactiveRegions": true,
+    "C_Cpp.vcFormat.indent.caseContents": false,
+    "C_Cpp.vcFormat.indent.preserveWithinParentheses": false,
+    "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyFunction": true,
+    "files.associations": {
+        "time.h": "c",
+        "*.def": "c",
+        "atomic": "c"
+    },
+}
