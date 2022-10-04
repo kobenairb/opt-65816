@@ -1,4 +1,4 @@
-BIN = wdc65816
+BIN = opt-65816
 SRC = $(BIN).c
 OBJ = $(SRC:.c=.o)
 CFLAGS = -Wall -O2 -g
@@ -12,8 +12,7 @@ $(BIN): $(OBJ)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-clean:
-	rm -f *~
+clean: distclean
 
-distclean: clean
+distclean:
 	rm -f *.o $(BIN)

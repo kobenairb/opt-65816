@@ -2,23 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "wdc65816.h"
+#include "opt-65816.h"
 
-/* Structure to store instructions from file to string array */
+/* Structure to store instructions
+    from file to string array */
 struct FileToArray
 {
     int used;
     char **lines;
 };
 
-/* Structure to store bss instructions to string array */
+/* Structure to store bss instructions
+    to string array */
 struct BssToArray
 {
     int used;
     char **bss;
 };
 
-/* Enable verbosity if OPT_816_QUIET is set to 1 */
+/* Enable verbosity if OPT_816_QUIET
+    is set to 1 */
 int verbosity()
 {
     char *OPT_816_QUIET = getenv("OPT_816_QUIET");
@@ -191,14 +194,14 @@ int main(int argc, char **argv)
         check_rc("Wrong argument", EXIT_FAILURE);
     }
 
-    struct FileToArray r = format_file(argc, argv);
+    struct FileToArray f = format_file(argc, argv);
 
-    for (int i = 0; i < r.used; i++)
+    for (int i = 0; i < f.used; i++)
     {
-        printf("line[%3u] : %s\n", i, r.lines[i]);
+        printf("line[%3u] : %s\n", i, f.lines[i]);
     }
 
-    struct BssToArray b = store_bss(r.used, r.lines);
+    struct BssToArray b = store_bss(f.used, f.lines);
 
     for (int i = 0; i < b.used; i++)
     {
@@ -206,9 +209,9 @@ int main(int argc, char **argv)
     }
 
     /* free pointers of pointers */
-    for (int i = 0; i < r.used; i++)
+    for (int i = 0; i < f.used; i++)
     {
-        free(r.lines[i]);
+        free(f.lines[i]);
     }
     for (int i = 0; i < b.used; i++)
     {
@@ -217,5 +220,5 @@ int main(int argc, char **argv)
 
     /* free pointers */
     free(b.bss);
-    free(r.lines);
+    free(f.lines);
 }

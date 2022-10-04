@@ -1,5 +1,5 @@
-#ifndef WDC65816_H_ /* Include guard */
-#define WDC65816_H_
+#ifndef OPT_65816_H_ /* Include guard */
+#define OPT_65816_H_
 
 /* initial no. of pointers to allocate (lines) */
 #define NPTRS 1
