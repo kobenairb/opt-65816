@@ -20,16 +20,21 @@ struct BssToArray
     char **bss;
 };
 
-/* Enable verbosity if OPT_816_QUIET
-    is set to 1 */
+/* Enable verbosity if OPT_816_QUIET i set
+    OPT_816_QUIET=1 (normal verbosity)
+    OPT_816_QUIET=2 (super verbosity) */
 int verbosity()
 {
     char *OPT_816_QUIET = getenv("OPT_816_QUIET");
 
-    if (!OPT_816_QUIET || (*OPT_816_QUIET == '1'))
+    if (!OPT_816_QUIET || *OPT_816_QUIET == '0')
         return 0;
+    else if (OPT_816_QUIET && *OPT_816_QUIET == '1')
+        return 1;
+    else if (OPT_816_QUIET && *OPT_816_QUIET == '2')
+        return 2;
 
-    return 1;
+    return 3;
 }
 
 /* Check if a string starts with */
@@ -112,7 +117,7 @@ struct BssToArray store_bss(int u, char **l)
 
 /* Create a dynamic string array from file
     without comment nor empty line */
-struct FileToArray format_file(int argc, char **argv)
+struct FileToArray trim_file(int argc, char **argv)
 {
     /* fixed buffer to read each line */
     char buf[MAXLEN_LINE];
@@ -177,15 +182,27 @@ struct FileToArray format_file(int argc, char **argv)
     return r;
 }
 
+void optimize()
+{
+    /* total number of optimizations performed */
+    // int totalopt = 0;
+    /* have we optimized in this pass */
+    int opted = -1;
+    /* optimization pass counter */
+    // int opass = 0;
+
+    if (opted)
+        fprintf(stderr, "Not optimized yet\n");
+}
 /* ---------- */
 /*    Main    */
 /* ---------- */
 int main(int argc, char **argv)
 {
-    /* Enable verbosity if OPT_816_QUIET=1 */
+    /* Enable verbosity level */
     int verbose = verbosity();
     if (verbose)
-        fprintf(stderr, "Verbose mode is activated\n");
+        fprintf(stderr, "Verbose mode is activated: %d\n", verbose);
 
     /* argc must be 2 for correct execution */
     if (argc != 2)
@@ -194,31 +211,52 @@ int main(int argc, char **argv)
         check_rc("Wrong argument", EXIT_FAILURE);
     }
 
-    struct FileToArray f = format_file(argc, argv);
+    /* -------------------------------- */
+    /*       store trimmed file         */
+    /* -------------------------------- */
+    struct FileToArray f = trim_file(argc, argv);
 
-    for (int i = 0; i < f.used; i++)
+    if (verbose == 2)
     {
-        printf("line[%3u] : %s\n", i, f.lines[i]);
+        for (int i = 0; i < f.used; i++)
+        {
+            fprintf(stderr, "line[%6u] : %s\n", i, f.lines[i]);
+        }
+        fprintf(stderr, "\n");
     }
 
+    /* -------------------------------- */
+    /*      store BSS instuctions       */
+    /* -------------------------------- */
     struct BssToArray b = store_bss(f.used, f.lines);
 
-    for (int i = 0; i < b.used; i++)
+    if (verbose == 2)
     {
-        printf("line[%3u] : %s\n", i, b.bss[i]);
+        for (int i = 0; i < b.used; i++)
+        {
+            printf("line[%5u] : %s\n", i, b.bss[i]);
+        }
+        fprintf(stderr, "\n");
     }
 
-    /* free pointers of pointers */
+    /* -------------------------------- */
+    /*    free pointers of pointers     */
+    /* -------------------------------- */
     for (int i = 0; i < f.used; i++)
     {
         free(f.lines[i]);
     }
+
     for (int i = 0; i < b.used; i++)
     {
         free(b.bss[i]);
     }
 
-    /* free pointers */
+    /* -------------------------------- */
+    /*          free pointers           */
+    /* -------------------------------- */
     free(b.bss);
     free(f.lines);
+
+    optimize();
 }
