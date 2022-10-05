@@ -3,3 +3,5 @@ vgcore.*
 backup
 *.o
 wdc65816
+*.out
+samples

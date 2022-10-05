@@ -21,4 +21,11 @@
 /* stores (accu only) to pseudo-registers */
 #define STORE_A_TO_PSEUDO "sta.b tcc__([rf][0-9]*h?)$"
 
+/* ----------------------------- */
+/* Windows specific declarations */
+/* ----------------------------- */
+#if defined(_WIN32)
+#define strtok_r strtok_s
+#endif
+
 #endif

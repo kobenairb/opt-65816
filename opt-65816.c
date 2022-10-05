@@ -1,28 +1,52 @@
+/*
+ *  opt-65816 - ASM Optimizer for WDC65815
+ *
+ * ASM code optimizer for WDC65816 processor produced by the 65816 TCC
+ * developed by AlekMaul. This library is a C port of the 816-opt python
+ * tool developed by nArnoSNES.
+ *
+ *  Copyright (c) 2022 Kobenairb
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#ifdef _WIN32
+#include <windows.h>
 #include <stdio.h>
+#endif
+
+#ifdef __linux__
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#endif
 
 #include "opt-65816.h"
 
-/* Structure to store instructions
-    from file to string array */
-struct FileToArray
+/* Structure to store an array
+    and the number of elements */
+struct DArray
 {
     int used;
-    char **lines;
+    char **arr;
 };
 
-/* Structure to store bss instructions
-    to string array */
-struct BssToArray
-{
-    int used;
-    char **bss;
-};
-
-/* Enable verbosity if OPT_816_QUIET i set
-    OPT_816_QUIET=1 (normal verbosity)
-    OPT_816_QUIET=2 (super verbosity) */
+/* Enable verbosity if OPT_816_QUIET is set
+    OPT_816_QUIET=0 or unset (no verbosity)
+    OPT_816_QUIET=1          (normal verbosity)
+    OPT_816_QUIET=2          (for debug purpose) */
 int verbosity()
 {
     char *OPT_816_QUIET = getenv("OPT_816_QUIET");
@@ -47,7 +71,7 @@ int start_with(const char *a, const char *b)
 }
 
 /* Check return code */
-void check_rc(char *message, int rc)
+void check_rc(const char *message, const int rc)
 {
     if (rc)
     {
@@ -60,12 +84,15 @@ void check_rc(char *message, int rc)
 
 /* Create a dynamic string array to store
     block bss instructions */
-struct BssToArray store_bss(int u, char **l)
+struct DArray store_bss(const int u, char **l)
 {
     char **bss = NULL;
     size_t used = 0;
     int bss_on = 0;
     size_t nptrs = NPTRS;
+
+    /* For strtok_r */
+    char *saveptr;
 
     if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
         check_rc("malloc-lines", EXIT_FAILURE);
@@ -106,18 +133,19 @@ struct BssToArray store_bss(int u, char **l)
             if (!(bss[used] = malloc(len + 1)))
                 check_rc("malloc-lines[used]", 0);
 
-            strncpy(bss[used], l[i], len + 1);
+            /* Store the first word of bss instruction */
+            memcpy(bss[used], strtok_r(l[i], " ", &saveptr), len + 1);
             used += 1;
         }
     }
 
-    struct BssToArray b = {used, bss};
+    struct DArray b = {used, bss};
     return b;
 }
 
 /* Create a dynamic string array from file
     without comment nor empty line */
-struct FileToArray trim_file(int argc, char **argv)
+struct DArray trim_file(const int argc, char **argv)
 {
     /* fixed buffer to read each line */
     char buf[MAXLEN_LINE];
@@ -178,7 +206,7 @@ struct FileToArray trim_file(int argc, char **argv)
     if (fp != stdin)
         fclose(fp);
 
-    struct FileToArray r = {used, lines};
+    struct DArray r = {used, lines};
     return r;
 }
 
@@ -194,6 +222,7 @@ void optimize()
     if (opted)
         fprintf(stderr, "Not optimized yet\n");
 }
+
 /* ---------- */
 /*    Main    */
 /* ---------- */
@@ -214,13 +243,13 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       store trimmed file         */
     /* -------------------------------- */
-    struct FileToArray f = trim_file(argc, argv);
+    struct DArray f = trim_file(argc, argv);
 
     if (verbose == 2)
     {
         for (int i = 0; i < f.used; i++)
         {
-            fprintf(stderr, "line[%6u] : %s\n", i, f.lines[i]);
+            fprintf(stderr, "line[%6u] : %s\n", i, f.arr[i]);
         }
         fprintf(stderr, "\n");
     }
@@ -228,13 +257,13 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*      store BSS instuctions       */
     /* -------------------------------- */
-    struct BssToArray b = store_bss(f.used, f.lines);
+    struct DArray b = store_bss(f.used, f.arr);
 
     if (verbose == 2)
     {
         for (int i = 0; i < b.used; i++)
         {
-            printf("line[%5u] : %s\n", i, b.bss[i]);
+            printf("line[%5u] : %s\n", i, b.arr[i]);
         }
         fprintf(stderr, "\n");
     }
@@ -244,19 +273,19 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     for (int i = 0; i < f.used; i++)
     {
-        free(f.lines[i]);
+        free(f.arr[i]);
     }
 
     for (int i = 0; i < b.used; i++)
     {
-        free(b.bss[i]);
+        free(b.arr[i]);
     }
 
     /* -------------------------------- */
     /*          free pointers           */
     /* -------------------------------- */
-    free(b.bss);
-    free(f.lines);
+    free(b.arr);
+    free(f.arr);
 
     optimize();
 }

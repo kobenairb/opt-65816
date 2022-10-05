@@ -20,7 +20,7 @@ for l in text:
         bsson = False
     if bsson:
         bss += [l.split(" ")[0]]
-        print(f"bss {bss}")
+        # print(f"bss {bss}")
 
 # checks if the line alters the control flow
 def is_control(line):
