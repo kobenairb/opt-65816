@@ -2,6 +2,6 @@ vgcore.*
 *.log
 backup
 *.o
-wdc65816
+opt-65816
 *.out
 samples
