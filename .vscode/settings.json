@@ -20,6 +20,7 @@
     "files.associations": {
         "time.h": "c",
         "*.def": "c",
-        "atomic": "c"
+        "atomic": "c",
+        "ctype.h": "c"
     },
 }

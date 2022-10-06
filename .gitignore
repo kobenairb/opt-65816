@@ -5,3 +5,5 @@ backup
 opt-65816
 *.out
 samples
+node_modules
+match.c

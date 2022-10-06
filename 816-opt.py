@@ -42,6 +42,9 @@ opass = 0  # optimization pass counter
 storetopseudo = re.compile("st([axyz]).b tcc__([rf][0-9]*h?)$")
 storexytopseudo = re.compile("st([xy]).b tcc__([rf][0-9]*h?)$")
 storeatopseudo = re.compile("sta.b tcc__([rf][0-9]*h?)$")
+
+print(f"number of line : {len(text)}")
+
 while opted:
     opass += 1
     if verbose:
@@ -49,16 +52,20 @@ while opted:
     opted = 0  # no optimizations performed
     text_opt = []  # optimized code array, will be filled in during this pass
     i = 0
+    print(f"number of line : {len(text)}")
     while i < len(text):
         if text[i].startswith("st"):
             # stores (accu/x/y/zero) to pseudo-registers
             r = storetopseudo.match(text[i])
             if r:
+                # print(f"{text[i]} match")
                 # eliminate redundant stores
                 doopt = False
+                # print(f"line={i} line+30={i+30} line_len={len(text)} range={i+1}->{min(len(text), i + 30)}")
                 for j in range(i + 1, min(len(text), i + 30)):
                     r1 = re.match("st([axyz]).b tcc__" + r.groups()[1] + "$", text[j])
                     if r1:
+                        # print(f"{text[i]} match in {r}")
                         doopt = True  # another store to the same pregister
                         break
                     if text[j].startswith("jsr.l ") and not text[j].startswith(
@@ -666,7 +673,7 @@ while opted:
         sys.stderr.write(f"{opted} optimizations performed\n")
     totalopt += opted
 
-for l in text_opt:
-    print(l)
+""" for l in text_opt:
+    print(l) """
 if verbose:
     sys.stderr.write(f"{totalopt} optimizations performed in total\n")

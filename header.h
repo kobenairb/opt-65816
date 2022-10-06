@@ -15,11 +15,14 @@
 #define BSS_END ".ENDS"
 
 /* stores (accu/x/y/zero) to pseudo-registers */
-#define STORE_TO_PSEUDO "st([axyz]).b tcc__([rf][0-9]*h?)$"
+#define STORE_AXYZ_TO_PSEUDO \
+    "st\\([axyz]\\).b tcc__\\([rf][0-9]\\{0,\\}h\\{0,1\\}\\)$"
 /* stores (x/y) to pseudo-registers */
-#define STORE_XY_TO_PSEUDO "st([xy]).b tcc__([rf][0-9]*h?)$"
+#define STORE_XY_TO_PSEUDO \
+    "st\\([xy]\\).b tcc__\\([rf][0-9]\\{0,\\}h\\{0,1\\}\\)$"
 /* stores (accu only) to pseudo-registers */
-#define STORE_A_TO_PSEUDO "sta.b tcc__([rf][0-9]*h?)$"
+#define STORE_A_TO_PSEUDO \
+    "sta.b tcc__\\([rf][0-9]\\{0,\\}h\\{0,1\\}\\)$"
 
 /* ----------------------------- */
 /* Windows specific declarations */

@@ -1,8 +1,9 @@
 /*
- *  opt-65816 - ASM Optimizer for WDC65815
+ *  opt-65816 - Assembly code Optimizer for WDC65816
  *
- * ASM code optimizer for WDC65816 processor produced by the 65816 TCC
- * developed by AlekMaul. This library is a C port of the 816-opt python
+ * Assembly code optimizer for WDC65816 processor produced by the 65816
+ * Tiny C Compiler (816-tcc) developed by AlekMaul.
+ * This library is a C port of the 816-opt python
  * tool developed by nArnoSNES.
  *
  *  Copyright (c) 2022 Kobenairb
@@ -19,21 +20,24 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+/* TODO : not tested with Windows */
 #ifdef _WIN32
 #include <windows.h>
-#include <stdio.h>
 #endif
 
 #ifdef __linux__
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+#include <regex.h>
 #endif
 
-#include "opt-65816.h"
+#include "header.h"
+#include "lib.c"
 
 /* Structure to store an array
     and the number of elements */
@@ -43,48 +47,9 @@ struct DArray
     char **arr;
 };
 
-/* Enable verbosity if OPT_816_QUIET is set
-    OPT_816_QUIET=0 or unset (no verbosity)
-    OPT_816_QUIET=1          (normal verbosity)
-    OPT_816_QUIET=2          (for debug purpose) */
-int verbosity()
-{
-    char *OPT_816_QUIET = getenv("OPT_816_QUIET");
-
-    if (!OPT_816_QUIET || *OPT_816_QUIET == '0')
-        return 0;
-    else if (OPT_816_QUIET && *OPT_816_QUIET == '1')
-        return 1;
-    else if (OPT_816_QUIET && *OPT_816_QUIET == '2')
-        return 2;
-
-    return 3;
-}
-
-/* Check if a string starts with */
-int start_with(const char *a, const char *b)
-{
-    if (strncmp(a, b, strlen(b)) == 0)
-        return 1;
-
-    return 0;
-}
-
-/* Check return code */
-void check_rc(const char *message, const int rc)
-{
-    if (rc)
-    {
-        perror(message);
-        exit(rc);
-    }
-
-    perror(message);
-}
-
 /* Create a dynamic string array to store
-    block bss instructions */
-struct DArray store_bss(const int u, char **l)
+    block bss instructions (first word) */
+struct DArray StoreBss(const int u, char **l)
 {
     char **bss = NULL;
     size_t used = 0;
@@ -95,24 +60,24 @@ struct DArray store_bss(const int u, char **l)
     char *saveptr;
 
     if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
-        check_rc("malloc-lines", EXIT_FAILURE);
+        CheckRc("malloc-lines", EXIT_FAILURE);
 
     for (int i = 0; i < u; i++)
     {
         size_t len;
         len = strlen(l[i]);
 
-        if (start_with(l[i], BSS_START))
+        if (StartWith(l[i], BSS_START))
         {
             bss_on = 1;
             continue;
         }
-        if (start_with(l[i], BSS_END) && bss_on)
+        if (StartWith(l[i], BSS_END) && bss_on)
         {
             bss_on = 0;
             continue;
         }
-        if (!start_with(l[i], BSS_START) && bss_on)
+        if (!StartWith(l[i], BSS_START) && bss_on)
         {
             if (used == nptrs)
             { /* check if realloc of lines needed */
@@ -120,7 +85,7 @@ struct DArray store_bss(const int u, char **l)
                 void *tmp = realloc(bss, (2 * nptrs) * sizeof *bss);
                 if (!tmp)
                 {
-                    check_rc("realloc-lines", 0);
+                    CheckRc("realloc-lines", 0);
                     break;
                 }
                 /* assign reallocated block to lines */
@@ -131,7 +96,7 @@ struct DArray store_bss(const int u, char **l)
 
             /* allocate/validate storage for line */
             if (!(bss[used] = malloc(len + 1)))
-                check_rc("malloc-lines[used]", 0);
+                CheckRc("malloc-lines[used]", 0);
 
             /* Store the first word of bss instruction */
             memcpy(bss[used], strtok_r(l[i], " ", &saveptr), len + 1);
@@ -144,8 +109,8 @@ struct DArray store_bss(const int u, char **l)
 }
 
 /* Create a dynamic string array from file
-    without comment nor empty line */
-struct DArray trim_file(const int argc, char **argv)
+    without comment and leading/trailing white spaces */
+struct DArray TidyFile(const int argc, char **argv)
 {
     /* fixed buffer to read each line */
     char buf[MAXLEN_LINE];
@@ -161,18 +126,20 @@ struct DArray trim_file(const int argc, char **argv)
 
     /* validate file open for reading */
     if (!fp)
-        check_rc("file open failed", EXIT_FAILURE);
+        CheckRc("file open failed", EXIT_FAILURE);
 
     /* allocate/validate block holding initial nptrs pointers */
     if ((lines = malloc(nptrs * sizeof *lines)) == NULL)
-        check_rc("malloc-lines", EXIT_FAILURE);
+        CheckRc("malloc-lines", EXIT_FAILURE);
 
+    /* read each line into buf */
     while (fgets(buf, MAXLEN_LINE, fp))
-    { /* read each line into buf */
+    {
         size_t len;
-        buf[(len = strcspn(buf, "\n"))] = 0; /* trim \n, save length */
+        /* trim \n, save length */
+        buf[(len = strcspn(buf, "\n"))] = 0;
 
-        if (!start_with(buf, COMMENT) && buf[0] != '\0')
+        if (!StartWith(buf, COMMENT))
         {
 
             if (used == nptrs)
@@ -181,7 +148,7 @@ struct DArray trim_file(const int argc, char **argv)
                 void *tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
                 if (!tmp)
                 {
-                    check_rc("realloc-lines", 0);
+                    CheckRc("realloc-lines", 0);
                     break;
                 }
                 /* assign reallocated block to lines */
@@ -193,11 +160,11 @@ struct DArray trim_file(const int argc, char **argv)
             /* allocate/validate storage for line */
             if (!(lines[used] = malloc(len + 1)))
             {
-                check_rc("malloc-lines[used]", 0);
+                CheckRc("malloc-lines[used]", 0);
                 break;
             }
             /* copy line from buf to lines[used] */
-            memcpy(lines[used], buf, len + 1);
+            memcpy(lines[used], TrimWhiteSpace(buf), len + 1);
             /* increment used pointer count */
             used += 1;
         }
@@ -210,17 +177,53 @@ struct DArray trim_file(const int argc, char **argv)
     return r;
 }
 
-void optimize()
+void optimize(const int u, char **l)
 {
     /* total number of optimizations performed */
     // int totalopt = 0;
     /* have we optimized in this pass */
-    int opted = -1;
+    // int opted = -1;
     /* optimization pass counter */
     // int opass = 0;
+    regex_t regexa,
+        regexb,
+        regexc;
 
-    if (opted)
-        fprintf(stderr, "Not optimized yet\n");
+    int storetopseudo,
+        storexytopseudo,
+        storeatopseudo;
+
+    storetopseudo = regcomp(&regexa, STORE_AXYZ_TO_PSEUDO, 0);
+    storexytopseudo = regcomp(&regexb, STORE_XY_TO_PSEUDO, 0);
+    storeatopseudo = regcomp(&regexc, STORE_A_TO_PSEUDO, 0);
+
+    if (storetopseudo ||
+        storexytopseudo ||
+        storeatopseudo)
+    {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+
+    size_t i = 0;
+
+    printf("number of line : %d\n", u);
+    while (i < u)
+    {
+        if (StartWith(l[i], "st"))
+        {
+            /* Execute regular expression */
+            storetopseudo = regexec(&regexa, l[i], (size_t)0, NULL, 0);
+            // if (!storetopseudo)
+            //  printf("line %ld match: %s\n", i, l[i]);
+            //  printf("line=%ld line+30=%ld line_len=%d range=%ld->%d\n", i, i + 30, u, i + 1, findSmall(u, i + 30));
+        }
+        ++i;
+    }
+    /* Free memory allocated to the pattern buffer by regcomp() */
+    regfree(&regexa);
+    regfree(&regexb);
+    regfree(&regexc);
 }
 
 /* ---------- */
@@ -233,17 +236,10 @@ int main(int argc, char **argv)
     if (verbose)
         fprintf(stderr, "Verbose mode is activated: %d\n", verbose);
 
-    /* argc must be 2 for correct execution */
-    if (argc != 2)
-    {
-        printf("usage: %s <file_name>\n", argv[0]);
-        check_rc("Wrong argument", EXIT_FAILURE);
-    }
-
     /* -------------------------------- */
     /*       store trimmed file         */
     /* -------------------------------- */
-    struct DArray f = trim_file(argc, argv);
+    struct DArray f = TidyFile(argc, argv);
 
     if (verbose == 2)
     {
@@ -257,7 +253,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*      store BSS instuctions       */
     /* -------------------------------- */
-    struct DArray b = store_bss(f.used, f.arr);
+    struct DArray b = StoreBss(f.used, f.arr);
 
     if (verbose == 2)
     {
@@ -268,6 +264,10 @@ int main(int argc, char **argv)
         fprintf(stderr, "\n");
     }
 
+    /* -------------------------------- */
+    /*           optimization           */
+    /* -------------------------------- */
+    optimize(f.used, f.arr);
     /* -------------------------------- */
     /*    free pointers of pointers     */
     /* -------------------------------- */
@@ -286,6 +286,4 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     free(b.arr);
     free(f.arr);
-
-    optimize();
 }
