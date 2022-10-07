@@ -1,8 +1,9 @@
 /*
  *  opt-65816 - Assembly code Optimizer for WDC65816
  *
- * Assembly code optimizer for WDC65816 processor produced by the 65816
- * Tiny C Compiler (816-tcc) developed by AlekMaul.
+ * Assembly code optimizer for the WDC65816 processor produced
+ * by the 65816 Tiny C Compiler (816-tcc) developed by AlekMaul.
+ *
  * This library is a C port of the 816-opt python
  * tool developed by nArnoSNES.
  *
@@ -41,76 +42,15 @@
 
 /* Structure to store an array
     and the number of elements */
-struct DArray
+typedef struct DynArray
 {
-    int used;
     char **arr;
-};
-
-/* Create a dynamic string array to store
-    block bss instructions (first word) */
-struct DArray StoreBss(const int u, char **l)
-{
-    char **bss = NULL;
-    size_t used = 0;
-    int bss_on = 0;
-    size_t nptrs = NPTRS;
-
-    /* For strtok_r */
-    char *saveptr;
-
-    if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
-        CheckRc("malloc-lines", EXIT_FAILURE);
-
-    for (int i = 0; i < u; i++)
-    {
-        size_t len;
-        len = strlen(l[i]);
-
-        if (StartWith(l[i], BSS_START))
-        {
-            bss_on = 1;
-            continue;
-        }
-        if (StartWith(l[i], BSS_END) && bss_on)
-        {
-            bss_on = 0;
-            continue;
-        }
-        if (!StartWith(l[i], BSS_START) && bss_on)
-        {
-            if (used == nptrs)
-            { /* check if realloc of lines needed */
-                /* always realloc using temporary pointer (doubling no. of pointers) */
-                void *tmp = realloc(bss, (2 * nptrs) * sizeof *bss);
-                if (!tmp)
-                {
-                    CheckRc("realloc-lines", 0);
-                    break;
-                }
-                /* assign reallocated block to lines */
-                bss = tmp;
-                /* update no. of pointers allocatd */
-                nptrs *= 2;
-            }
-
-            /* allocate/validate storage for line */
-            if (!(bss[used] = malloc(len + 1)))
-                CheckRc("malloc-lines[used]", 0);
-
-            /* Store the first word of bss instruction */
-            memcpy(bss[used], strtok_r(l[i], " ", &saveptr), len + 1);
-            used += 1;
-        }
-    }
-
-    struct DArray b = {used, bss};
-    return b;
-}
+    size_t used;
+} DynArray;
 
 /* Create a dynamic string array from file
     without comment and leading/trailing white spaces */
-struct DArray TidyFile(const int argc, char **argv)
+DynArray TidyFile(const int argc, char **argv)
 {
     /* fixed buffer to read each line */
     char buf[MAXLEN_LINE];
@@ -139,11 +79,11 @@ struct DArray TidyFile(const int argc, char **argv)
         /* trim \n, save length */
         buf[(len = strcspn(buf, "\n"))] = 0;
 
-        if (!StartWith(buf, COMMENT))
+        if (!StartsWith(buf, COMMENT))
         {
-
+            /* check if realloc of lines needed */
             if (used == nptrs)
-            { /* check if realloc of lines needed */
+            {
                 /* always realloc using temporary pointer (doubling no. of pointers) */
                 void *tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
                 if (!tmp)
@@ -173,117 +113,219 @@ struct DArray TidyFile(const int argc, char **argv)
     if (fp != stdin)
         fclose(fp);
 
-    struct DArray r = {used, lines};
+    DynArray r = {lines, used};
     return r;
 }
 
-void optimize(const int u, char **l)
+/* Create a dynamic string array to store
+    block bss instructions (first word) */
+DynArray StoreBss(char **l, const int u)
+{
+    char **bss = NULL;
+    char *saveptr;
+
+    size_t used = 0;
+    size_t bss_on = 0;
+    size_t nptrs = NPTRS;
+
+    if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
+        CheckRc("malloc-lines", EXIT_FAILURE);
+
+    for (size_t i = 0; i < u; i++)
+    {
+        size_t len;
+        len = strlen(l[i]);
+
+        if (StartsWith(l[i], BSS_START))
+        {
+            bss_on = 1;
+            continue;
+        }
+        if (StartsWith(l[i], BSS_END) && bss_on)
+        {
+            bss_on = 0;
+            continue;
+        }
+        if (!StartsWith(l[i], BSS_START) && bss_on)
+        {
+            /* check if realloc of lines needed */
+            if (used == nptrs)
+            {
+                /* always realloc using temporary pointer (doubling no. of pointers) */
+                void *tmp = realloc(bss, (2 * nptrs) * sizeof *bss);
+                if (!tmp)
+                {
+                    CheckRc("realloc-lines", 0);
+                    break;
+                }
+                /* assign reallocated block to lines */
+                bss = tmp;
+                /* update no. of pointers allocatd */
+                nptrs *= 2;
+            }
+
+            /* allocate/validate storage for line */
+            if (!(bss[used] = malloc(len + 1)))
+            {
+                CheckRc("malloc-lines[used]", 0);
+                break;
+            }
+
+            /* Store the first word of bss instruction */
+            memcpy(bss[used], strtok_r(l[i], " ", &saveptr), len + 1);
+            used += 1;
+        }
+    }
+
+    DynArray b = {bss, used};
+    return b;
+}
+
+/* Optimize ASM code */
+void OptimizeAsm(char **l, const unsigned int u)
 {
     /* total number of optimizations performed */
     // int totalopt = 0;
-    /* have we optimized in this pass */
+    /* have we OptimizeAsmd in this pass */
     // int opted = -1;
     /* optimization pass counter */
     // int opass = 0;
+
+    size_t maxGroups = 3;
+    regmatch_t groupArray[maxGroups];
+
     regex_t regexa,
         regexb,
-        regexc;
+        regexc,
+        regexd;
 
-    int storetopseudo,
-        storexytopseudo,
-        storeatopseudo;
-
-    storetopseudo = regcomp(&regexa, STORE_AXYZ_TO_PSEUDO, 0);
-    storexytopseudo = regcomp(&regexb, STORE_XY_TO_PSEUDO, 0);
-    storeatopseudo = regcomp(&regexc, STORE_A_TO_PSEUDO, 0);
-
-    if (storetopseudo ||
-        storexytopseudo ||
-        storeatopseudo)
+    if (regcomp(&regexa, STORE_AXYZ_TO_PSEUDO, REG_EXTENDED) ||
+        regcomp(&regexb, STORE_XY_TO_PSEUDO, REG_EXTENDED) ||
+        regcomp(&regexc, STORE_A_TO_PSEUDO, REG_EXTENDED))
     {
         fprintf(stderr, "Could not compile regex\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
+    int doopt;
+    char *cursor;
+
+    char snp_buf[MAXLEN_LINE];
     size_t i = 0;
 
-    printf("number of line : %d\n", u);
+    // printf("number of line : %u\n", u);
     while (i < u)
     {
-        if (StartWith(l[i], "st"))
+
+        if (StartsWith(l[i], "st"))
         {
-            /* Execute regular expression */
-            storetopseudo = regexec(&regexa, l[i], (size_t)0, NULL, 0);
-            // if (!storetopseudo)
-            //  printf("line %ld match: %s\n", i, l[i]);
-            //  printf("line=%ld line+30=%ld line_len=%d range=%ld->%d\n", i, i + 30, u, i + 1, findSmall(u, i + 30));
+            if (!regexec(&regexa, l[i], maxGroups, groupArray, 0))
+            {
+                // printf("line %lu match: %s\n", i, l[i]);
+                //  printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, (i + 1), FindMin(u, (i + 30)));
+                doopt = 0;
+                cursor = l[i];
+                char cursorCopy[strlen(cursor) + 1];
+                strcpy(cursorCopy, cursor);
+                cursorCopy[groupArray[2].rm_eo] = 0;
+                for (size_t j = (i + 1); j < FindMin(u, (i + 30)); j++)
+                {
+                    // printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, j, FindMin(u, (i + 30)));
+                    snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", cursorCopy + groupArray[2].rm_so);
+                    if (regcomp(&regexd,
+                                snp_buf,
+                                REG_EXTENDED))
+                    {
+                        fprintf(stderr, "Could not compile regex\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    if (!regexec(&regexd, l[j], maxGroups, groupArray, 0))
+                    {
+                        printf("CAS 1 %s\n", l[j]);
+                        doopt = 1;
+                        break;
+                    }
+                    if (StartsWith(l[j], "jsr.l") && !StartsWith(l[j], "jsr.l tcc__"))
+                    {
+                        printf("CAS 2 %s\n", l[j]);
+                        doopt = 1;
+                        break;
+                    }
+                    regfree(&regexd);
+                }
+                if (doopt)
+                {
+                    ++i;
+                    regfree(&regexd);
+                    continue;
+                }
+            }
         }
         ++i;
     }
+
     /* Free memory allocated to the pattern buffer by regcomp() */
     regfree(&regexa);
     regfree(&regexb);
     regfree(&regexc);
 }
 
-/* ---------- */
-/*    Main    */
-/* ---------- */
+/* Main */
 int main(int argc, char **argv)
 {
-    /* Enable verbosity level */
-    int verbose = verbosity();
+    /* -------------------------------- */
+    /*       Enable verbosity level     */
+    /* -------------------------------- */
+    size_t verbose = verbosity();
     if (verbose)
-        fprintf(stderr, "Verbose mode is activated: %d\n", verbose);
+        fprintf(stderr, "Verbose mode is activated: %lu\n", verbose);
 
     /* -------------------------------- */
-    /*       store trimmed file         */
+    /*       Store trimmed file         */
     /* -------------------------------- */
-    struct DArray f = TidyFile(argc, argv);
+    DynArray file = TidyFile(argc, argv);
 
     if (verbose == 2)
     {
-        for (int i = 0; i < f.used; i++)
+        for (size_t i = 0; i < file.used; i++)
         {
-            fprintf(stderr, "line[%6u] : %s\n", i, f.arr[i]);
+            fprintf(stderr, "line[%6lu] : %s\n", i, file.arr[i]);
         }
         fprintf(stderr, "\n");
     }
 
     /* -------------------------------- */
-    /*      store BSS instuctions       */
+    /*      Store BSS instuctions       */
     /* -------------------------------- */
-    struct DArray b = StoreBss(f.used, f.arr);
+    DynArray bss = StoreBss(file.arr, file.used);
 
     if (verbose == 2)
     {
-        for (int i = 0; i < b.used; i++)
+        for (size_t i = 0; i < bss.used; i++)
         {
-            printf("line[%5u] : %s\n", i, b.arr[i]);
+            fprintf(stderr, "line[%5lu] : %s\n", i, bss.arr[i]);
         }
         fprintf(stderr, "\n");
     }
 
     /* -------------------------------- */
-    /*           optimization           */
+    /*       ASM Optimization           */
     /* -------------------------------- */
-    optimize(f.used, f.arr);
-    /* -------------------------------- */
-    /*    free pointers of pointers     */
-    /* -------------------------------- */
-    for (int i = 0; i < f.used; i++)
-    {
-        free(f.arr[i]);
-    }
-
-    for (int i = 0; i < b.used; i++)
-    {
-        free(b.arr[i]);
-    }
+    OptimizeAsm(file.arr, file.used);
 
     /* -------------------------------- */
-    /*          free pointers           */
+    /*       Free pointers              */
     /* -------------------------------- */
-    free(b.arr);
-    free(f.arr);
+    for (size_t i = 0; i < file.used; i++)
+    {
+        free(file.arr[i]);
+    }
+
+    for (size_t i = 0; i < bss.used; i++)
+    {
+        free(bss.arr[i]);
+    }
+
+    free(bss.arr);
+    free(file.arr);
 }

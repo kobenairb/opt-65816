@@ -28,6 +28,7 @@ def is_control(line):
 
 
 def changes_accu(line):
+    print(f"4 first char is {line[:3]} from {line}")
     return bool(
         line[2] == "a"
         and line[:3] not in ["pha", "sta"]
@@ -43,7 +44,7 @@ storetopseudo = re.compile("st([axyz]).b tcc__([rf][0-9]*h?)$")
 storexytopseudo = re.compile("st([xy]).b tcc__([rf][0-9]*h?)$")
 storeatopseudo = re.compile("sta.b tcc__([rf][0-9]*h?)$")
 
-print(f"number of line : {len(text)}")
+# print(f"number of line : {len(text)}")
 
 while opted:
     opass += 1
@@ -58,19 +59,21 @@ while opted:
             # stores (accu/x/y/zero) to pseudo-registers
             r = storetopseudo.match(text[i])
             if r:
-                # print(f"{text[i]} match")
+                # print(f"{text[i]}")
                 # eliminate redundant stores
                 doopt = False
-                # print(f"line={i} line+30={i+30} line_len={len(text)} range={i+1}->{min(len(text), i + 30)}")
+                print(f"line={i} line+30={i+30} line_len={len(text)} range={i+1}->{min(len(text), i + 30)}")
                 for j in range(i + 1, min(len(text), i + 30)):
+                    # print(f"st([axyz]).b tcc__{r.groups()[1]}$")
                     r1 = re.match("st([axyz]).b tcc__" + r.groups()[1] + "$", text[j])
                     if r1:
-                        # print(f"{text[i]} match in {r}")
+                        print(f"CAS 1 {text[j]}")
                         doopt = True  # another store to the same pregister
                         break
                     if text[j].startswith("jsr.l ") and not text[j].startswith(
                         "jsr.l tcc__"
                     ):
+                        print(f"CAS 2 {text[j]}")
                         doopt = True  # before function call (will be clobbered anyway)
                         break
                     # cases in which we don't pursue optimization further
