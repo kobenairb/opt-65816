@@ -1,6 +1,5 @@
 vgcore.*
 *.log
-backup
 *.o
 opt-65816
 *.out
