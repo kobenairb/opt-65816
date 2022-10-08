@@ -1,5 +1,7 @@
-#ifndef OPT_65816_H_ /* Include guard */
-#define OPT_65816_H_
+/* TODO : not tested with Windows */
+#ifdef _WIN32
+#define strtok_r strtok_s
+#endif
 
 /* initial no. of pointers to allocate (lines) */
 #define NPTRS 1
@@ -11,7 +13,8 @@
 #define COMMENT ";"
 
 /* BSS constants */
-#define BSS_START ".RAMSECTION \".bss\" BANK $7e SLOT 2"
+#define BSS_START \
+    ".RAMSECTION \".bss\" BANK $7e SLOT 2"
 #define BSS_END ".ENDS"
 
 /* stores (accu/x/y/zero) to pseudo-registers */
@@ -23,12 +26,3 @@
 /* stores (accu only) to pseudo-registers */
 #define STORE_A_TO_PSEUDO \
     "sta.b tcc__([rf][0-9]{0,}h{0,1})$"
-
-/* ----------------------------- */
-/* Windows specific declarations */
-/* ----------------------------- */
-#if defined(_WIN32)
-#define strtok_r strtok_s
-#endif
-
-#endif

@@ -213,54 +213,54 @@ void OptimizeAsm(char **l, const unsigned int u)
     char snp_buf[MAXLEN_LINE];
     size_t i = 0;
 
-    // printf("number of line : %u\n", u);
     while (i < u)
     {
-
-        if (StartsWith(l[i], "st"))
-        {
-            if (!regexec(&regexa, l[i], maxGroups, groupArray, 0))
-            {
-                // printf("line %lu match: %s\n", i, l[i]);
-                //  printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, (i + 1), FindMin(u, (i + 30)));
-                doopt = 0;
-                cursor = l[i];
-                char cursorCopy[strlen(cursor) + 1];
-                strcpy(cursorCopy, cursor);
-                cursorCopy[groupArray[2].rm_eo] = 0;
-                for (size_t j = (i + 1); j < FindMin(u, (i + 30)); j++)
+        if (IsControl(l[i]))
+            printf("%s\n", l[i]);
+        /*         if (StartsWith(l[i], "st"))
                 {
-                    // printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, j, FindMin(u, (i + 30)));
-                    snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", cursorCopy + groupArray[2].rm_so);
-                    if (regcomp(&regexd,
-                                snp_buf,
-                                REG_EXTENDED))
+                    if (!regexec(&regexa, l[i], maxGroups, groupArray, 0))
                     {
-                        fprintf(stderr, "Could not compile regex\n");
-                        exit(EXIT_FAILURE);
+                        // printf("line %lu match: %s\n", i, l[i]);
+                        //  printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, (i + 1), FindMin(u, (i + 30)));
+                        doopt = 0;
+                        cursor = l[i];
+                        char cursorCopy[strlen(cursor) + 1];
+                        strcpy(cursorCopy, cursor);
+                        cursorCopy[groupArray[2].rm_eo] = 0;
+                        for (size_t j = (i + 1); j < FindMin(u, (i + 30)); j++)
+                        {
+                            // printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, j, FindMin(u, (i + 30)));
+                            snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", cursorCopy + groupArray[2].rm_so);
+                            if (regcomp(&regexd,
+                                        snp_buf,
+                                        REG_EXTENDED))
+                            {
+                                fprintf(stderr, "Could not compile regex\n");
+                                exit(EXIT_FAILURE);
+                            }
+                            if (!regexec(&regexd, l[j], maxGroups, groupArray, 0))
+                            {
+                                printf("CAS 1 %s\n", l[j]);
+                                doopt = 1;
+                                break;
+                            }
+                            if (StartsWith(l[j], "jsr.l") && !StartsWith(l[j], "jsr.l tcc__"))
+                            {
+                                printf("CAS 2 %s\n", l[j]);
+                                doopt = 1;
+                                break;
+                            }
+                            regfree(&regexd);
+                        }
+                        if (doopt)
+                        {
+                            ++i;
+                            regfree(&regexd);
+                            continue;
+                        }
                     }
-                    if (!regexec(&regexd, l[j], maxGroups, groupArray, 0))
-                    {
-                        printf("CAS 1 %s\n", l[j]);
-                        doopt = 1;
-                        break;
-                    }
-                    if (StartsWith(l[j], "jsr.l") && !StartsWith(l[j], "jsr.l tcc__"))
-                    {
-                        printf("CAS 2 %s\n", l[j]);
-                        doopt = 1;
-                        break;
-                    }
-                    regfree(&regexd);
-                }
-                if (doopt)
-                {
-                    ++i;
-                    regfree(&regexd);
-                    continue;
-                }
-            }
-        }
+                } */
         ++i;
     }
 
@@ -289,6 +289,10 @@ int main(int argc, char **argv)
     {
         for (size_t i = 0; i < file.used; i++)
         {
+            // int z = 0;
+            // if (strlen(file.arr[i]) == 0)
+            // if (file.arr[i][0] == '\0')
+            // z = 1;
             fprintf(stderr, "line[%6lu] : %s\n", i, file.arr[i]);
         }
         fprintf(stderr, "\n");
