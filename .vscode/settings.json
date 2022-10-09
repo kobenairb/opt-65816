@@ -19,7 +19,8 @@
         "*.def": "c",
         "atomic": "c",
         "ctype.h": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "opt-816.h": "c"
     },
     "files.trimTrailingWhitespace": true,
     "python.languageServer": "Pylance",

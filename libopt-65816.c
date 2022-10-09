@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "header.h"
+#include "opt-65816.h"
 
 /* Enable verbosity if OPT_816_QUIET is set
     OPT_816_QUIET=0 or unset (no verbosity)
@@ -44,7 +44,7 @@ unsigned int verbosity()
     return 3;
 }
 
-/* Check if a string starts with */
+/* Check if a string starts with b string */
 int StartsWith(const char *a, const char *b)
 {
     if (strncmp(a, b, strlen(b)) == 0)
@@ -53,13 +53,21 @@ int StartsWith(const char *a, const char *b)
     return 0;
 }
 
-/* Check if a string starts with */
+/* Check if a string ends with b string */
 int EndsWith(const char *a, const char *b)
 {
     size_t alen = strlen(a);
     size_t blen = strlen(b);
 
     if (strcmp(a + alen - blen, b) == 0)
+        return 1;
+    return 0;
+}
+
+/* Check if b string is in a string */
+int IsInText(const char *a, const char *b)
+{
+    if (strstr(a, b) != NULL)
         return 1;
     return 0;
 }
@@ -111,24 +119,33 @@ char *TrimWhiteSpace(char *str)
 
 int ChangesAccu(const char *a)
 {
-    if (strlen(a) > 1)
-        if ((a[2] == 'a' && (!StartsWith(a, "pha") || !StartsWith(a, "sta"))) ||
-            (strlen(a) == 5 && EndsWith(a, " a")))
+    if (strlen(a) > 2)
+    {
+        if (a[2] == 'a' && (!StartsWith(a, "pha") && !StartsWith(a, "sta")))
             return 1;
+        if (strlen(a) == 5 && EndsWith(a, " a"))
+            return 1;
+    }
 
     return 0;
 }
 /* Checks if the line alters the control flow */
 int IsControl(const char *a)
 {
-    if (strlen(a) != 0)
-        if (EndsWith(a, ":") ||
-            (StartsWith(a, "j") ||
-             StartsWith(a, "b") ||
-             StartsWith(a, "l") ||
-             StartsWith(a, "-") ||
-             StartsWith(a, "+")))
+    if (strlen(a) > 0)
+    {
+        if (EndsWith(a, ":"))
+        {
             return 1;
+        }
+        if (StartsWith(a, "j") ||
+            StartsWith(a, "b") ||
+            StartsWith(a, "-") ||
+            StartsWith(a, "+"))
+        {
+            return 1;
+        }
+    }
 
     return 0;
 }

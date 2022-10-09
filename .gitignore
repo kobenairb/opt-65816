@@ -5,6 +5,5 @@ opt-65816
 *.out
 samples
 node_modules
-match.c
-match
 examples
+tests

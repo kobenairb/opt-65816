@@ -4,7 +4,7 @@ OBJ = $(SRC:.c=.o)
 CFLAGS = -Wall -O2 -g
 CC = gcc
 
-all: $(BIN)
+all: clean $(BIN)
 
 $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@

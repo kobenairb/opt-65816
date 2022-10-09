@@ -37,8 +37,8 @@
 #include <regex.h>
 #endif
 
-#include "header.h"
-#include "lib.c"
+#include "opt-65816.h"
+#include "libopt-65816.c"
 
 /* Structure to store an array
     and the number of elements */
@@ -60,6 +60,14 @@ DynArray TidyFile(const int argc, char **argv)
     size_t nptrs = NPTRS;
     /* number of pointers used */
     size_t used = 0;
+
+    if (argc > 2)
+    {
+        printf("usage:\n");
+        printf("  - %s <filename>\n", argv[0]);
+        printf("  - <stdin> | %s\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
 
     /* use filename provided as 1st argument (stdin by default) */
     FILE *fp = argc > 1 ? fopen(argv[1], "r") : stdin;
@@ -182,12 +190,12 @@ DynArray StoreBss(char **l, const int u)
 }
 
 /* Optimize ASM code */
-void OptimizeAsm(char **l, const unsigned int u)
+void OptimizeAsm(char **l, const int u)
 {
     /* total number of optimizations performed */
     // int totalopt = 0;
     /* have we OptimizeAsmd in this pass */
-    // int opted = -1;
+    int opted = -1;
     /* optimization pass counter */
     // int opass = 0;
 
@@ -215,53 +223,71 @@ void OptimizeAsm(char **l, const unsigned int u)
 
     while (i < u)
     {
-        if (IsControl(l[i]))
-            printf("%s\n", l[i]);
-        /*         if (StartsWith(l[i], "st"))
+        ChangesAccu(l[i]);
+
+        if (StartsWith(l[i], "st"))
+        {
+            /* eliminate redundant stores */
+            if (!regexec(&regexa, l[i], maxGroups, groupArray, 0))
+            {
+                doopt = 0;
+                cursor = l[i];
+                char cursorCopy[strlen(cursor) + 1];
+                strcpy(cursorCopy, cursor);
+                cursorCopy[groupArray[2].rm_eo] = 0;
+                for (size_t j = (i + 1); j < FindMin(u, (i + 30)); j++)
                 {
-                    if (!regexec(&regexa, l[i], maxGroups, groupArray, 0))
+                    snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", cursorCopy + groupArray[2].rm_so);
+                    if (regcomp(&regexd,
+                                snp_buf,
+                                REG_EXTENDED))
                     {
-                        // printf("line %lu match: %s\n", i, l[i]);
-                        //  printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, (i + 1), FindMin(u, (i + 30)));
-                        doopt = 0;
-                        cursor = l[i];
-                        char cursorCopy[strlen(cursor) + 1];
-                        strcpy(cursorCopy, cursor);
-                        cursorCopy[groupArray[2].rm_eo] = 0;
-                        for (size_t j = (i + 1); j < FindMin(u, (i + 30)); j++)
-                        {
-                            // printf("line=%lu line+30=%lu line_len=%u range=%lu->%u\n", i, (i + 30), u, j, FindMin(u, (i + 30)));
-                            snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", cursorCopy + groupArray[2].rm_so);
-                            if (regcomp(&regexd,
-                                        snp_buf,
-                                        REG_EXTENDED))
-                            {
-                                fprintf(stderr, "Could not compile regex\n");
-                                exit(EXIT_FAILURE);
-                            }
-                            if (!regexec(&regexd, l[j], maxGroups, groupArray, 0))
-                            {
-                                printf("CAS 1 %s\n", l[j]);
-                                doopt = 1;
-                                break;
-                            }
-                            if (StartsWith(l[j], "jsr.l") && !StartsWith(l[j], "jsr.l tcc__"))
-                            {
-                                printf("CAS 2 %s\n", l[j]);
-                                doopt = 1;
-                                break;
-                            }
-                            regfree(&regexd);
-                        }
-                        if (doopt)
-                        {
-                            ++i;
-                            regfree(&regexd);
-                            continue;
-                        }
+                        fprintf(stderr, "Could not compile regex\n");
+                        exit(EXIT_FAILURE);
                     }
-                } */
-        ++i;
+                    /* Another store to the same pregister */
+                    if (!regexec(&regexd, l[j], maxGroups, groupArray, 0))
+                    {
+                        printf("[CAS 1] %lu: %s\n", i, l[j]);
+                        doopt = 1;
+                        break;
+                    }
+                    /* Before function call (will be clobbered anyway) */
+                    if (StartsWith(l[j], "jsr.l ") && !StartsWith(l[j], "jsr.l tcc__"))
+                    {
+                        printf("[CAS 2] %lu: %s\n", i, l[j]);
+                        doopt = 1;
+                        break;
+                    }
+                    /* Cases in which we don't pursue optimization further */
+                    /* #1 Branch or other use of the pseudo register */
+                    snprintf(snp_buf, sizeof(snp_buf), "tcc__%s", cursorCopy + groupArray[2].rm_so);
+                    if (IsControl(l[j]) || IsInText(l[j], snp_buf))
+                    {
+                        printf("[CAS 3] %lu: %s\n", i, l[j]);
+                        break;
+                    }
+                    /* #2 Use as a pointer */
+                    snprintf(snp_buf, sizeof(snp_buf), "[tcc__%s", cursorCopy + groupArray[2].rm_so);
+                    snp_buf[strlen(snp_buf) - 1] = '\0';
+                    if (EndsWith(cursorCopy + groupArray[2].rm_so, "h") && IsInText(l[j], snp_buf))
+                    {
+                        printf("[CAS 4] %lu: %s\n", i, l[j]);
+                        break;
+                    }
+                    regfree(&regexd);
+                }
+                if (doopt)
+                {
+                    ++i;
+                    ++opted;
+                    regfree(&regexd);
+                    continue;
+                }
+                regfree(&regexd);
+            }
+        }
+        i++;
     }
 
     /* Free memory allocated to the pattern buffer by regcomp() */
@@ -289,10 +315,6 @@ int main(int argc, char **argv)
     {
         for (size_t i = 0; i < file.used; i++)
         {
-            // int z = 0;
-            // if (strlen(file.arr[i]) == 0)
-            // if (file.arr[i][0] == '\0')
-            // z = 1;
             fprintf(stderr, "line[%6lu] : %s\n", i, file.arr[i]);
         }
         fprintf(stderr, "\n");
@@ -301,7 +323,10 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*      Store BSS instuctions       */
     /* -------------------------------- */
-    DynArray bss = StoreBss(file.arr, file.used);
+    /* Too lazy to write a function to copy
+        file.arr. TODO */
+    DynArray tmp = TidyFile(argc, argv);
+    DynArray bss = StoreBss(tmp.arr, file.used);
 
     if (verbose == 2)
     {
@@ -325,11 +350,16 @@ int main(int argc, char **argv)
         free(file.arr[i]);
     }
 
+    for (size_t i = 0; i < tmp.used; i++)
+    {
+        free(tmp.arr[i]);
+    }
+
     for (size_t i = 0; i < bss.used; i++)
     {
         free(bss.arr[i]);
     }
-
+    free(tmp.arr);
     free(bss.arr);
     free(file.arr);
 }
