@@ -353,21 +353,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       Free pointers              */
     /* -------------------------------- */
-    for (size_t i = 0; i < file.used; i++)
-    {
-        free(file.arr[i]);
-    }
-
-    for (size_t i = 0; i < tmp.used; i++)
-    {
-        free(tmp.arr[i]);
-    }
-
-    for (size_t i = 0; i < bss.used; i++)
-    {
-        free(bss.arr[i]);
-    }
-    free(tmp.arr);
-    free(bss.arr);
-    free(file.arr);
+    FreeDynArray(tmp.arr, tmp.used);
+    FreeDynArray(bss.arr, bss.used);
+    FreeDynArray(file.arr, file.used);
 }
