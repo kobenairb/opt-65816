@@ -74,11 +74,17 @@ DynArray TidyFile(const int argc, char **argv)
 
     /* validate file open for reading */
     if (!fp)
-        CheckRc("file open failed", EXIT_FAILURE);
+    {
+        perror(argv[1]);
+        exit(EXIT_FAILURE);
+    }
 
     /* allocate/validate block holding initial nptrs pointers */
     if ((lines = malloc(nptrs * sizeof *lines)) == NULL)
-        CheckRc("malloc-lines", EXIT_FAILURE);
+    {
+        perror("malloc-lines");
+        exit(EXIT_FAILURE);
+    }
 
     /* read each line into buf */
     while (fgets(buf, MAXLEN_LINE, fp))
@@ -96,7 +102,7 @@ DynArray TidyFile(const int argc, char **argv)
                 void *tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
                 if (!tmp)
                 {
-                    CheckRc("realloc-lines", 0);
+                    perror("realloc-lines");
                     break;
                 }
                 /* assign reallocated block to lines */
@@ -108,7 +114,7 @@ DynArray TidyFile(const int argc, char **argv)
             /* allocate/validate storage for line */
             if (!(lines[used] = malloc(len + 1)))
             {
-                CheckRc("malloc-lines[used]", 0);
+                perror("malloc-lines[used]");
                 break;
             }
             /* copy line from buf to lines[used] */
@@ -137,7 +143,10 @@ DynArray StoreBss(char **l, const int u)
     size_t nptrs = NPTRS;
 
     if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
-        CheckRc("malloc-lines", EXIT_FAILURE);
+    {
+        perror("malloc-lines");
+        exit(EXIT_FAILURE);
+    }
 
     for (size_t i = 0; i < u; i++)
     {
@@ -163,7 +172,7 @@ DynArray StoreBss(char **l, const int u)
                 void *tmp = realloc(bss, (2 * nptrs) * sizeof *bss);
                 if (!tmp)
                 {
-                    CheckRc("realloc-lines", 0);
+                    perror("realloc-lines");
                     break;
                 }
                 /* assign reallocated block to lines */
@@ -175,7 +184,7 @@ DynArray StoreBss(char **l, const int u)
             /* allocate/validate storage for line */
             if (!(bss[used] = malloc(len + 1)))
             {
-                CheckRc("malloc-lines[used]", 0);
+                perror("malloc-lines[used]");
                 break;
             }
 
@@ -277,14 +286,13 @@ void OptimizeAsm(char **l, const int u)
                     }
                     regfree(&regexd);
                 }
+                regfree(&regexd);
                 if (doopt)
                 {
                     ++i;
                     ++opted;
-                    regfree(&regexd);
                     continue;
                 }
-                regfree(&regexd);
             }
         }
         i++;
