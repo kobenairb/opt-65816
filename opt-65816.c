@@ -1,4 +1,4 @@
-/*
+/**
  *  opt-65816 - Assembly code Optimizer for WDC65816
  *
  * Assembly code optimizer for the WDC65816 processor produced
@@ -40,8 +40,10 @@
 #include "opt-65816.h"
 #include "libopt-65816.c"
 
-/* Structure to store an array
-    and the number of elements */
+/**
+ * @brief Structure to store an array
+    and the number of elements
+ */
 typedef struct DynArray
 {
     char **arr;
@@ -209,23 +211,12 @@ void OptimizeAsm(char **l, const int u)
     // int opass = 0;
 
     size_t maxGroups = 3;
-    regmatch_t groupArray[maxGroups];
 
-    regex_t regexa,
-        regexb,
-        regexc,
-        regexd;
+    regex_t regexd;
 
-    if (regcomp(&regexa, STORE_AXYZ_TO_PSEUDO, REG_EXTENDED) ||
-        regcomp(&regexb, STORE_XY_TO_PSEUDO, REG_EXTENDED) ||
-        regcomp(&regexc, STORE_A_TO_PSEUDO, REG_EXTENDED))
-    {
-        fprintf(stderr, "Could not compile regex\n");
-        exit(EXIT_FAILURE);
-    }
+    RegDynArray r;
 
     int doopt;
-    char *cursor;
 
     char snp_buf[MAXLEN_LINE];
     size_t i = 0;
@@ -237,25 +228,23 @@ void OptimizeAsm(char **l, const int u)
         if (StartsWith(l[i], "st"))
         {
             /* eliminate redundant stores */
-            if (!regexec(&regexa, l[i], maxGroups, groupArray, 0))
+            r = RegMatchGroups(l[i], STORE_AXYZ_TO_PSEUDO, maxGroups);
+            regfree(&r.regexCompiled);
+            if (r.status)
             {
                 doopt = 0;
-                cursor = l[i];
-                char cursorCopy[strlen(cursor) + 1];
-                strcpy(cursorCopy, cursor);
-                cursorCopy[groupArray[2].rm_eo] = 0;
                 for (size_t j = (i + 1); j < FindMin(u, (i + 30)); j++)
                 {
-                    snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", cursorCopy + groupArray[2].rm_so);
+                    snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", r.groups[2]);
                     if (regcomp(&regexd,
                                 snp_buf,
-                                REG_EXTENDED))
+                                0))
                     {
                         fprintf(stderr, "Could not compile regex\n");
                         exit(EXIT_FAILURE);
                     }
                     /* Another store to the same pregister */
-                    if (!regexec(&regexd, l[j], maxGroups, groupArray, 0))
+                    if (!regexec(&regexd, l[j], 0, NULL, 0))
                     {
                         printf("[CAS 1] %lu: %s\n", i, l[j]);
                         doopt = 1;
@@ -270,16 +259,16 @@ void OptimizeAsm(char **l, const int u)
                     }
                     /* Cases in which we don't pursue optimization further */
                     /* #1 Branch or other use of the pseudo register */
-                    snprintf(snp_buf, sizeof(snp_buf), "tcc__%s", cursorCopy + groupArray[2].rm_so);
+                    snprintf(snp_buf, sizeof(snp_buf), "tcc__%s", r.groups[2]);
                     if (IsControl(l[j]) || IsInText(l[j], snp_buf))
                     {
                         printf("[CAS 3] %lu: %s\n", i, l[j]);
                         break;
                     }
                     /* #2 Use as a pointer */
-                    snprintf(snp_buf, sizeof(snp_buf), "[tcc__%s", cursorCopy + groupArray[2].rm_so);
+                    snprintf(snp_buf, sizeof(snp_buf), "[tcc__%s", r.groups[2]);
                     snp_buf[strlen(snp_buf) - 1] = '\0';
-                    if (EndsWith(cursorCopy + groupArray[2].rm_so, "h") && IsInText(l[j], snp_buf))
+                    if (EndsWith(r.groups[2], "h") && IsInText(l[j], snp_buf))
                     {
                         printf("[CAS 4] %lu: %s\n", i, l[j]);
                         break;
@@ -287,21 +276,22 @@ void OptimizeAsm(char **l, const int u)
                     regfree(&regexd);
                 }
                 regfree(&regexd);
+                FreeDynArray(r.groups, maxGroups);
                 if (doopt)
                 {
+                    /* Skip redundant store */
                     ++i;
                     ++opted;
                     continue;
                 }
             }
+            /* Stores (x/y) to pseudo-registers */
+            // if (!regexec(&regexb, l[i], maxGroups, groupArray, 0))
+            // {
+            // }
         }
         i++;
     }
-
-    /* Free memory allocated to the pattern buffer by regcomp() */
-    regfree(&regexa);
-    regfree(&regexb);
-    regfree(&regexc);
 }
 
 /* Main */

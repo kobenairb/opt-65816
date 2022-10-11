@@ -1,4 +1,4 @@
-/*
+/**
  *  opt-65816 - Assembly code Optimizer for WDC65816
  *
  * Assembly code optimizer for the WDC65816 processor produced
@@ -26,11 +26,14 @@
 
 #include "opt-65816.h"
 
-/* Enable verbosity if OPT_816_QUIET is set
-    OPT_816_QUIET=0 or unset (no verbosity)
-    OPT_816_QUIET=1          (normal verbosity)
-    OPT_816_QUIET=2          (for debug purpose) */
-unsigned int verbosity()
+/*!
+ * @brief Enable verbosity if OPT_816_QUIET is set
+ *     OPT_816_QUIET=0 or unset (no verbosity)
+ *     OPT_816_QUIET=1          (normal verbosity)
+ *     OPT_816_QUIET=2          (for debug purpose)
+ * @return
+ */
+int verbosity()
 {
     char *OPT_816_QUIET = getenv("OPT_816_QUIET");
 
@@ -44,7 +47,26 @@ unsigned int verbosity()
     return 3;
 }
 
-/* Check if a string starts with b string */
+/*!
+ * @brief Free pointers and pointers to pointers
+ * @param l
+ * @param u
+ */
+void FreeDynArray(char **l, int u)
+{
+    for (size_t i = 0; i < u; i++)
+    {
+        free(l[i]);
+    }
+    free(l);
+}
+
+/*!
+ * @brief Check if a string starts with b string
+ * @param a
+ * @param b
+ * @return
+ */
 int StartsWith(const char *a, const char *b)
 {
     if (strncmp(a, b, strlen(b)) == 0)
@@ -53,7 +75,12 @@ int StartsWith(const char *a, const char *b)
     return 0;
 }
 
-/* Check if a string ends with b string */
+/*!
+ * @brief Check if a string ends with b string
+ * @param a
+ * @param b
+ * @return
+ */
 int EndsWith(const char *a, const char *b)
 {
     size_t alen = strlen(a);
@@ -65,6 +92,13 @@ int EndsWith(const char *a, const char *b)
 }
 
 /* Check if b string is in a string */
+
+/*!
+ * @brief Check if b string is in a string
+ * @param a
+ * @param b
+ * @return
+ */
 int IsInText(const char *a, const char *b)
 {
     if (strstr(a, b) != NULL)
@@ -72,7 +106,12 @@ int IsInText(const char *a, const char *b)
     return 0;
 }
 
-/* get the smalest number between two int */
+/*!
+ * @brief get the smalest number between two int
+ * @param a
+ * @param b
+ * @return
+ */
 int FindMin(const int a, const int b)
 {
     if (a > b)
@@ -81,19 +120,11 @@ int FindMin(const int a, const int b)
         return a;
 }
 
-/* Check return code */
-void CheckRc(const char *message, const unsigned int rc)
-{
-    if (rc)
-    {
-        perror(message);
-        exit(rc);
-    }
-
-    perror(message);
-}
-
-/* Remove leading/trailing whitespaces */
+/*!
+ * @brief Remove leading/trailing whitespaces
+ * @param str
+ * @return
+ */
 char *TrimWhiteSpace(char *str)
 {
     char *end;
@@ -117,6 +148,11 @@ char *TrimWhiteSpace(char *str)
     return str;
 }
 
+/*!
+ * @brief checks if it touches the accumulator register
+ * @param a
+ * @return
+ */
 int ChangesAccu(const char *a)
 {
     if (strlen(a) > 2)
@@ -129,7 +165,12 @@ int ChangesAccu(const char *a)
 
     return 0;
 }
-/* Checks if the line alters the control flow */
+
+/*!
+ * @brief Checks if the line alters the control flow
+ * @param a
+ * @return
+ */
 int IsControl(const char *a)
 {
     if (strlen(a) > 0)
@@ -148,4 +189,98 @@ int IsControl(const char *a)
     }
 
     return 0;
+}
+
+/**
+ * @brief Structure to store RegMatchGroups
+ */
+typedef struct RegDynArray
+{
+    size_t status;
+    regex_t regexCompiled;
+    char **groups;
+} RegDynArray;
+
+/**
+ * @brief
+ * @param source
+ * @param regex
+ * @param maxgroup
+ * @return
+ */
+RegDynArray RegMatchGroups(char *source, char *regex, const unsigned int maxgroup)
+{
+    regex_t regexCompiled;
+    regmatch_t groupArray[maxgroup];
+    char *cursor = source;
+    size_t used = 0;
+    char **groups = NULL;
+
+    if (regcomp(&regexCompiled, regex, REG_EXTENDED))
+    {
+        printf("Could not compile regular expression.\n");
+        exit(EXIT_FAILURE);
+    };
+
+    if (regexec(&regexCompiled, cursor, maxgroup, groupArray, 0))
+    {
+        RegDynArray r = {0, regexCompiled, groups};
+        return r;
+    }
+
+    size_t len;
+    size_t g;
+
+    size_t nptrs = NPTRS;
+
+    if ((groups = malloc(nptrs * sizeof *groups)) == NULL)
+    {
+        perror("malloc-lines");
+        exit(EXIT_FAILURE);
+    }
+
+    for (g = 0; g < maxgroup; g++)
+    {
+        if (groupArray[g].rm_so == (size_t)-1)
+        {
+            break; // No more groups
+        }
+
+        char cursorCopy[strlen(cursor) + 1];
+        strcpy(cursorCopy, cursor);
+        cursorCopy[groupArray[g].rm_eo] = 0;
+
+        len = strlen(cursorCopy + groupArray[g].rm_so);
+
+        /* check if realloc of lines needed */
+        if (used == nptrs)
+        {
+            printf("%s\n", source);
+            /* always realloc using temporary pointer (doubling no. of pointers) */
+            void *tmp = realloc(groups, (2 * nptrs) * sizeof *groups);
+            if (!tmp)
+            {
+                perror("realloc-lines");
+                break;
+            }
+            /* assign reallocated block to lines */
+            groups = tmp;
+            /* update no. of pointers allocatd */
+            nptrs *= 2;
+        }
+
+        /* allocate/validate storage for line */
+        if (!(groups[used] = malloc(len + 1)))
+        {
+            perror("malloc-lines[used]");
+            break;
+        }
+
+        memcpy(groups[used], cursorCopy + groupArray[g].rm_so, len + 1);
+        ++used;
+    }
+
+    RegDynArray r = {1, regexCompiled, groups};
+
+    return r;
 }

@@ -10,17 +10,35 @@
     "C_Cpp.dimInactiveRegions": true,
     "C_Cpp.vcFormat.indent.preserveWithinParentheses": false,
     "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyFunction": true,
+    // File copyright documentation tag.  Array of strings will be converted to one line per element.  Can template {year}.
+    "doxdocgen.file.copyrightTag": [
+        "@copyright Copyright (c) {year}"
+    ],
+    // Provide intellisense and snippet for doxygen commands
+    "doxdocgen.generic.commandSuggestion": true,
+    "doxdocgen.generic.order": [
+        "brief",
+        "empty",
+        "tparam",
+        "param",
+        "return",
+        "custom",
+        "version",
+        "author",
+        "date",
+        "copyright"
+      ],
     "editor.detectIndentation": false,
     "editor.fontSize": 16,
     "editor.formatOnSave": false,
     "editor.tabSize": 4,
     "files.associations": {
-        "time.h": "c",
         "*.def": "c",
+        "algorithm": "c",
         "atomic": "c",
         "ctype.h": "c",
-        "algorithm": "c",
-        "opt-816.h": "c"
+        "opt-816.h": "c",
+        "time.h": "c"
     },
     "files.trimTrailingWhitespace": true,
     "python.languageServer": "Pylance",
