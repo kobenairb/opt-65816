@@ -255,7 +255,6 @@ RegDynArray RegMatchGroups(char *source, char *regex, const unsigned int maxgrou
         /* check if realloc of lines needed */
         if (used == nptrs)
         {
-            printf("%s\n", source);
             /* always realloc using temporary pointer (doubling no. of pointers) */
             void *tmp = realloc(groups, (2 * nptrs) * sizeof *groups);
             if (!tmp)
