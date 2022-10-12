@@ -32,10 +32,10 @@ make
 
 ### Usage
 
-Just give the ASM file to optimze as argument to `opt-65816`.
+Just give the ASM file to optimize as argument to `opt-65816`.
 
 ```
-opt_65816 /path/to/your/asm/file
+opt-65816 /path/to/your/asm/file
 ```
 
 Or by using the `stdin`.
