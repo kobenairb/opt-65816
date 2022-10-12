@@ -12,7 +12,12 @@ $(BIN): $(OBJ)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+docs:
+	@doxygen ./Doxyfile
+
 clean: distclean
 
 distclean:
-	rm -f *.o $(BIN)
+	@rm -rf *.o $(BIN) doc/html
+
+.PHONY: doc
