@@ -1,8 +1,9 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -O2 -g
+
 BIN = opt-65816
 SRC = $(BIN).c
 OBJ = $(SRC:.c=.o)
-CFLAGS = -Wall -Wextra -O2 -g
-CC = gcc
 
 all: clean $(BIN)
 
@@ -13,6 +14,7 @@ $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 docs:
+	@rm -rf doc/html
 	@doxygen ./Doxyfile
 
 clean: distclean
