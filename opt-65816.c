@@ -1,30 +1,18 @@
-/**
- *  opt-65816 - Assembly code Optimizer for WDC65816
+/*
+ * opt-65816 - Assembly code Optimizer for WDC65816.
  *
- * Assembly code optimizer for the WDC65816 processor produced
+ * Description: Assembly code optimizer for the WDC65816 processor produced
  * by the 65816 Tiny C Compiler (816-tcc) developed by AlekMaul.
+ * This library is a C port of the 816-opt python tool developed by nArnoSNES.
  *
- * This library is a C port of the 816-opt python
- * tool developed by nArnoSNES.
+ * Author: kobenairb (kobenairb@gmail.com).
  *
- *  Copyright (c) 2022 Kobenairb
+ * Copyright (c) 2022.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * This project is released under the GNU Public License.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* TODO : not tested with Windows */
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -41,27 +29,20 @@
 #include "libopt-65816.c"
 
 /**
- * @brief Structure to store an array
-    and the number of elements
+ * @brief Create an array of strings from a file
+    without comment and leading/trailing white spaces.
+    Accept an ASM file as argument or stdin.
+ * @param argc The number of arguments provided.
+ * @param argv The arguments provided.
+ * @return A structure (DynArray).
  */
-typedef struct DynArray
-{
-    char **arr;
-    size_t used;
-} DynArray;
-
-/* Create a dynamic string array from file
-    without comment and leading/trailing white spaces */
 DynArray TidyFile(const int argc, char **argv)
 {
-    /* fixed buffer to read each line */
     char buf[MAXLEN_LINE];
-    /* pointer to pointer to hold collection of lines */
     char **lines = NULL;
-    /* number of pointers available */
-    size_t nptrs = NPTRS;
-    /* number of pointers used */
+    size_t nptrs = 1;
     size_t used = 0;
+    size_t len;
 
     if (argc > 2)
     {
@@ -71,61 +52,46 @@ DynArray TidyFile(const int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    /* use filename provided as 1st argument (stdin by default) */
     FILE *fp = argc > 1 ? fopen(argv[1], "r") : stdin;
 
-    /* validate file open for reading */
     if (!fp)
     {
         perror(argv[1]);
         exit(EXIT_FAILURE);
     }
 
-    /* allocate/validate block holding initial nptrs pointers */
     if ((lines = malloc(nptrs * sizeof *lines)) == NULL)
     {
         perror("malloc-lines");
         exit(EXIT_FAILURE);
     }
 
-    /* read each line into buf */
     while (fgets(buf, MAXLEN_LINE, fp))
     {
-        size_t len;
-        /* trim \n, save length */
         buf[(len = strcspn(buf, "\n"))] = 0;
 
         if (!StartsWith(buf, COMMENT))
         {
-            /* check if realloc of lines needed */
             if (used == nptrs)
             {
-                /* always realloc using temporary pointer (doubling no. of pointers) */
                 void *tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
                 if (!tmp)
                 {
                     perror("realloc-lines");
                     break;
                 }
-                /* assign reallocated block to lines */
                 lines = tmp;
-                /* update no. of pointers allocatd */
                 nptrs *= 2;
             }
-
-            /* allocate/validate storage for line */
             if (!(lines[used] = malloc(len + 1)))
             {
                 perror("malloc-lines[used]");
                 break;
             }
-            /* copy line from buf to lines[used] */
             memcpy(lines[used], TrimWhiteSpace(buf), len + 1);
-            /* increment used pointer count */
             used += 1;
         }
     }
-    /* close file if not stdin */
     if (fp != stdin)
         fclose(fp);
 
@@ -133,16 +99,21 @@ DynArray TidyFile(const int argc, char **argv)
     return r;
 }
 
-/* Create a dynamic string array to store
-    block bss instructions (first word) */
-DynArray StoreBss(char **l, const int u)
+/**
+ * @brief Create an array of string to store
+    block bss instructions (first word only).
+ * @param arr The array of strings.
+ * @param n The number of elements in the array.
+ * @return A structure (DynArray).
+ */
+DynArray StoreBss(char **arr, const size_t n)
 {
     char **bss = NULL;
     char *saveptr;
 
     size_t used = 0;
     size_t bss_on = 0;
-    size_t nptrs = NPTRS;
+    size_t nptrs = n;
 
     if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
     {
@@ -150,48 +121,22 @@ DynArray StoreBss(char **l, const int u)
         exit(EXIT_FAILURE);
     }
 
-    for (size_t i = 0; i < u; i++)
+    for (size_t i = 0; i < n; i++)
     {
-        size_t len;
-        len = strlen(l[i]);
-
-        if (StartsWith(l[i], BSS_START))
+        if (StartsWith(arr[i], BSS_START))
         {
             bss_on = 1;
             continue;
         }
-        if (StartsWith(l[i], BSS_END) && bss_on)
+        if (StartsWith(arr[i], BSS_END) && bss_on)
         {
             bss_on = 0;
             continue;
         }
-        if (!StartsWith(l[i], BSS_START) && bss_on)
+        if (!StartsWith(arr[i], BSS_START) && bss_on)
         {
-            /* check if realloc of lines needed */
-            if (used == nptrs)
-            {
-                /* always realloc using temporary pointer (doubling no. of pointers) */
-                void *tmp = realloc(bss, (2 * nptrs) * sizeof *bss);
-                if (!tmp)
-                {
-                    perror("realloc-lines");
-                    break;
-                }
-                /* assign reallocated block to lines */
-                bss = tmp;
-                /* update no. of pointers allocatd */
-                nptrs *= 2;
-            }
-
-            /* allocate/validate storage for line */
-            if (!(bss[used] = malloc(len + 1)))
-            {
-                perror("malloc-lines[used]");
-                break;
-            }
-
-            /* Store the first word of bss instruction */
-            memcpy(bss[used], strtok_r(l[i], " ", &saveptr), len + 1);
+            bss[used] = malloc(strlen(arr[i]) + 1);
+            memcpy(bss[used], strtok_r(arr[i], " ", &saveptr), strlen(arr[i]) + 1);
             used += 1;
         }
     }
@@ -200,8 +145,12 @@ DynArray StoreBss(char **l, const int u)
     return b;
 }
 
-/* Optimize ASM code */
-void OptimizeAsm(char **l, const int u)
+/**
+ * @brief Optimize ASM code.
+ * @param l
+ * @param u
+ */
+void OptimizeAsm(char **l, const size_t u)
 {
     /* total number of optimizations performed */
     // int totalopt = 0;
@@ -216,15 +165,25 @@ void OptimizeAsm(char **l, const int u)
 
     RegDynArray r;
 
-    int doopt;
+    size_t doopt;
 
     char snp_buf[MAXLEN_LINE];
+
+    /* Manage pointers */
+    char **text_opt = NULL;
+    size_t used = 0;
+    size_t nptrs = u;
+
+    if ((text_opt = malloc(nptrs * sizeof *text_opt)) == NULL)
+    {
+        perror("malloc-lines");
+        exit(EXIT_FAILURE);
+    }
+
     size_t i = 0;
 
     while (i < u)
     {
-        ChangesAccu(l[i]);
-
         if (StartsWith(l[i], "st"))
         {
             /* eliminate redundant stores */
@@ -233,7 +192,7 @@ void OptimizeAsm(char **l, const int u)
             if (r.status)
             {
                 doopt = 0;
-                for (size_t j = (i + 1); j < FindMin(u, (i + 30)); j++)
+                for (size_t j = (i + 1); j < (size_t)FindMin(u, (i + 30)); j++)
                 {
                     snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", r.groups[2]);
                     if (regcomp(&regexd,
@@ -280,21 +239,45 @@ void OptimizeAsm(char **l, const int u)
                 if (doopt)
                 {
                     /* Skip redundant store */
-                    ++i;
-                    ++opted;
+                    i += 1;
+                    opted += 1;
                     continue;
                 }
             }
             /* Stores (x/y) to pseudo-registers */
-            // if (!regexec(&regexb, l[i], maxGroups, groupArray, 0))
-            // {
-            // }
+            r = RegMatchGroups(l[i], STORE_XY_TO_PSEUDO, maxGroups);
+            regfree(&r.regexCompiled);
+            if (r.status)
+            {
+                /* Store hwreg to preg, push preg, function call -> push hwreg, function call */
+                snprintf(snp_buf, sizeof(snp_buf), "pei (tcc__%s)", r.groups[2]);
+                if (l[i + 1] == snp_buf && StartsWith(l[i + 2], "jsr.l "))
+                {
+                    printf("[CAS 5] %lu: %s\n", i, l[i]);
+                    snprintf(snp_buf, sizeof(snp_buf), "pei%s", r.groups[1]);
+                    text_opt[used] = malloc(strlen(l[i]) + 1);
+                    memcpy(text_opt[used], snp_buf, strlen(l[i]) + 1);
+                    used += 1;
+                    i += 2;
+                    opted += 1;
+                    continue;
+                }
+                FreeDynArray(r.groups, maxGroups);
+            }
         }
         i++;
     }
+
+    FreeDynArray(text_opt, used);
 }
 
-/* Main */
+/**
+ * @brief The main function. Accept an ASM file
+ as argument or stdin.
+ * @param argc The number of arguments provided.
+ * @param argv The arguments provided.
+ * @return 0
+ */
 int main(int argc, char **argv)
 {
     /* -------------------------------- */
@@ -339,6 +322,14 @@ int main(int argc, char **argv)
     /*       ASM Optimization           */
     /* -------------------------------- */
     OptimizeAsm(file.arr, file.used);
+
+    // if (verbose == 2)
+    // {
+    //     for (size_t i = 0; i < used; i++)
+    //     {
+    //         printf("%s\n", text_opt[i]);
+    //     }
+    // }
 
     /* -------------------------------- */
     /*       Free pointers              */

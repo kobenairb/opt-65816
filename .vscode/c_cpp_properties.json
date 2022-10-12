@@ -22,7 +22,8 @@
                 "path": [
                     "${opt-816}"
                 ]
-            }
+            },
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ]
 }

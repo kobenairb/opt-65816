@@ -1,7 +1,7 @@
 BIN = opt-65816
 SRC = $(BIN).c
 OBJ = $(SRC:.c=.o)
-CFLAGS = -Wall -O2 -g
+CFLAGS = -Wall -Wextra -O2 -g
 CC = gcc
 
 all: clean $(BIN)

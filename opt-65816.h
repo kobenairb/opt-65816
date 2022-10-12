@@ -1,28 +1,43 @@
-/* TODO : not tested with Windows */
+/*!
+ * @brief For Windows compatibility
+ */
 #ifdef _WIN32
 #define strtok_r strtok_s
 #endif
 
-/* initial no. of pointers to allocate (lines) */
-#define NPTRS 1
-
-/* POSIX suggests a line length of 4096 */
+/*!
+ * @brief POSIX suggests a line length of 4096,
+ */
 #define MAXLEN_LINE 4096
 
-/* Remove comments */
+/*!
+ * @brief Define comment for ASM files
+ */
 #define COMMENT ";"
 
-/* BSS constants */
+/*!
+ * @brief BSS begining of block
+ */
 #define BSS_START \
     ".RAMSECTION \".bss\" BANK $7e SLOT 2"
+/*!
+ * @brief BSS end of block
+ */
 #define BSS_END ".ENDS"
 
-/* stores (accu/x/y/zero) to pseudo-registers */
+/*!
+ * @brief Stores (accu/x/y/zero) to pseudo-registers
+ */
 #define STORE_AXYZ_TO_PSEUDO \
     "st([axyz]).b tcc__([rf][0-9]{0,}h{0,1})$"
-/* stores (x/y) to pseudo-registers */
+/*!
+ * @brief Stores (x/y) to pseudo-registers
+ */
 #define STORE_XY_TO_PSEUDO \
     "st([xy]).b tcc__([rf][0-9]{0,}h{0,1})$"
-/* stores (accu only) to pseudo-registers */
+
+/*!
+ * @brief Stores (accu only) to pseudo-registers
+ */
 #define STORE_A_TO_PSEUDO \
     "sta.b tcc__([rf][0-9]{0,}h{0,1})$"
