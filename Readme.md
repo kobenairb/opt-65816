@@ -41,7 +41,7 @@ opt-65816 /path/to/your/asm/file
 Or by using the `stdin`.
 
 ```
-cat /path/to/your/asm/file | opt_65816
+cat /path/to/your/asm/file | opt-65816
 ```
 
 ## Authors
