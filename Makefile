@@ -13,6 +13,16 @@ $(BIN): $(OBJ)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+valgrind: all
+	for file in $$(ls -1 samples/*); do \
+	    valgrind --quiet \
+		    --leak-check=full \
+		    --track-origins=yes \
+		    --exit-on-first-error=yes \
+		    --error-exitcode=1 \
+		    ./opt-65816 $${file}; \
+	done
+
 docs:
 	@rm -rf doc/html
 	@doxygen ./Doxyfile

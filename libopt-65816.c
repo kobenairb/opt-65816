@@ -1,5 +1,5 @@
 /*
- * opt-65816 - Assembly code Optimizer for WDC65816.
+ * opt-65816 - Assembly code optimizer for WDC65816.
  *
  * Description: Assembly code optimizer for the WDC65816 processor produced
  * by the 65816 Tiny C Compiler (816-tcc) developed by AlekMaul.

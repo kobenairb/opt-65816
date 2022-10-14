@@ -1,0 +1,247 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; push4 imm r 0x52f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.7
+pea.w tccs_L.7 + 0
+; push2 imm r 0xf0
+pea.w 8
+; push2 imm r 0xf0
+pea.w 5
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.8
+pea.w tccs_L.8 + 0
+; push2 imm r 0xf0
+pea.w 10
+; push2 imm r 0xf0
+pea.w 3
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #15
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setBrightness
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+__local_2:
+; gtst inv 1 t 0 v 240 r 1222 ind 1222
+; uncond jump: nop
+; gtst finished; t 0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [pad0,0]
+lda.b tcc__r0
+sta.l pad0 + 0
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x4)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #65535
+sta.b tcc__r0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x12f0
+pea.w :tccs_L.9
+pea.w tccs_L.9 + 0
+; push2 imm r 0xf0
+pea.w 12
+; push2 imm r 0xf0
+pea.w 6
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #10
+tsa
+clc
+adc #10
+tas
+__local_1:
+; load 0
+; type 16 reg 0x3f0 extra 0x94
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #0
+ldx #1
+lda.b tcc__r0
+sec
+sbc #0
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 2165 ind 2165
+; gsym_addr t 0 a 2202 ind 2202
+; ERROR no jump found to patch
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 2321 ind 2321
+; cmp op 0x95 inv 1 v 243 r 2321
+; cmp ne
+bne +
+; gsym_addr t 0 a 2408 ind 2408
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 2321
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [pad0,0]
+lda.b tcc__r0
+sta.l pad0 + 0
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 1960 at 2739
+jmp.w __local_1
+; gsym_addr t 2780 a 1960 ind 2780
+__local_0:
+; gsym_addr t 2321 a 2815 ind 2815
+; gsym_addr t 0 a 1960 ind 2850
+; gjmp_addr 1222 at 2882
+jmp.w __local_2
+; gsym_addr t 2923 a 1222 ind 2923
+; gsym_addr t 0 a 2958 ind 2958
+; gsym_addr t 0 a 1222 ind 2990
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 3099
+jmp.w __local_3
+; gsym_addr t 3137 a 0 ind 3137
+__local_3:
+; gsym_addr t 3137 a 3169 ind 3169
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+__local_dummy.data dsb 1
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+__local_dummy.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+tccs_L.7: .db $4a,$55,$53,$54,$20,$44,$4f,$20,$52,$41,$4e,$44,$4f,$4d,$20,$4e,$55,$4d,$42,$45,$52,$53,$0
+tccs_L.8: .db $50,$52,$45,$53,$53,$20,$4b,$45,$59,$20,$46,$4f,$52,$20,$41,$4e,$4f,$54,$48,$45,$52,$20,$4f,$4e,$45,$0
+tccs_L.9: .db $52,$41,$4e,$44,$4f,$4d,$20,$4e,$55,$4d,$42,$45,$52,$3d,$25,$30,$34,$78,$0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+pad0 dsb 2
+.ENDS

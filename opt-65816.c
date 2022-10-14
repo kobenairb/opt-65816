@@ -1,5 +1,5 @@
 /*
- * opt-65816 - Assembly code Optimizer for WDC65816.
+ * opt-65816 - Assembly code optimizer for WDC65816.
  *
  * Description: Assembly code optimizer for the WDC65816 processor produced
  * by the 65816 Tiny C Compiler (816-tcc) developed by AlekMaul.
@@ -147,10 +147,10 @@ DynArray StoreBss(char **arr, const size_t n)
 
 /**
  * @brief Optimize ASM code.
- * @param l
+ * @param arr
  * @param u
  */
-void OptimizeAsm(char **l, const size_t u)
+void OptimizeAsm(char **arr, const size_t u)
 {
     /* total number of optimizations performed */
     // int totalopt = 0;
@@ -167,7 +167,9 @@ void OptimizeAsm(char **l, const size_t u)
 
     size_t doopt;
 
-    char snp_buf[MAXLEN_LINE];
+    /* some char to handle snprintf buffers */
+    char snp_buf1[MAXLEN_LINE],
+        snp_buf2[MAXLEN_LINE];
 
     /* Manage pointers */
     char **text_opt = NULL;
@@ -184,52 +186,52 @@ void OptimizeAsm(char **l, const size_t u)
 
     while (i < u)
     {
-        if (StartsWith(l[i], "st"))
+        if (StartsWith(arr[i], "st"))
         {
             /* eliminate redundant stores */
-            r = RegMatchGroups(l[i], STORE_AXYZ_TO_PSEUDO, maxGroups);
+            r = RegMatchGroups(arr[i], STORE_AXYZ_TO_PSEUDO, maxGroups);
             regfree(&r.regexCompiled);
             if (r.status)
             {
                 doopt = 0;
                 for (size_t j = (i + 1); j < (size_t)FindMin(u, (i + 30)); j++)
                 {
-                    snprintf(snp_buf, sizeof(snp_buf), "st([axyz]).b tcc__%s$", r.groups[2]);
+                    snprintf(snp_buf1, sizeof(snp_buf1), "st([axyz]).b tcc__%s$", r.groups[2]);
                     if (regcomp(&regexd,
-                                snp_buf,
+                                snp_buf1,
                                 0))
                     {
                         fprintf(stderr, "Could not compile regex\n");
                         exit(EXIT_FAILURE);
                     }
                     /* Another store to the same pregister */
-                    if (!regexec(&regexd, l[j], 0, NULL, 0))
+                    if (!regexec(&regexd, arr[j], 0, NULL, 0))
                     {
-                        printf("[CAS 1] %lu: %s\n", i, l[j]);
+                        printf("[CAS 1] %lu: %s\n", i, arr[j]);
                         doopt = 1;
                         break;
                     }
                     /* Before function call (will be clobbered anyway) */
-                    if (StartsWith(l[j], "jsr.l ") && !StartsWith(l[j], "jsr.l tcc__"))
+                    if (StartsWith(arr[j], "jsr.l ") && !StartsWith(arr[j], "jsr.l tcc__"))
                     {
-                        printf("[CAS 2] %lu: %s\n", i, l[j]);
+                        printf("[CAS 2] %lu: %s\n", i, arr[j]);
                         doopt = 1;
                         break;
                     }
                     /* Cases in which we don't pursue optimization further */
                     /* #1 Branch or other use of the pseudo register */
-                    snprintf(snp_buf, sizeof(snp_buf), "tcc__%s", r.groups[2]);
-                    if (IsControl(l[j]) || IsInText(l[j], snp_buf))
+                    snprintf(snp_buf1, sizeof(snp_buf1), "tcc__%s", r.groups[2]);
+                    if (IsControl(arr[j]) || IsInText(arr[j], snp_buf1))
                     {
-                        printf("[CAS 3] %lu: %s\n", i, l[j]);
+                        printf("[CAS 3] %lu: %s\n", i, arr[j]);
                         break;
                     }
                     /* #2 Use as a pointer */
-                    snprintf(snp_buf, sizeof(snp_buf), "[tcc__%s", r.groups[2]);
-                    snp_buf[strlen(snp_buf) - 1] = '\0';
-                    if (EndsWith(r.groups[2], "h") && IsInText(l[j], snp_buf))
+                    snprintf(snp_buf1, sizeof(snp_buf1), "[tcc__%s", r.groups[2]);
+                    snp_buf1[strlen(snp_buf1) - 1] = '\0';
+                    if (EndsWith(r.groups[2], "h") && IsInText(arr[j], snp_buf1))
                     {
-                        printf("[CAS 4] %lu: %s\n", i, l[j]);
+                        printf("[CAS 4] %lu: %s\n", i, arr[j]);
                         break;
                     }
                     regfree(&regexd);
@@ -245,21 +247,59 @@ void OptimizeAsm(char **l, const size_t u)
                 }
             }
             /* Stores (x/y) to pseudo-registers */
-            r = RegMatchGroups(l[i], STORE_XY_TO_PSEUDO, maxGroups);
+            r = RegMatchGroups(arr[i], STORE_XY_TO_PSEUDO, maxGroups);
             regfree(&r.regexCompiled);
             if (r.status)
             {
-                /* Store hwreg to preg, push preg, function call -> push hwreg, function call */
-                snprintf(snp_buf, sizeof(snp_buf), "pei (tcc__%s)", r.groups[2]);
-                if (l[i + 1] == snp_buf && StartsWith(l[i + 2], "jsr.l "))
+                /* Store hwreg to preg, push preg,
+                    function call -> push hwreg, function call */
+                snprintf(snp_buf1, sizeof(snp_buf1), "pei (tcc__%s)", r.groups[2]);
+                if (StartsWith(arr[i + 1], snp_buf1) && StartsWith(arr[i + 2], "jsr.l "))
                 {
-                    printf("[CAS 5] %lu: %s\n", i, l[i]);
-                    snprintf(snp_buf, sizeof(snp_buf), "pei%s", r.groups[1]);
-                    text_opt[used] = malloc(strlen(l[i]) + 1);
-                    memcpy(text_opt[used], snp_buf, strlen(l[i]) + 1);
+                    printf("[CAS 5] %lu: %s\n", i + 1, arr[i + 1]);
+                    snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.groups[1]);
+                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
                     i += 2;
                     opted += 1;
+                    FreeDynArray(r.groups, maxGroups);
+                    continue;
+                }
+                /* Store hwreg to preg, push preg -> store hwreg to preg,
+                    push hwreg (shorter) */
+                if (StartsWith(arr[i + 1], snp_buf1))
+                {
+                    printf("[CAS 6] %lu: %s\n", i + 1, arr[i + 1]);
+                    text_opt[used] = malloc(strlen(arr[i]) + 1);
+                    memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
+                    used += 1;
+                    snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.groups[1]);
+                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                    used += 1;
+                    i += 2;
+                    opted += 1;
+                    FreeDynArray(r.groups, maxGroups);
+                    continue;
+                }
+                /* Store hwreg to preg, load hwreg from preg -> store hwreg to preg,
+                    transfer hwreg/hwreg (shorter) */
+                snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[2]);
+                snprintf(snp_buf2, sizeof(snp_buf2), "lda.b tcc__%s ; DON'T OPTIMIZE", r.groups[2]);
+                if (StartsWith(arr[i + 1], snp_buf1) || StartsWith(arr[i + 1], snp_buf2))
+                {
+                    printf("[CAS 7] %lu: %s\n", i + 1, arr[i + 1]);
+                    text_opt[used] = malloc(strlen(arr[i]) + 1);
+                    memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
+                    used += 1;
+                    snprintf(snp_buf1, sizeof(snp_buf1), "t%sa", r.groups[1]);
+                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                    used += 1;
+                    i += 2;
+                    opted += 1;
+                    FreeDynArray(r.groups, maxGroups);
                     continue;
                 }
                 FreeDynArray(r.groups, maxGroups);
@@ -267,7 +307,6 @@ void OptimizeAsm(char **l, const size_t u)
         }
         i++;
     }
-
     FreeDynArray(text_opt, used);
 }
 

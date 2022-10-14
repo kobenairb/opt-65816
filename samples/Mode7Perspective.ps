@@ -1,0 +1,1249 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __setMode7_HdmaPerspective_locals 0
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+setMode7_HdmaPerspective:
+; sub sp,#__setMode7_HdmaPerspective_locals
+.ifgr __setMode7_HdmaPerspective_locals 0
+tsa
+sec
+sbc #__setMode7_HdmaPerspective_locals
+tas
+.endif
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x210d
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8461,tcc__r9
+lda.w #8461
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0xcd
+; shr tcc__r0, #8
+lda.b tcc__r0
+xba
+and #$00ff
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x210d
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8461,tcc__r9
+lda.w #8461
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [sy + 0], tcc__r0
+lda.l sy + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x210e
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8462,tcc__r9
+lda.w #8462
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [sy + 0], tcc__r0
+lda.l sy + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0xcd
+; shr tcc__r0, #8
+lda.b tcc__r0
+xba
+and #$00ff
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x210e
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8462,tcc__r9
+lda.w #8462
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x210f
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8463,tcc__r9
+lda.w #8463
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0xcd
+; shr tcc__r0, #8
+lda.b tcc__r0
+xba
+and #$00ff
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x210f
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8463,tcc__r9
+lda.w #8463
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+clc
+lda.b tcc__r0
+adc.w #128
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x211f
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8479,tcc__r9
+lda.w #8479
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+clc
+lda.b tcc__r0
+adc.w #128
+sta.b tcc__r0
+; gen_opi len 2 op 0xcd
+; shr tcc__r0, #8
+lda.b tcc__r0
+xba
+and #$00ff
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x211f
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8479,tcc__r9
+lda.w #8479
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [sy + 0], tcc__r0
+lda.l sy + 0
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+clc
+lda.b tcc__r0
+adc.w #112
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x2120
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8480,tcc__r9
+lda.w #8480
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [sy + 0], tcc__r0
+lda.l sy + 0
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x1011)
+; length xxy 2 vtop->type 0x10
+clc
+lda.b tcc__r0
+adc.w #112
+sta.b tcc__r0
+; gen_opi len 2 op 0xcd
+; shr tcc__r0, #8
+lda.b tcc__r0
+xba
+and #$00ff
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x2120
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8480,tcc__r9
+lda.w #8480
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x420c
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #16908,tcc__r9
+lda.w #16908
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4310
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17168,tcc__r9
+lda.w #17168
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #5,tcc__r0
+lda.w #5
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4311
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17169,tcc__r9
+lda.w #17169
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4112 reg 0x3f0 extra 0x0
+; ld2 [data_to_transfertMode + 0], tcc__r0
+lda.l data_to_transfertMode + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x4312
+; load 9
+; type 4 reg 0xf0 extra 0x28
+; ld4 #17170,tcc__r9
+lda.w #17170
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st2 tcc__r0, [tcc__r9,0]
+lda.b tcc__r0
+sta.b [tcc__r9]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [data_to_transfertMode + 2], tcc__r0
+lda.w #0
+sep #$20
+lda.l data_to_transfertMode + 2
+rep #$20
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4314
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #17172,tcc__r9
+lda.w #17172
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4320
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17184,tcc__r9
+lda.w #17184
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #44,tcc__r0
+lda.w #44
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4321
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17185,tcc__r9
+lda.w #17185
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4112 reg 0x3f0 extra 0x0
+; ld2 [data_to_transfertBG + 0], tcc__r0
+lda.l data_to_transfertBG + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x4322
+; load 9
+; type 4 reg 0xf0 extra 0x28
+; ld4 #17186,tcc__r9
+lda.w #17186
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st2 tcc__r0, [tcc__r9,0]
+lda.b tcc__r0
+sta.b [tcc__r9]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [data_to_transfertBG + 2], tcc__r0
+lda.w #0
+sep #$20
+lda.l data_to_transfertBG + 2
+rep #$20
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4324
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #17188,tcc__r9
+lda.w #17188
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #2,tcc__r0
+lda.w #2
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4330
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17200,tcc__r9
+lda.w #17200
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #27,tcc__r0
+lda.w #27
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4331
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17201,tcc__r9
+lda.w #17201
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4112 reg 0x3f0 extra 0x0
+; ld2 [data_to_transfertX + 0], tcc__r0
+lda.l data_to_transfertX + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x4332
+; load 9
+; type 4 reg 0xf0 extra 0x28
+; ld4 #17202,tcc__r9
+lda.w #17202
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st2 tcc__r0, [tcc__r9,0]
+lda.b tcc__r0
+sta.b [tcc__r9]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [data_to_transfertX + 2], tcc__r0
+lda.w #0
+sep #$20
+lda.l data_to_transfertX + 2
+rep #$20
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4334
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #17204,tcc__r9
+lda.w #17204
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #2,tcc__r0
+lda.w #2
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4340
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17216,tcc__r9
+lda.w #17216
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #30,tcc__r0
+lda.w #30
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4341
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #17217,tcc__r9
+lda.w #17217
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4112 reg 0x3f0 extra 0x0
+; ld2 [data_to_transfertY + 0], tcc__r0
+lda.l data_to_transfertY + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x4342
+; load 9
+; type 4 reg 0xf0 extra 0x28
+; ld4 #17218,tcc__r9
+lda.w #17218
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st2 tcc__r0, [tcc__r9,0]
+lda.b tcc__r0
+sta.b [tcc__r9]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [data_to_transfertY + 2], tcc__r0
+lda.w #0
+sep #$20
+lda.l data_to_transfertY + 2
+rep #$20
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x4344
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #17220,tcc__r9
+lda.w #17220
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #30,tcc__r0
+lda.w #30
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x420c
+; load 9
+; type 4 reg 0x50f0 extra 0x1
+; ld4 #16908,tcc__r9
+lda.w #16908
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; gsym_addr t 0 a 11358 ind 11358
+; ERROR no jump found to patch
+; add sp, #__setMode7_HdmaPerspective_locals
+.ifgr __setMode7_HdmaPerspective_locals 0
+tsa
+clc
+adc #__setMode7_HdmaPerspective_locals
+tas
+.endif
+rtl
+.ENDS
+
+.SECTION ".text_0x1" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns_end + 0, tcc__r0 (type 0x84)
+lda.w #:patterns_end
+sta.b tcc__r0h
+lda.w #patterns_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns + 0, tcc__r1 (type 0x84)
+lda.w #:patterns
+sta.b tcc__r1h
+lda.w #patterns + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x52f0
+pea.w :palette
+pea.w palette + 0
+; push4 imm r 0x52f0
+pea.w :map
+pea.w map + 0
+; push4 imm r 0x52f0
+pea.w :patterns
+pea.w patterns + 0
+; call r 0x2f0
+jsr.l bgInitMapTileSet7
+; add sp, #16
+tsa
+clc
+adc #16
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #map2_end + 0, tcc__r0 (type 0x84)
+lda.w #:map2_end
+sta.b tcc__r0h
+lda.w #map2_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #map2 + 0, tcc__r1 (type 0x84)
+lda.w #:map2
+sta.b tcc__r1h
+lda.w #map2 + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 16384
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x52f0
+pea.w :map2
+pea.w map2 + 0
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitMapSet
+; add sp, #10
+tsa
+clc
+adc #10
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns2_end + 0, tcc__r0 (type 0x84)
+lda.w #:patterns2_end
+sta.b tcc__r0h
+lda.w #patterns2_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns2 + 0, tcc__r1 (type 0x84)
+lda.w #:patterns2
+sta.b tcc__r1h
+lda.w #patterns2 + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #palette2_end + 0, tcc__r1 (type 0x84)
+lda.w #:palette2_end
+sta.b tcc__r1h
+lda.w #palette2_end + 0
+sta.b tcc__r1
+; load 2
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #palette2 + 0, tcc__r2 (type 0x84)
+lda.w #:palette2
+sta.b tcc__r2h
+lda.w #palette2 + 0
+sta.b tcc__r2
+; gen_opi len 4 op -
+; sbc tcc__r2 (0x2), tcc__r1 (0x1) (fr type 0x84 c 0 r type 0x10)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r1
+sbc.b tcc__r2
+sta.b tcc__r1
+; push2 imm r 0xf0
+pea.w 20480
+; push2 imm r 0xf0
+pea.w 16
+; ldpush before load type 0x10 reg 0x1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push4 imm r 0x52f0
+pea.w :palette
+pea.w palette + 0
+; push4 imm r 0x52f0
+pea.w :patterns2
+pea.w patterns2 + 0
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode7
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; load 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sz,0]
+lda.b tcc__r0
+sta.l sz + 0
+; load 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sx,0]
+lda.b tcc__r0
+sta.l sx + 0
+; load 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sy,0]
+lda.b tcc__r0
+sta.l sy + 0
+; load 0
+; type 4 reg 0x2f0 extra 0x0
+; ld4 #ModeTable + 0, tcc__r0 (type 0x4)
+lda.w #:ModeTable
+sta.b tcc__r0h
+lda.w #ModeTable + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [data_to_transfertMode,0]
+lda.b tcc__r0
+sta.l data_to_transfertMode + 0
+lda.b tcc__r0h
+sta.l data_to_transfertMode + 0 + 2
+; load 0
+; type 4 reg 0x2f0 extra 0x0
+; ld4 #BGTable + 0, tcc__r0 (type 0x4)
+lda.w #:BGTable
+sta.b tcc__r0h
+lda.w #BGTable + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [data_to_transfertBG,0]
+lda.b tcc__r0
+sta.l data_to_transfertBG + 0
+lda.b tcc__r0h
+sta.l data_to_transfertBG + 0 + 2
+; load 0
+; type 4 reg 0x2f0 extra 0x0
+; ld4 #PerspectiveX + 0, tcc__r0 (type 0x4)
+lda.w #:PerspectiveX
+sta.b tcc__r0h
+lda.w #PerspectiveX + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [data_to_transfertX,0]
+lda.b tcc__r0
+sta.l data_to_transfertX + 0
+lda.b tcc__r0h
+sta.l data_to_transfertX + 0 + 2
+; load 0
+; type 4 reg 0x2f0 extra 0x0
+; ld4 #PerspectiveY + 0, tcc__r0 (type 0x4)
+lda.w #:PerspectiveY
+sta.b tcc__r0h
+lda.w #PerspectiveY + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [data_to_transfertY,0]
+lda.b tcc__r0
+sta.l data_to_transfertY + 0
+lda.b tcc__r0h
+sta.l data_to_transfertY + 0 + 2
+__local_6:
+; gtst inv 1 t 0 v 240 r 16715 ind 16715
+; uncond jump: nop
+; gtst finished; t 0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [pad0,0]
+lda.b tcc__r0
+sta.l pad0 + 0
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #512
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 17249 ind 17249
+; gsym_addr t 0 a 17288 ind 17288
+; ERROR no jump found to patch
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 17409 ind 17409
+; cmp op 0x95 inv 1 v 243 r 17409
+; cmp ne
+bne +
+; gsym_addr t 0 a 17499 ind 17499
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 17409
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+dec.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sx,0]
+lda.b tcc__r0
+sta.l sx + 0
+__local_0:
+; gsym_addr t 17409 a 18034 ind 18034
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #256
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 18332 ind 18332
+; gsym_addr t 0 a 18371 ind 18371
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 18461 ind 18461
+; cmp op 0x95 inv 1 v 243 r 18461
+; cmp ne
+bne +
+; gsym_addr t 0 a 18551 ind 18551
+brl __local_1
++
+; gtst finished; t 18461
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [sx + 0], tcc__r0
+lda.l sx + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+inc.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sx,0]
+lda.b tcc__r0
+sta.l sx + 0
+__local_1:
+; gsym_addr t 18461 a 19055 ind 19055
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #2048
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 19354 ind 19354
+; gsym_addr t 0 a 19393 ind 19393
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 19483 ind 19483
+; cmp op 0x95 inv 1 v 243 r 19483
+; cmp ne
+bne +
+; gsym_addr t 0 a 19573 ind 19573
+brl __local_2
++
+; gtst finished; t 19483
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [sy + 0], tcc__r0
+lda.l sy + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+dec.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sy,0]
+lda.b tcc__r0
+sta.l sy + 0
+__local_2:
+; gsym_addr t 19483 a 20077 ind 20077
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #1024
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 20376 ind 20376
+; gsym_addr t 0 a 20415 ind 20415
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 20505 ind 20505
+; cmp op 0x95 inv 1 v 243 r 20505
+; cmp ne
+bne +
+; gsym_addr t 0 a 20595 ind 20595
+brl __local_3
++
+; gtst finished; t 20505
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [sy + 0], tcc__r0
+lda.l sy + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+inc.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sy,0]
+lda.b tcc__r0
+sta.l sy + 0
+__local_3:
+; gsym_addr t 20505 a 21099 ind 21099
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #16
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 21396 ind 21396
+; gsym_addr t 0 a 21435 ind 21435
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 21525 ind 21525
+; cmp op 0x95 inv 1 v 243 r 21525
+; cmp ne
+bne +
+; gsym_addr t 0 a 21615 ind 21615
+brl __local_4
++
+; gtst finished; t 21525
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [sz + 0], tcc__r0
+lda.l sz + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+inc.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sz,0]
+lda.b tcc__r0
+sta.l sz + 0
+__local_4:
+; gsym_addr t 21525 a 22119 ind 22119
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #32
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 22416 ind 22416
+; gsym_addr t 0 a 22455 ind 22455
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 22545 ind 22545
+; cmp op 0x95 inv 1 v 243 r 22545
+; cmp ne
+bne +
+; gsym_addr t 0 a 22635 ind 22635
+brl __local_5
++
+; gtst finished; t 22545
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [sz + 0], tcc__r0
+lda.l sz + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+dec.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sz,0]
+lda.b tcc__r0
+sta.l sz + 0
+__local_5:
+; gsym_addr t 22545 a 23139 ind 23139
+; call r 0x2f0
+jsr.l setMode7_HdmaPerspective
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 16715 at 23258
+jmp.w __local_6
+; gsym_addr t 23301 a 16715 ind 23301
+; gsym_addr t 0 a 23339 ind 23339
+; gsym_addr t 0 a 16715 ind 23373
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 23484
+jmp.w __local_7
+; gsym_addr t 23523 a 0 ind 23523
+__local_7:
+; gsym_addr t 23523 a 23557 ind 23557
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+
+ModeTable dsb 5
+BGTable dsb 5
+PerspectiveX dsb 264
+PerspectiveY dsb 264
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+.db $60,$3,$1,$7,$0
+.db $60,$12,$1,$11,$0
+.db $60,$0,$1,$ff,$1,$0,$0,$2,$f3,$1,$e7,$1,$dc,$1,$d1,$1,$c7,$1,$bd,$1,$b3,$1,$aa,$1,$a1,$1,$99,$1,$91,$1,$89,$1,$82,$1,$7b,$1,$74,$1,$6d,$1,$67,$1,$61,$1,$5b,$1,$55,$1,$4f,$1,$4a,$1,$45,$1,$40,$1,$3b,$1,$36,$1,$31,$1,$2d,$1,$28,$1,$24,$1,$20,$1,$1c,$1,$18,$1,$14,$1,$11,$1,$d,$1,$9,$1,$6,$1,$3,$1,$0,$1,$fc,$0,$f9,$0,$f6,$0,$f3,$0,$f0,$0,$ee,$0,$eb,$0,$e8,$0,$e6,$0,$e3,$0,$e1,$0,$de,$0,$dc,$0,$d9,$0,$d7,$0,$d5,$0,$d3,$0,$d0,$0,$ce,$0,$cc,$0,$ca,$0,$c8,$0,$c6,$0,$c4,$0,$c3,$0,$c1,$0,$bf,$0,$bd,$0,$bb,$0,$ba,$0,$b8,$0,$b6,$0,$b5,$0,$b3,$0,$b2,$0,$b0,$0,$af,$0,$ad,$0,$ac,$0,$aa,$0,$a9,$0,$a7,$0,$a6,$0,$a5,$0,$a3,$0,$a2,$0,$a1,$0,$9f,$0,$9e,$0,$9d,$0,$9c,$0,$9b,$0,$99,$0,$98,$0,$97,$0,$96,$0,$95,$0,$94,$0,$93,$0,$92,$0,$91,$0,$90,$0,$8f,$0,$8e,$0,$8d,$0,$8c,$0,$8b,$0,$8a,$0,$89,$0,$88,$0,$87,$0,$86,$0,$85,$0,$84,$0,$84,$0,$83,$0,$82,$0,$81,$0,$80,$0,$7f,$0,$7f,$0,$7e,$0,$7d,$0,$7c,$0,$7c,$0,$7b,$0,$0,$0,$0,$0
+.db $60,$0,$1,$ff,$7a,$0,$0,$10,$3c,$f,$8b,$e,$e9,$d,$55,$d,$cc,$c,$4e,$c,$da,$b,$6d,$b,$8,$b,$aa,$a,$52,$a,$0,$a,$b2,$9,$69,$9,$24,$9,$e3,$8,$a6,$8,$6b,$8,$34,$8,$0,$8,$ce,$7,$9e,$7,$71,$7,$45,$7,$1c,$7,$f4,$6,$ce,$6,$aa,$6,$87,$6,$66,$6,$46,$6,$27,$6,$9,$6,$ed,$5,$d1,$5,$b6,$5,$9d,$5,$84,$5,$6c,$5,$55,$5,$3e,$5,$29,$5,$14,$5,$0,$5,$ec,$4,$d9,$4,$c6,$4,$b4,$4,$a3,$4,$92,$4,$81,$4,$71,$4,$62,$4,$53,$4,$44,$4,$35,$4,$27,$4,$1a,$4,$c,$4,$0,$4,$f3,$3,$e7,$3,$da,$3,$cf,$3,$c3,$3,$b8,$3,$ad,$3,$a2,$3,$98,$3,$8e,$3,$84,$3,$7a,$3,$70,$3,$67,$3,$5e,$3,$55,$3,$4c,$3,$43,$3,$3b,$3,$33,$3,$2b,$3,$23,$3,$1b,$3,$13,$3,$c,$3,$4,$3,$fd,$2,$f6,$2,$ef,$2,$e8,$2,$e2,$2,$db,$2,$d4,$2,$ce,$2,$c8,$2,$c2,$2,$bc,$2,$b6,$2,$b0,$2,$aa,$2,$a5,$2,$9f,$2,$9a,$2,$94,$2,$8f,$2,$8a,$2,$85,$2,$7f,$2,$7b,$2,$76,$2,$71,$2,$6c,$2,$67,$2,$63,$2,$5e,$2,$5a,$2,$55,$2,$51,$2,$4d,$2,$49,$2,$44,$2,$40,$2,$3c,$2,$38,$2,$34,$2,$31,$2,$0,$0,$0,$0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+__local_dummy.rodata: .db 0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+pad0 dsb 2
+sz dsb 2
+sx dsb 2
+sy dsb 2
+data_to_transfertMode dsb 4
+data_to_transfertBG dsb 4
+data_to_transfertX dsb 4
+data_to_transfertY dsb 4
+.ENDS

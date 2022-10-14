@@ -1,0 +1,272 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l spcBoot
+; call r 0x2f0
+jsr.l consoleInit
+; push4 imm r 0x52f0
+pea.w :SOUNDBANK__
+pea.w SOUNDBANK__ + 0
+; call r 0x2f0
+jsr.l spcSetBank
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #39
+pha
+rep #$20
+; call r 0x2f0
+jsr.l spcAllocateSoundRegion
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push2 imm r 0xf0
+pea.w 0
+; call r 0x2f0
+jsr.l spcLoad
+; add sp, #2
+pla
+; push4 imm r 0x52f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.7
+pea.w tccs_L.7 + 0
+; push2 imm r 0xf0
+pea.w 10
+; push2 imm r 0xf0
+pea.w 5
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l spcPlay
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+__local_0:
+; gtst inv 1 t 0 v 240 r 1422 ind 1422
+; uncond jump: nop
+; gtst finished; t 0
+; call r 0x2f0
+jsr.l spcProcess
+; call r 0x2f0
+jsr.l WaitForVBlank
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [bgcolor + 0], tcc__r0
+lda.l bgcolor + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x1c4e290
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+inc.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [bgcolor,0]
+lda.b tcc__r0
+sta.l bgcolor + 0
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x2121
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8481,tcc__r9
+lda.w #8481
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [bgcolor + 0], tcc__r0
+lda.l bgcolor + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
+; load 9
+; type 4 reg 0x50f0 extra 0x143fd0ec
+; ld4 #8482,tcc__r9
+lda.w #8482
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [bgcolor + 0], tcc__r0
+lda.l bgcolor + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0xcd
+; shr tcc__r0, #8
+lda.b tcc__r0
+xba
+and #$00ff
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
+; load 9
+; type 4 reg 0x50f0 extra 0x143fd0ec
+; ld4 #8482,tcc__r9
+lda.w #8482
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; gjmp_addr 1422 at 3257
+jmp.w __local_0
+; gsym_addr t 3298 a 1422 ind 3298
+; gsym_addr t 0 a 3333 ind 3333
+; gsym_addr t 0 a 1422 ind 3365
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 3474
+jmp.w __local_1
+; gsym_addr t 3512 a 0 ind 3512
+__local_1:
+; gsym_addr t 3512 a 3544 ind 3544
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+
+bgcolor dsb 2
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+.db $0,$0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+tccs_L.7: .db $4c,$65,$74,$27,$73,$20,$74,$68,$65,$20,$6d,$75,$73,$69,$63,$20,$70,$6c,$61,$79,$20,$21,$0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+__local_dummybss dsb 1
+.ENDS

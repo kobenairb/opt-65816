@@ -3,7 +3,7 @@ vgcore.*
 *.o
 opt-65816
 *.out
-samples
+*.txt
 node_modules
 examples
 tests

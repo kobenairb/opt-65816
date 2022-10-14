@@ -1,0 +1,363 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 18
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; push4 imm r 0x52f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.7
+pea.w tccs_L.7 + 0
+; push2 imm r 0xf0
+pea.w 1
+; push2 imm r 0xf0
+pea.w 12
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.8
+pea.w tccs_L.8 + 0
+; push2 imm r 0xf0
+pea.w 5
+; push2 imm r 0xf0
+pea.w 3
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.9
+pea.w tccs_L.9 + 0
+; push2 imm r 0xf0
+pea.w 7
+; push2 imm r 0xf0
+pea.w 3
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+__local_7:
+; gtst inv 1 t 0 v 240 r 1318 ind 1318
+; uncond jump: nop
+; gtst finished; t 0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffffe
+; st2 tcc__r0, [sp,-2]
+; stack adjust: fc + disp - loc 18
+lda.b tcc__r0
+sta -2 + __main_locals + 1,s
+; load 0
+; type 16 reg 0x1f2 extra 0x0
+; ld2 [sp,-2],tcc__r0
+; stack adjust: fc + disp - loc 18
+lda -2 + __main_locals + 1,s
+sta.b tcc__r0
+; gjmp_addr 0 at 1784
+jmp.w __local_0
+; gsym_addr t 1822 a 0 ind 1822
+; gjmp_addr 0 at 1854
+jmp.w __local_1
+; gsym_addr t 1892 a 0 ind 1892
+__local_0:
+; gsym_addr t 1822 a 1924 ind 1924
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #128
+ldx #1
+lda.b tcc__r0
+sec
+sbc #128
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 2073 ind 2073
+; gsym_addr t 0 a 2110 ind 2110
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 2198 ind 2198
+; cmp op 0x95 inv 1 v 243 r 2198
+; cmp ne
+bne +
+; gsym_addr t 0 a 2285 ind 2285
+brl __local_2
++
+; gtst finished; t 2198
+__local_1:
+; gsym_addr t 1892 a 2357 ind 2357
+; push2 imm r 0xf0
+pea.w 2
+; push4 imm r 0x52f0
+pea.w :valToSave
+pea.w valToSave + 0
+; call r 0x2f0
+jsr.l consoleCopySram
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.10
+pea.w tccs_L.10 + 0
+; push2 imm r 0xf0
+pea.w 10
+; push2 imm r 0xf0
+pea.w 9
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; gjmp_addr 0 at 2728
+jmp.w __local_3
+; gsym_addr t 2766 a 0 ind 2766
+; gjmp_addr 0 at 2798
+jmp.w __local_4
+; gsym_addr t 2836 a 0 ind 2836
+__local_2:
+; gsym_addr t 2198 a 2868 ind 2868
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #32768
+ldx #1
+lda.b tcc__r0
+sec
+sbc #32768
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 3021 ind 3021
+; gsym_addr t 0 a 3058 ind 3058
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 3146 ind 3146
+; cmp op 0x95 inv 1 v 243 r 3146
+; cmp ne
+bne +
+; gsym_addr t 0 a 3233 ind 3233
+brl __local_5
++
+; gtst finished; t 3146
+__local_4:
+; gsym_addr t 2836 a 3305 ind 3305
+; load 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [valToLoad,0]
+lda.b tcc__r0
+sta.l valToLoad + 0
+; push2 imm r 0xf0
+pea.w 2
+; push4 imm r 0x52f0
+pea.w :valToLoad
+pea.w valToLoad + 0
+; call r 0x2f0
+jsr.l consoleLoadSram
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; ldpush before load type 0x10 reg 0x3f0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [valToLoad + 0], tcc__r0
+lda.l valToLoad + 0
+sta.b tcc__r0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x12f0
+pea.w :tccs_L.11
+pea.w tccs_L.11 + 0
+; ldpush before load type 0x4 reg 0x10f2
+; load 0
+; type 4 reg 0x10f2 extra 0x0
+; ld4 #(sp) + -18,tcc__r0 (fr 0x10f2 ft 0x4 fc 0xffffffee)
+stz.b tcc__r0h
+tsa
+clc
+adc #(-12 + __main_locals + 1)
+sta.b tcc__r0
+; ldpush4 (type 0x4 reg 0x0) tcc__r0
+pei (tcc__r0h)
+pei (tcc__r0)
+; call r 0x2f0
+jsr.l sprintf
+; add sp, #10
+tsa
+clc
+adc #10
+tas
+; ldpush before load type 0x4 reg 0x10f2
+; load 0
+; type 4 reg 0x10f2 extra 0x0
+; ld4 #(sp) + -18,tcc__r0 (fr 0x10f2 ft 0x4 fc 0xffffffee)
+stz.b tcc__r0h
+tsa
+clc
+adc #(-18 + __main_locals + 1)
+sta.b tcc__r0
+; ldpush4 (type 0x4 reg 0x0) tcc__r0
+pei (tcc__r0h)
+pei (tcc__r0)
+; push2 imm r 0xf0
+pea.w 10
+; push2 imm r 0xf0
+pea.w 9
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; gjmp_addr 2766 at 4661
+jmp.w __local_6
+; gsym_addr t 4702 a 2766 ind 4702
+__local_5:
+; gsym_addr t 3146 a 4737 ind 4737
+__local_3:
+__local_6:
+; gsym_addr t 4702 a 4772 ind 4772
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 1318 at 4842
+jmp.w __local_7
+; gsym_addr t 4883 a 1318 ind 4883
+; gsym_addr t 0 a 4918 ind 4918
+; gsym_addr t 0 a 1318 ind 4950
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 5059
+jmp.w __local_8
+; gsym_addr t 5097 a 0 ind 5097
+__local_8:
+; gsym_addr t 5097 a 5129 ind 5129
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+
+valToSave dsb 2
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+.db $fe,$ca
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+tccs_L.7: .db $53,$52,$41,$4d,$20,$54,$45,$53,$54,$0
+tccs_L.8: .db $55,$53,$45,$20,$41,$20,$54,$4f,$20,$57,$52,$49,$54,$45,$0
+tccs_L.9: .db $55,$53,$45,$20,$42,$20,$54,$4f,$20,$52,$45,$41,$44,$0
+tccs_L.10: .db $53,$52,$41,$4d,$20,$53,$41,$56,$45,$0
+tccs_L.11: .db $25,$30,$34,$58,$20,$52,$45,$41,$44,$0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+valToLoad dsb 2
+.ENDS

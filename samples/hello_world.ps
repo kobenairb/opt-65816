@@ -1,0 +1,170 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; push4 imm r 0x52f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.7
+pea.w tccs_L.7 + 0
+; push2 imm r 0xf0
+pea.w 10
+; push2 imm r 0xf0
+pea.w 10
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.8
+pea.w tccs_L.8 + 0
+; push2 imm r 0xf0
+pea.w 14
+; push2 imm r 0xf0
+pea.w 6
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.9
+pea.w tccs_L.9 + 0
+; push2 imm r 0xf0
+pea.w 18
+; push2 imm r 0xf0
+pea.w 3
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+__local_0:
+; gtst inv 1 t 0 v 240 r 1321 ind 1321
+; uncond jump: nop
+; gtst finished; t 0
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 1321 at 1435
+jmp.w __local_0
+; gsym_addr t 1476 a 1321 ind 1476
+; gsym_addr t 0 a 1511 ind 1511
+; gsym_addr t 0 a 1321 ind 1543
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 1652
+jmp.w __local_1
+; gsym_addr t 1690 a 0 ind 1690
+__local_1:
+; gsym_addr t 1690 a 1722 ind 1722
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+__local_dummy.data dsb 1
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+__local_dummy.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+tccs_L.7: .db $48,$65,$6c,$6c,$6f,$20,$57,$6f,$72,$6c,$64,$20,$21,$0
+tccs_L.8: .db $57,$45,$4c,$43,$4f,$4d,$45,$20,$54,$4f,$20,$50,$56,$53,$4e,$45,$53,$4c,$49,$42,$0
+tccs_L.9: .db $48,$54,$54,$50,$53,$3a,$2f,$2f,$57,$57,$57,$2e,$50,$4f,$52,$54,$41,$42,$4c,$45,$44,$45,$56,$2e,$43,$4f,$4d,$0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+__local_dummybss dsb 1
+.ENDS

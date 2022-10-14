@@ -1,0 +1,335 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns_end + 0, tcc__r0 (type 0x84)
+lda.w #:patterns_end
+sta.b tcc__r0h
+lda.w #patterns_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns + 0, tcc__r1 (type 0x84)
+lda.w #:patterns
+sta.b tcc__r1h
+lda.w #patterns + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x52f0
+pea.w :palette
+pea.w palette + 0
+; push4 imm r 0x52f0
+pea.w :map
+pea.w map + 0
+; push4 imm r 0x52f0
+pea.w :patterns
+pea.w patterns + 0
+; call r 0x2f0
+jsr.l bgInitMapTileSet7
+; add sp, #16
+tsa
+clc
+adc #16
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode7
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [angle,0]
+sep #$20
+lda.b tcc__r0
+sta.l angle + 0
+rep #$20
+__local_8:
+; gtst inv 1 t 0 v 240 r 1307 ind 1307
+; uncond jump: nop
+; gtst finished; t 0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [pad0,0]
+lda.b tcc__r0
+sta.l pad0 + 0
+; gtst inv 1 t 0 v 240 r 1579 ind 1579
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gsym_addr t 0 a 1712 ind 1712
+; ERROR no jump found to patch
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 1831 ind 1831
+; cmp op 0x95 inv 1 v 243 r 1831
+; cmp ne
+bne +
+; gsym_addr t 0 a 1918 ind 1918
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 1831
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gjmp_addr 0 at 2115
+jmp.w __local_1
+; gsym_addr t 2153 a 0 ind 2153
+; gjmp_addr 0 at 2185
+jmp.w __local_2
+; gsym_addr t 2223 a 0 ind 2223
+__local_1:
+; gsym_addr t 2153 a 2255 ind 2255
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #128
+ldx #1
+lda.b tcc__r0
+sec
+sbc #128
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 2404 ind 2404
+; gsym_addr t 0 a 2441 ind 2441
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 2529 ind 2529
+; cmp op 0x95 inv 1 v 243 r 2529
+; cmp ne
+bne +
+; gsym_addr t 0 a 2616 ind 2616
+brl __local_3
++
+; gtst finished; t 2529
+__local_2:
+; gsym_addr t 2223 a 2688 ind 2688
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [angle + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l angle + 0
+rep #$20
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0xc519b0d0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
+inc.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [angle,0]
+sep #$20
+lda.b tcc__r0
+sta.l angle + 0
+rep #$20
+; ldpush before load type 0x11 reg 0x53f0
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [angle + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l angle + 0
+rep #$20
+sta.b tcc__r0
+; ldpush1 (type 0x11 reg 0x0) tcc__r0
+sep #$20
+lda.b tcc__r0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode7Rot
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; gjmp_addr 0 at 3521
+jmp.w __local_4
+; gsym_addr t 3559 a 0 ind 3559
+; gjmp_addr 0 at 3591
+jmp.w __local_5
+; gsym_addr t 3629 a 0 ind 3629
+__local_3:
+; gsym_addr t 2529 a 3661 ind 3661
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #32768
+ldx #1
+lda.b tcc__r0
+sec
+sbc #32768
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 3814 ind 3814
+; gsym_addr t 0 a 3851 ind 3851
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 3939 ind 3939
+; cmp op 0x95 inv 1 v 243 r 3939
+; cmp ne
+bne +
+; gsym_addr t 0 a 4026 ind 4026
+brl __local_6
++
+; gtst finished; t 3939
+__local_5:
+; gsym_addr t 3629 a 4098 ind 4098
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [angle + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l angle + 0
+rep #$20
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0xc519b0d0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
+dec.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [angle,0]
+sep #$20
+lda.b tcc__r0
+sta.l angle + 0
+rep #$20
+; ldpush before load type 0x11 reg 0x53f0
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [angle + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l angle + 0
+rep #$20
+sta.b tcc__r0
+; ldpush1 (type 0x11 reg 0x0) tcc__r0
+sep #$20
+lda.b tcc__r0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode7Rot
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; gjmp_addr 3559 at 4931
+jmp.w __local_7
+; gsym_addr t 4972 a 3559 ind 4972
+__local_6:
+; gsym_addr t 3939 a 5007 ind 5007
+__local_4:
+__local_7:
+; gsym_addr t 4972 a 5042 ind 5042
+__local_0:
+; gsym_addr t 1831 a 5077 ind 5077
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 1307 at 5147
+jmp.w __local_8
+; gsym_addr t 5188 a 1307 ind 5188
+; gsym_addr t 0 a 5223 ind 5223
+; gsym_addr t 0 a 1307 ind 5255
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 5364
+jmp.w __local_9
+; gsym_addr t 5402 a 0 ind 5402
+__local_9:
+; gsym_addr t 5402 a 5434 ind 5434
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+__local_dummy.data dsb 1
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+__local_dummy.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+__local_dummy.rodata: .db 0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+pad0 dsb 2
+angle dsb 1
+.ENDS

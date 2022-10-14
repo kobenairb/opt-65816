@@ -1,0 +1,135 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; push4 imm r 0x12f0
+pea.w :tccs_L.7
+pea.w tccs_L.7 + 0
+; call r 0x2f0
+jsr.l consoleNocashMessage
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+__local_0:
+; gtst inv 1 t 0 v 240 r 689 ind 689
+; uncond jump: nop
+; gtst finished; t 0
+; ldpush before load type 0x10 reg 0x3f0
+; load 0
+; type 16 reg 0x3f0 extra 0x1599dc0
+; ld2 [snes_vblank_count + 0], tcc__r0
+lda.l snes_vblank_count + 0
+sta.b tcc__r0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x12f0
+pea.w :tccs_L.8
+pea.w tccs_L.8 + 0
+; call r 0x2f0
+jsr.l consoleNocashMessage
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 689 at 1150
+jmp.w __local_0
+; gsym_addr t 1190 a 689 ind 1190
+; gsym_addr t 0 a 1224 ind 1224
+; gsym_addr t 0 a 689 ind 1256
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 1364
+jmp.w __local_1
+; gsym_addr t 1402 a 0 ind 1402
+__local_1:
+; gsym_addr t 1402 a 1434 ind 1434
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+__local_dummy.data dsb 1
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+__local_dummy.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+tccs_L.7: .db $4a,$55,$53,$54,$20,$43,$4f,$55,$4e,$54,$20,$56,$42,$4c,$d,$0
+tccs_L.8: .db $46,$50,$53,$3d,$25,$30,$34,$64,$d,$a,$0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+messtxt dsb 16
+.ENDS

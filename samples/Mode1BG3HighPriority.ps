@@ -1,0 +1,354 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 1024
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 2048
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #BG1_tiles_end + 0, tcc__r0 (type 0x84)
+lda.w #:BG1_tiles_end
+sta.b tcc__r0h
+lda.w #BG1_tiles_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #BG1_tiles + 0, tcc__r1 (type 0x84)
+lda.w #:BG1_tiles
+sta.b tcc__r1h
+lda.w #BG1_tiles + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 8192
+; push2 imm r 0xf0
+pea.w 16
+; push2 imm r 0xf0
+pea.w 32
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; push4 imm r 0x52f0
+pea.w :BG1_pal
+pea.w BG1_pal + 0
+; push4 imm r 0x52f0
+pea.w :BG1_tiles
+pea.w BG1_tiles + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #BG2_tiles_end + 0, tcc__r0 (type 0x84)
+lda.w #:BG2_tiles_end
+sta.b tcc__r0h
+lda.w #BG2_tiles_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #BG2_tiles + 0, tcc__r1 (type 0x84)
+lda.w #:BG2_tiles
+sta.b tcc__r1h
+lda.w #BG2_tiles + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 12288
+; push2 imm r 0xf0
+pea.w 16
+; push2 imm r 0xf0
+pea.w 32
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #4
+pha
+rep #$20
+; push4 imm r 0x52f0
+pea.w :BG2_pal
+pea.w BG2_pal + 0
+; push4 imm r 0x52f0
+pea.w :BG2_tiles
+pea.w BG2_tiles + 0
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #BG3_tiles_end + 0, tcc__r0 (type 0x84)
+lda.w #:BG3_tiles_end
+sta.b tcc__r0h
+lda.w #BG3_tiles_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #BG3_tiles + 0, tcc__r1 (type 0x84)
+lda.w #:BG3_tiles
+sta.b tcc__r1h
+lda.w #BG3_tiles + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 16384
+; push2 imm r 0xf0
+pea.w 16
+; push2 imm r 0xf0
+pea.w 8
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push4 imm r 0x52f0
+pea.w :BG3_pal
+pea.w BG3_pal + 0
+; push4 imm r 0x52f0
+pea.w :BG3_tiles
+pea.w BG3_tiles + 0
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; call r 0x2f0
+jsr.l WaitForVBlank
+; push2 imm r 0xf0
+pea.w 2048
+; push2 imm r 0xf0
+pea.w 0
+; push4 imm r 0x52f0
+pea.w :BG1_map
+pea.w BG1_map + 0
+; call r 0x2f0
+jsr.l dmaCopyVram
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push2 imm r 0xf0
+pea.w 2048
+; push2 imm r 0xf0
+pea.w 1024
+; push4 imm r 0x52f0
+pea.w :BG2_map
+pea.w BG2_map + 0
+; call r 0x2f0
+jsr.l dmaCopyVram
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push2 imm r 0xf0
+pea.w 2048
+; push2 imm r 0xf0
+pea.w 2048
+; push4 imm r 0x52f0
+pea.w :BG3_map
+pea.w BG3_map + 0
+; call r 0x2f0
+jsr.l dmaCopyVram
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #8
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #3
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+__local_0:
+; gtst inv 1 t 0 v 240 r 4381 ind 4381
+; uncond jump: nop
+; gtst finished; t 0
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 4381 at 4495
+jmp.w __local_0
+; gsym_addr t 4536 a 4381 ind 4536
+; gsym_addr t 0 a 4571 ind 4571
+; gsym_addr t 0 a 4381 ind 4603
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 4712
+jmp.w __local_1
+; gsym_addr t 4750 a 0 ind 4750
+__local_1:
+; gsym_addr t 4750 a 4782 ind 4782
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+__local_dummy.data dsb 1
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+__local_dummy.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+__local_dummy.rodata: .db 0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+__local_dummybss dsb 1
+.ENDS

@@ -1,0 +1,396 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l spcBoot
+; call r 0x2f0
+jsr.l consoleInit
+; push1 imm r 0xf0
+sep #$20
+lda #39
+pha
+rep #$20
+; call r 0x2f0
+jsr.l spcAllocateSoundRegion
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push4 imm r 0x52f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.7
+pea.w tccs_L.7 + 0
+; push2 imm r 0xf0
+pea.w 10
+; push2 imm r 0xf0
+pea.w 5
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #soundbrrend + 0, tcc__r0 (type 0x84)
+lda.w #:soundbrrend
+sta.b tcc__r0h
+lda.w #soundbrrend + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #soundbrr + 0, tcc__r1 (type 0x84)
+lda.w #:soundbrr
+sta.b tcc__r1h
+lda.w #soundbrr + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push4 imm r 0x2f0
+pea.w :tadasound
+pea.w tadasound + 0
+; push4 imm r 0x52f0
+pea.w :soundbrr
+pea.w soundbrr + 0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #4
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #15
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #15
+pha
+rep #$20
+; call r 0x2f0
+jsr.l spcSetSoundEntry
+; add sp, #13
+tsa
+clc
+adc #13
+tas
+__local_3:
+; gtst inv 1 t 0 v 240 r 2005 ind 2005
+; uncond jump: nop
+; gtst finished; t 0
+; call r 0x2f0
+jsr.l scanPads
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #128
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 2382 ind 2382
+; gsym_addr t 0 a 2419 ind 2419
+; ERROR no jump found to patch
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 2538 ind 2538
+; cmp op 0x95 inv 1 v 243 r 2538
+; cmp ne
+bne +
+; gsym_addr t 0 a 2625 ind 2625
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 2538
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [keyapressed + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l keyapressed + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #0
+ldx #1
+lda.b tcc__r0
+sec
+sbc #0
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 2974 ind 2974
+; gsym_addr t 0 a 3011 ind 3011
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 3099 ind 3099
+; cmp op 0x95 inv 1 v 243 r 3099
+; cmp ne
+bne +
+; gsym_addr t 0 a 3186 ind 3186
+brl __local_1
++
+; gtst finished; t 3099
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [keyapressed,0]
+sep #$20
+lda.b tcc__r0
+sta.l keyapressed + 0
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l spcPlaySound
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; load 0
+; type 16 reg 0x3f0 extra 0x490b40
+; ld2 [bgcolor + 0], tcc__r0
+lda.l bgcolor + 0
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+clc
+lda.b tcc__r0
+adc.w #16
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [bgcolor,0]
+lda.b tcc__r0
+sta.l bgcolor + 0
+; load 0
+; type 4113 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x2121
+; load 9
+; type 4 reg 0x50f0 extra 0x28
+; ld4 #8481,tcc__r9
+lda.w #8481
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [bgcolor + 0], tcc__r0
+lda.l bgcolor + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
+; load 9
+; type 4 reg 0x50f0 extra 0x7ebda67c
+; ld4 #8482,tcc__r9
+lda.w #8482
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+; load 0
+; type 16 reg 0x3f0 extra 0xffffffff
+; ld2 [bgcolor + 0], tcc__r0
+lda.l bgcolor + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0xcd
+; shr tcc__r0, #8
+lda.b tcc__r0
+xba
+and #$00ff
+sta.b tcc__r0
+; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
+; load 9
+; type 4 reg 0x50f0 extra 0x7ebda67c
+; ld4 #8482,tcc__r9
+lda.w #8482
+sta.b tcc__r9
+lda.w #0
+sta.b tcc__r9h
+; st1 tcc__r0, [tcc__r9,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r9]
+rep #$20
+__local_1:
+; gsym_addr t 3099 a 5173 ind 5173
+; gjmp_addr 0 at 5208
+jmp.w __local_2
+; gsym_addr t 5246 a 0 ind 5246
+__local_0:
+; gsym_addr t 2538 a 5278 ind 5278
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [keyapressed,0]
+sep #$20
+lda.b tcc__r0
+sta.l keyapressed + 0
+rep #$20
+__local_2:
+; gsym_addr t 5246 a 5515 ind 5515
+; call r 0x2f0
+jsr.l spcProcess
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 2005 at 5617
+jmp.w __local_3
+; gsym_addr t 5658 a 2005 ind 5658
+; gsym_addr t 0 a 5693 ind 5693
+; gsym_addr t 0 a 2005 ind 5725
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 5834
+jmp.w __local_4
+; gsym_addr t 5872 a 0 ind 5872
+__local_4:
+; gsym_addr t 5872 a 5904 ind 5904
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+
+bgcolor dsb 2
+keyapressed dsb 1
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+.db $80,$0
+.db $0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+tccs_L.7: .db $50,$72,$65,$73,$73,$20,$41,$20,$74,$6f,$20,$70,$6c,$61,$79,$20,$65,$66,$66,$65,$63,$74,$20,$21,$0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+tadasound dsb 8
+.ENDS

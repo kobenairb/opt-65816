@@ -1,0 +1,219 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; push4 imm r 0x52f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #6
+tsa
+clc
+adc #6
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.7
+pea.w tccs_L.7 + 0
+; push2 imm r 0xf0
+pea.w 6
+; push2 imm r 0xf0
+pea.w 10
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push4 imm r 0x12f0
+pea.w :tccs_L.8
+pea.w tccs_L.8 + 0
+; push2 imm r 0xf0
+pea.w 10
+; push2 imm r 0xf0
+pea.w 3
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; call r 0x2f0
+jsr.l consoleRegionIsOK
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #1
+ldx #1
+lda.b tcc__r0
+sec
+sbc #1
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 1289 ind 1289
+; gsym_addr t 0 a 1326 ind 1326
+; ERROR no jump found to patch
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 1445 ind 1445
+; cmp op 0x95 inv 1 v 243 r 1445
+; cmp ne
+bne +
+; gsym_addr t 0 a 1532 ind 1532
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 1445
+; push4 imm r 0x12f0
+pea.w :tccs_L.9
+pea.w tccs_L.9 + 0
+; push2 imm r 0xf0
+pea.w 14
+; push2 imm r 0xf0
+pea.w 6
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; gjmp_addr 0 at 1815
+jmp.w __local_1
+; gsym_addr t 1853 a 0 ind 1853
+__local_0:
+; gsym_addr t 1445 a 1885 ind 1885
+; push4 imm r 0x12f0
+pea.w :tccs_L.10
+pea.w tccs_L.10 + 0
+; push2 imm r 0xf0
+pea.w 14
+; push2 imm r 0xf0
+pea.w 4
+; call r 0x2f0
+jsr.l consoleDrawText
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+__local_1:
+; gsym_addr t 1853 a 2102 ind 2102
+__local_2:
+; gtst inv 1 t 0 v 240 r 2137 ind 2137
+; uncond jump: nop
+; gtst finished; t 0
+; call r 0x2f0
+jsr.l WaitForVBlank
+; gjmp_addr 2137 at 2251
+jmp.w __local_2
+; gsym_addr t 2292 a 2137 ind 2292
+; gsym_addr t 0 a 2327 ind 2327
+; gsym_addr t 0 a 2137 ind 2359
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 2468
+jmp.w __local_3
+; gsym_addr t 2506 a 0 ind 2506
+__local_3:
+; gsym_addr t 2506 a 2538 ind 2538
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+__local_dummy.data dsb 1
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+__local_dummy.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+tccs_L.7: .db $43,$48,$45,$43,$4b,$20,$52,$45,$47,$49,$4f,$4e,$53,$0
+tccs_L.8: .db $42,$45,$54,$57,$45,$45,$4e,$20,$53,$4e,$45,$53,$20,$41,$4e,$44,$20,$43,$41,$52,$54,$52,$49,$44,$47,$45,$0
+tccs_L.9: .db $4f,$4b,$2c,$20,$54,$48,$45,$20,$53,$41,$4d,$45,$20,$52,$45,$47,$49,$4f,$4e,$21,$0
+tccs_L.10: .db $42,$41,$44,$2c,$20,$4e,$4f,$54,$20,$54,$48,$45,$20,$53,$41,$4d,$45,$20,$52,$45,$47,$49,$4f,$4e,$21,$0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+pad0 dsb 2
+.ENDS

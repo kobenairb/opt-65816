@@ -1,0 +1,417 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #tilesetend + 0, tcc__r0 (type 0x84)
+lda.w #:tilesetend
+sta.b tcc__r0h
+lda.w #tilesetend + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #tileset + 0, tcc__r1 (type 0x84)
+lda.w #:tileset
+sta.b tcc__r1h
+lda.w #tileset + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 8192
+; push2 imm r 0xf0
+pea.w 16
+; push2 imm r 0xf0
+pea.w 32
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push4 imm r 0x52f0
+pea.w :palmario
+pea.w palmario + 0
+; push4 imm r 0x52f0
+pea.w :tileset
+pea.w tileset + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l WaitForVBlank
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #sprmario_end + 0, tcc__r0 (type 0x84)
+lda.w #:sprmario_end
+sta.b tcc__r0h
+lda.w #sprmario_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #sprmario + 0, tcc__r1 (type 0x84)
+lda.w #:sprmario
+sta.b tcc__r1h
+lda.w #sprmario + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push1 imm r 0xf0
+sep #$20
+lda #96
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 32
+; push4 imm r 0x52f0
+pea.w :palsprite
+pea.w palsprite + 0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x52f0
+pea.w :sprmario
+pea.w sprmario + 0
+; call r 0x2f0
+jsr.l oamInitGfxSet
+; add sp, #16
+tsa
+clc
+adc #16
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #sprgoomba_end + 0, tcc__r0 (type 0x84)
+lda.w #:sprgoomba_end
+sta.b tcc__r0h
+lda.w #sprgoomba_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #sprgoomba + 0, tcc__r1 (type 0x84)
+lda.w #:sprgoomba
+sta.b tcc__r1h
+lda.w #sprgoomba + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x10)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push2 imm r 0xf0
+pea.w 512
+; push4 imm r 0x52f0
+pea.w :sprgoomba
+pea.w sprgoomba + 0
+; call r 0x2f0
+jsr.l dmaCopyVram
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #sprkoopatroopa_end + 0, tcc__r0 (type 0x84)
+lda.w #:sprkoopatroopa_end
+sta.b tcc__r0h
+lda.w #sprkoopatroopa_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #sprkoopatroopa + 0, tcc__r1 (type 0x84)
+lda.w #:sprkoopatroopa
+sta.b tcc__r1h
+lda.w #sprkoopatroopa + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x10)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push2 imm r 0xf0
+pea.w 1024
+; push4 imm r 0x52f0
+pea.w :sprkoopatroopa
+pea.w sprkoopatroopa + 0
+; call r 0x2f0
+jsr.l dmaCopyVram
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; call r 0x2f0
+jsr.l objInitEngine
+; push4 imm r 0x2f0
+pea.w :marioupdate
+pea.w marioupdate + 0
+; push4 imm r 0x2f0
+pea.w :marioinit
+pea.w marioinit + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l objInitFunctions
+; add sp, #9
+tsa
+clc
+adc #9
+tas
+; push4 imm r 0x2f0
+pea.w :goombaupdate
+pea.w goombaupdate + 0
+; push4 imm r 0x2f0
+pea.w :goombainit
+pea.w goombainit + 0
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l objInitFunctions
+; add sp, #9
+tsa
+clc
+adc #9
+tas
+; push4 imm r 0x2f0
+pea.w :koopatroopaupdate
+pea.w koopatroopaupdate + 0
+; push4 imm r 0x2f0
+pea.w :koopatroopainit
+pea.w koopatroopainit + 0
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l objInitFunctions
+; add sp, #9
+tsa
+clc
+adc #9
+tas
+; push4 imm r 0x52f0
+pea.w :tabobjects
+pea.w tabobjects + 0
+; call r 0x2f0
+jsr.l objLoadObjects
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push4 imm r 0x52f0
+pea.w :tilsetprop
+pea.w tilsetprop + 0
+; push4 imm r 0x52f0
+pea.w :tilesetdef
+pea.w tilesetdef + 0
+; push4 imm r 0x52f0
+pea.w :mapmario
+pea.w mapmario + 0
+; call r 0x2f0
+jsr.l mapLoad
+; add sp, #12
+tsa
+clc
+adc #12
+tas
+__local_0:
+; gtst inv 1 t 0 v 240 r 5219 ind 5219
+; uncond jump: nop
+; gtst finished; t 0
+; load 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [sprnum,0]
+lda.b tcc__r0
+sta.l sprnum + 0
+; push1 imm r 0xf0
+sep #$20
+lda #10
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 0
+; call r 0x2f0
+jsr.l oamClear
+; add sp, #3
+tsa
+clc
+adc #3
+tas
+; call r 0x2f0
+jsr.l mapUpdate
+; call r 0x2f0
+jsr.l objUpdateAll
+; call r 0x2f0
+jsr.l WaitForVBlank
+; call r 0x2f0
+jsr.l mapVblank
+; gjmp_addr 5219 at 5740
+jmp.w __local_0
+; gsym_addr t 5781 a 5219 ind 5781
+; gsym_addr t 0 a 5816 ind 5816
+; gsym_addr t 0 a 5219 ind 5848
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 5957
+jmp.w __local_1
+; gsym_addr t 5995 a 0 ind 5995
+__local_1:
+; gsym_addr t 5995 a 6027 ind 6027
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ram.data" APPENDTO "globram.data"
+
+tilsetprop dsb 128
+tabobjects dsb 52
+
+.ENDS
+
+.SECTION ".data" APPENDTO "glob.data"
+
+.db $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$ff,$0,$ff,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$ff,$0,$ff,$0,$ff,$0,$ff,$0,$0,$0,$0
+.db $f,$0,$60,$0,$0,$0,$0,$0,$0,$0,$10,$2,$c0,$0,$1,$0,$e0,$1,$50,$2,$60,$3,$c0,$0,$1,$0,$0,$3,$65,$3,$a8,$2,$c0,$0,$2,$0,$80,$2,$d0,$2,$d0,$3,$c0,$0,$2,$0,$b0,$3,$40,$4,$ff,$ff
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+__local_dummy.rodata: .db 0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+sprnum dsb 2
+.ENDS
