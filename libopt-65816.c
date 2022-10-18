@@ -46,7 +46,6 @@ typedef struct DynArray
 typedef struct RegDynArray
 {
     size_t status;
-    regex_t regexCompiled;
     char **groups;
     size_t used;
 } RegDynArray;
@@ -266,13 +265,16 @@ RegDynArray RegMatchGroups(char *source, char *regex, const size_t maxGroups)
             ++used;
         }
 
-        RegDynArray r = {1, regexCompiled, groups, used};
+        regfree(&regexCompiled);
 
+        RegDynArray r = {1, groups, used};
         return r;
     }
     else if (re == REG_NOMATCH)
     {
-        RegDynArray r = {0, regexCompiled, groups, used};
+        regfree(&regexCompiled);
+
+        RegDynArray r = {0, groups, used};
         return r;
     }
     else
