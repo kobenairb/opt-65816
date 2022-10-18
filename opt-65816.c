@@ -256,13 +256,15 @@ void OptimizeAsm(char **arr, const size_t u)
                     StartsWith(arr[i + 2], "jsr.l "))
                 {
                     printf("[CAS 5] %lu: %s\n", i + 1, arr[i + 1]);
+
                     snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.groups[1]);
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
+                    FreeDynArray(r.groups, r.used);
+
                     i += 2;
                     opted += 1;
-                    FreeDynArray(r.groups, r.used);
                     continue;
                 }
                 /* Store hwreg to preg, push preg -> store hwreg to preg,
@@ -270,6 +272,7 @@ void OptimizeAsm(char **arr, const size_t u)
                 if (strcmp(arr[i + 1], snp_buf1) == 0)
                 {
                     printf("[CAS 6] %lu: %s\n", i + 1, arr[i + 1]);
+
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
                     memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
                     used += 1;
@@ -277,9 +280,10 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
+                    FreeDynArray(r.groups, r.used);
+
                     i += 2;
                     opted += 1;
-                    FreeDynArray(r.groups, r.used);
                     continue;
                 }
                 /* Store hwreg to preg, load hwreg from preg -> store hwreg to preg,
@@ -290,6 +294,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     strcmp(arr[i + 1], snp_buf2) == 0)
                 {
                     printf("[CAS 7] %lu: %s\n", i + 1, arr[i + 1]);
+
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
                     memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
                     used += 1;
@@ -297,9 +302,10 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
+                    FreeDynArray(r.groups, r.used);
+
                     i += 2;
                     opted += 1;
-                    FreeDynArray(r.groups, r.used);
                     continue;
                 }
                 FreeDynArray(r.groups, r.used);
@@ -314,12 +320,14 @@ void OptimizeAsm(char **arr, const size_t u)
                 if (strcmp(arr[i + 1], snp_buf1) == 0)
                 {
                     printf("[CAS 8] %lu: %s\n", i + 1, arr[i + 1]);
+
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
                     memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
                     used += 1;
+                    FreeDynArray(r.groups, r.used);
+
                     i += 2;
                     opted += 1;
-                    FreeDynArray(r.groups, r.used);
                     continue;
                 }
                 FreeDynArray(r.groups, r.used);
@@ -327,6 +335,7 @@ void OptimizeAsm(char **arr, const size_t u)
         }
         i++;
     }
+
     FreeDynArray(text_opt, used);
 }
 
