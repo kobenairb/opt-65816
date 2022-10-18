@@ -35,7 +35,6 @@
  */
 #define STORE_XY_TO_PSEUDO \
     "st([xy]).b tcc__([rf][0-9]{0,}h{0,1})$"
-
 /*!
  * @brief Stores (accu only) to pseudo-registers
  */

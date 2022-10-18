@@ -159,15 +159,17 @@ void OptimizeAsm(char **arr, const size_t u)
     /* optimization pass counter */
     // int opass = 0;
 
-    regex_t regexd;
+    // regex_t regexd;
 
     RegDynArray r;
+    // int r1;
+    RegDynArray r1;
 
     size_t doopt;
 
-    size_t cont;
+    // size_t cont;
 
-    int crem[2][4] = {"inc", "dec"};
+    // char crem[2][4] = {"inc", "dec"};
 
     /* some char to handle snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
@@ -199,15 +201,9 @@ void OptimizeAsm(char **arr, const size_t u)
                 for (size_t j = (i + 1); j < (size_t)FindMin(u, (i + 30)); j++)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "st([axyz]).b tcc__%s$", r.groups[2]);
-                    if (regcomp(&regexd,
-                                snp_buf1,
-                                0))
-                    {
-                        fprintf(stderr, "Could not compile regex\n");
-                        exit(EXIT_FAILURE);
-                    }
-                    /* Another store to the same pregister */
-                    if (!regexec(&regexd, arr[j], 0, NULL, 0))
+                    r1 = RegMatchGroups(arr[j], snp_buf1, 2);
+                    regfree(&r1.regexCompiled);
+                    if (r1.status == 1)
                     {
                         printf("[CAS 1] %lu: %s\n", i, arr[j]);
                         doopt = 1;
@@ -236,10 +232,11 @@ void OptimizeAsm(char **arr, const size_t u)
                         printf("[CAS 4] %lu: %s\n", i, arr[j]);
                         break;
                     }
-                    regfree(&regexd);
+                    // regfree(&regexd);
                 }
-                regfree(&regexd);
+                // regfree(&regexd);
                 FreeDynArray(r.groups, r.used);
+                FreeDynArray(r1.groups, r1.used);
                 if (doopt)
                 {
                     /* Skip redundant store */
@@ -409,7 +406,7 @@ void OptimizeAsm(char **arr, const size_t u)
                 }
 
                 /* Convert incs/decs on pregs incs/decs on hwregs */
-                cont = 0;
+                // cont = 0;
 
                 FreeDynArray(r.groups, r.used);
             }
