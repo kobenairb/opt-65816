@@ -254,7 +254,8 @@ void OptimizeAsm(char **arr, const size_t u)
                 /* Store hwreg to preg, push preg,
                     function call -> push hwreg, function call */
                 snprintf(snp_buf1, sizeof(snp_buf1), "pei (tcc__%s)", r.groups[2]);
-                if (StartsWith(arr[i + 1], snp_buf1) && StartsWith(arr[i + 2], "jsr.l "))
+                if (strcmp(arr[i + 1], snp_buf1) == 0 &&
+                    StartsWith(arr[i + 2], "jsr.l "))
                 {
                     printf("[CAS 5] %lu: %s\n", i + 1, arr[i + 1]);
                     snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.groups[1]);
@@ -287,7 +288,8 @@ void OptimizeAsm(char **arr, const size_t u)
                     transfer hwreg/hwreg (shorter) */
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[2]);
                 snprintf(snp_buf2, sizeof(snp_buf2), "lda.b tcc__%s ; DON'T OPTIMIZE", r.groups[2]);
-                if (StartsWith(arr[i + 1], snp_buf1) || StartsWith(arr[i + 1], snp_buf2))
+                if (strcmp(arr[i + 1], snp_buf1) == 0 ||
+                    strcmp(arr[i + 1], snp_buf2) == 0)
                 {
                     printf("[CAS 7] %lu: %s\n", i + 1, arr[i + 1]);
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
@@ -361,14 +363,6 @@ int main(int argc, char **argv)
     /*       ASM Optimization           */
     /* -------------------------------- */
     OptimizeAsm(file.arr, file.used);
-
-    // if (verbose == 2)
-    // {
-    //     for (size_t i = 0; i < used; i++)
-    //     {
-    //         printf("%s\n", text_opt[i]);
-    //     }
-    // }
 
     /* -------------------------------- */
     /*       Free pointers              */
