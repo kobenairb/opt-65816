@@ -269,7 +269,7 @@ void OptimizeAsm(char **arr, const size_t u)
                 }
                 /* Store hwreg to preg, push preg -> store hwreg to preg,
                     push hwreg (shorter) */
-                if (StartsWith(arr[i + 1], snp_buf1))
+                if (strcmp(arr[i + 1], snp_buf1) == 0)
                 {
                     printf("[CAS 6] %lu: %s\n", i + 1, arr[i + 1]);
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
