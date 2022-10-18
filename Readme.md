@@ -1,5 +1,7 @@
 # Assembly code Optimizer for WDC65816
 
+>> [WIP] Don't use it please.
+
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
