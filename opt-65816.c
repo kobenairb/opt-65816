@@ -159,17 +159,11 @@ void OptimizeAsm(char **arr, const size_t u)
     /* optimization pass counter */
     // int opass = 0;
 
-    // regex_t regexd;
-
-    RegDynArray r;
-    // int r1;
-    RegDynArray r1;
+    RegDynArray r, r1;
 
     size_t doopt;
 
-    // size_t cont;
-
-    // char crem[2][4] = {"inc", "dec"};
+    char crem[2][4] = {"inc", "dec"};
 
     /* some char to handle snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
@@ -232,9 +226,7 @@ void OptimizeAsm(char **arr, const size_t u)
                         printf("[CAS 4] %lu: %s\n", i, arr[j]);
                         break;
                     }
-                    // regfree(&regexd);
                 }
-                // regfree(&regexd);
                 FreeDynArray(r.groups, r.used);
                 FreeDynArray(r1.groups, r1.used);
                 if (doopt)
@@ -406,7 +398,40 @@ void OptimizeAsm(char **arr, const size_t u)
                 }
 
                 /* Convert incs/decs on pregs incs/decs on hwregs */
-                // cont = 0;
+                size_t cont = 0;
+                for (size_t k = 0; k < sizeof(crem) / sizeof(crem[0]); k++)
+                {
+                    snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s", crem[k], r.groups[1]);
+                    if (strcmp(arr[i + 1], snp_buf1) == 0)
+                    {
+                        if (strcmp(arr[i + 2], snp_buf1) == 0 && StartsWith(arr[i + 3], "lda"))
+                        {
+                            printf("[CAS 13] %lu: %s\n", i + 1, arr[i + 1]);
+
+                            snprintf(snp_buf1, sizeof(snp_buf1), "%s a", crem[k]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+                            snprintf(snp_buf1, sizeof(snp_buf1), "sta.b tcc__%s", r.groups[1]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+                            // FreeDynArray(r.groups, r.used);
+
+                            snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
+                            if (strcmp(arr[i + 3], snp_buf1))
+                                i += 4;
+                            else
+                                i += 3;
+                            opted += 1;
+                            cont += 1;
+                            break;
+                        }
+                    }
+                }
 
                 FreeDynArray(r.groups, r.used);
             }
