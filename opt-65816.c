@@ -159,8 +159,6 @@ void OptimizeAsm(char **arr, const size_t u)
     /* optimization pass counter */
     // int opass = 0;
 
-    size_t maxGroups = 3;
-
     regex_t regexd;
 
     RegDynArray r;
@@ -189,9 +187,9 @@ void OptimizeAsm(char **arr, const size_t u)
         if (StartsWith(arr[i], "st"))
         {
             /* eliminate redundant stores */
-            r = RegMatchGroups(arr[i], STORE_AXYZ_TO_PSEUDO, maxGroups);
+            r = RegMatchGroups(arr[i], STORE_AXYZ_TO_PSEUDO, 3);
             regfree(&r.regexCompiled);
-            if (r.status)
+            if (r.status == 1)
             {
                 doopt = 0;
                 for (size_t j = (i + 1); j < (size_t)FindMin(u, (i + 30)); j++)
@@ -237,7 +235,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     regfree(&regexd);
                 }
                 regfree(&regexd);
-                FreeDynArray(r.groups, maxGroups);
+                FreeDynArray(r.groups, r.used);
                 if (doopt)
                 {
                     /* Skip redundant store */
@@ -247,9 +245,9 @@ void OptimizeAsm(char **arr, const size_t u)
                 }
             }
             /* Stores (x/y) to pseudo-registers */
-            r = RegMatchGroups(arr[i], STORE_XY_TO_PSEUDO, maxGroups);
+            r = RegMatchGroups(arr[i], STORE_XY_TO_PSEUDO, 3);
             regfree(&r.regexCompiled);
-            if (r.status)
+            if (r.status == 1)
             {
                 /* Store hwreg to preg, push preg,
                     function call -> push hwreg, function call */
@@ -264,7 +262,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     used += 1;
                     i += 2;
                     opted += 1;
-                    FreeDynArray(r.groups, maxGroups);
+                    FreeDynArray(r.groups, r.used);
                     continue;
                 }
                 /* Store hwreg to preg, push preg -> store hwreg to preg,
@@ -281,7 +279,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     used += 1;
                     i += 2;
                     opted += 1;
-                    FreeDynArray(r.groups, maxGroups);
+                    FreeDynArray(r.groups, r.used);
                     continue;
                 }
                 /* Store hwreg to preg, load hwreg from preg -> store hwreg to preg,
@@ -301,10 +299,30 @@ void OptimizeAsm(char **arr, const size_t u)
                     used += 1;
                     i += 2;
                     opted += 1;
-                    FreeDynArray(r.groups, maxGroups);
+                    FreeDynArray(r.groups, r.used);
                     continue;
                 }
-                FreeDynArray(r.groups, maxGroups);
+                FreeDynArray(r.groups, r.used);
+            }
+            /* Stores (accu only) to pseudo-registers */
+            r = RegMatchGroups(arr[i], STORE_A_TO_PSEUDO, 2);
+            regfree(&r.regexCompiled);
+            if (r.status == 1)
+            {
+                /* Store preg followed by load preg */
+                snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
+                if (strcmp(arr[i + 1], snp_buf1) == 0)
+                {
+                    printf("[CAS 8] %lu: %s\n", i + 1, arr[i + 1]);
+                    text_opt[used] = malloc(strlen(arr[i]) + 1);
+                    memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
+                    used += 1;
+                    i += 2;
+                    opted += 1;
+                    FreeDynArray(r.groups, r.used);
+                    continue;
+                }
+                FreeDynArray(r.groups, r.used);
             }
         }
         i++;
