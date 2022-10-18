@@ -23,7 +23,7 @@ valgrind: all
 		    ./opt-65816 $${file}; \
 	done
 
-docs:
+doc:
 	@rm -rf doc/html
 	@doxygen ./Doxyfile
 
