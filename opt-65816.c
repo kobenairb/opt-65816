@@ -165,6 +165,10 @@ void OptimizeAsm(char **arr, const size_t u)
 
     size_t doopt;
 
+    size_t cont;
+
+    int crem[2][4] = {"inc", "dec"};
+
     /* some char to handle snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
         snp_buf2[MAXLEN_LINE];
@@ -298,7 +302,9 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
                     memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
                     used += 1;
-                    snprintf(snp_buf1, sizeof(snp_buf1), "t%sa", r.groups[1]);
+                    snprintf(snp_buf1, sizeof(snp_buf1),
+                             "t%sa", r.groups[1]); // FIXME: shouldn't this be marked as
+                                                   // DON'T OPTIMIZE again?
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
@@ -322,7 +328,42 @@ void OptimizeAsm(char **arr, const size_t u)
                     printf("[CAS 8] %lu: %s\n", i + 1, arr[i + 1]);
 
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
-                    memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
+                    memcpy(text_opt[used], arr[i],
+                           strlen(arr[i]) + 1); // Keep store
+                    used += 1;
+                    FreeDynArray(r.groups, r.used);
+
+                    i += 2; // Omit load
+                    opted += 1;
+                    continue;
+                }
+                /* Store preg followed by load preg with ldx/ldy in between */
+                if ((StartsWith(arr[i + 1], "ldx") || StartsWith(arr[i + 1], "ldy")) && strcmp(arr[i + 2], snp_buf1) == 0)
+                {
+                    printf("[CAS 9] %lu: %s\n", i + 1, arr[i + 1]);
+
+                    text_opt[used] = malloc(strlen(arr[i]) + 1);
+                    memcpy(text_opt[used], arr[i],
+                           strlen(arr[i]) + 1); // Keep store
+                    used += 1;
+                    text_opt[used] = malloc(strlen(arr[i + 1]) + 1);
+                    memcpy(text_opt[used], arr[i + 1], strlen(arr[i + 1]) + 1);
+                    used += 1;
+                    FreeDynArray(r.groups, r.used);
+
+                    i += 3; // Omit load
+                    opted += 1;
+                    continue;
+                }
+                /* Store accu to preg, push preg, function call -> push accu,
+                    function call */
+                snprintf(snp_buf1, sizeof(snp_buf1), "pei (tcc__%s)", r.groups[1]);
+                if (strcmp(arr[i + 1], snp_buf1) == 0 && StartsWith(arr[i + 2], "jsr.l "))
+                {
+                    printf("[CAS 10] %lu: %s\n", i + 1, arr[i + 1]);
+
+                    text_opt[used] = malloc(strlen("pha") + 1);
+                    memcpy(text_opt[used], "pha", strlen("pha") + 1);
                     used += 1;
                     FreeDynArray(r.groups, r.used);
 
@@ -330,6 +371,46 @@ void OptimizeAsm(char **arr, const size_t u)
                     opted += 1;
                     continue;
                 }
+                /* Store accu to preg, push preg -> store accu to preg,
+                    push accu (shorter) */
+                if (strcmp(arr[i + 1], snp_buf1) == 0)
+                {
+                    printf("[CAS 11] %lu: %s\n", i + 1, arr[i + 1]);
+
+                    text_opt[used] = malloc(strlen(arr[i + 1]) + 1);
+                    memcpy(text_opt[used], arr[i + 1], strlen(arr[i + 1]) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen("pha") + 1);
+                    memcpy(text_opt[used], "pha", strlen("pha") + 1);
+                    used += 1;
+                    FreeDynArray(r.groups, r.used);
+
+                    i += 2;
+                    opted += 1;
+                    continue;
+                }
+                /* Store accu to preg1, push preg2, push preg1 -> store accu to preg1,
+                    push preg2, push accu */
+                else if (StartsWith(arr[i + 1], "pei ") && strcmp(arr[i + 2], snp_buf1) == 0)
+                {
+                    printf("[CAS 12] %lu: %s\n", i + 1, arr[i + 1]);
+
+                    text_opt[used] = malloc(strlen(arr[i + 1]) + 1);
+                    memcpy(text_opt[used], arr[i + 1], strlen(arr[i + 1]) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen(arr[i]) + 1);
+                    memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
+                    used += 1;
+                    FreeDynArray(r.groups, r.used);
+
+                    i += 3;
+                    opted += 1;
+                    continue;
+                }
+
+                /* Convert incs/decs on pregs incs/decs on hwregs */
+                cont = 0;
+
                 FreeDynArray(r.groups, r.used);
             }
         }
