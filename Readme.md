@@ -10,6 +10,8 @@
   - [About](#about)
   - [Getting Started](#getting-started)
     - [Build it](#build-it)
+    - [Generate the documentation](#generate-the-documentation)
+    - [Memory checker using valgrind](#memory-checker-using-valgrind)
     - [Usage](#usage)
   - [Authors](#authors)
   - [License](#license)
@@ -17,20 +19,38 @@
 
 ## About
 
-Assembly code optimizer for the *WDC65816* processor produced
-by the *65816 Tiny C Compiler* (`816-tcc`) developed by [@AlekMaul](https://github.com/alekmaul).
+Assembly code optimizer for the **WDC65816** processor produced
+by the *65816 Tiny C Compiler* (`816-tcc`).
 
-This library is a `C` port of the `816-opt` Python tool developed by [@nArnoSNES](https://github.com/arnosnes).
+This library is a `C` port of the `816-opt` Python tool.
 
 ## Getting Started
 
 ### Build it
 
-Just compile it using the `make` command.
+Compile it using the `make` command.
 
 ```
 make
 ```
+### Generate the documentation
+
+Generate the documentation in `doc/html` like this.
+
+```
+make doc
+```
+
+### Memory checker using valgrind
+
+If you want to modify the code, you can use this make command.
+
+```
+make valgrind
+```
+
+It will launch `opt-65816` with **valgrind** and will iterate over the `samples/*.ps` files.
+
 
 ### Usage
 
@@ -58,5 +78,4 @@ This project is released under the GNU Public License.
 
 ## Acknowledgements
 
-- [@nArnoSNES](https://github.com/arnosnes)
-- [@AlekMaul](https://github.com/alekmaul)
+- TODO
