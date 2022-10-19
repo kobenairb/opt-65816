@@ -167,9 +167,9 @@ void OptimizeAsm(char **arr, const size_t u)
 
     size_t doopt;
 
-    // size_t cont;
+    size_t cont;
 
-    // char crem[2][4] = {"inc", "dec"};
+    char crem[2][4] = {"inc", "dec"};
 
     /* some char to handle snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
@@ -398,9 +398,81 @@ void OptimizeAsm(char **arr, const size_t u)
                     opted += 1;
                     continue;
                 }
-
                 /* Convert incs/decs on pregs incs/decs on hwregs */
-                // cont = 0;
+                cont = 0;
+                for (size_t k = 0; k < sizeof(crem) / sizeof(crem[0]); k++)
+                {
+                    snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s", crem[k], r.groups[1]);
+                    if (strcmp(arr[i + 1], snp_buf1) == 0)
+                    {
+                        printf("[CAS 13] %lu: %s\n", i + 1, arr[i + 1]);
+                        /* Store to preg followed by crement on preg */
+                        if (strcmp(arr[i + 2], snp_buf1) == 0 && StartsWith(arr[i + 3], "lda"))
+                        {
+                            printf("[CAS 14] %lu: %s\n", i + 2, arr[i + 2]);
+
+                            /* Store to preg followed by two crements on preg
+                                increment the accu first, then store it to preg */
+                            snprintf(snp_buf1, sizeof(snp_buf1), "%s a", crem[k]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+                            snprintf(snp_buf1, sizeof(snp_buf1), "sta.b tcc__%s", r.groups[1]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+
+                            /* A subsequent load can be omitted (the right value is already in the accu) */
+                            snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
+                            if (strcmp(arr[i + 3], snp_buf1) == 0)
+                            {
+                                printf("[CAS 15] %lu: %s\n", i + 3, arr[i + 3]);
+                                i += 4;
+                            }
+                            else
+                            {
+                                printf("[CAS 16] %lu: %s\n", i, arr[i]);
+                                i += 3;
+                            }
+                            opted += 1;
+                            cont += 1;
+                            break;
+                        }
+                        else if (StartsWith(arr[i + 2], "lda"))
+                        {
+                            printf("[CAS 17] %lu: %s\n", i + 2, arr[i + 2]);
+
+                            snprintf(snp_buf1, sizeof(snp_buf1), "%s a", crem[k]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+                            snprintf(snp_buf1, sizeof(snp_buf1), "sta.b tcc__%s", r.groups[1]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+
+                            snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
+                            if (strcmp(arr[i + 2], snp_buf1) == 0)
+                            {
+                                printf("[CAS 18] %lu: %s\n", i + 2, arr[i + 2]);
+                                i += 3;
+                            }
+                            else
+                            {
+                                printf("[CAS 19] %lu: %s\n", i, arr[i]);
+                                i += 2;
+                            }
+                            opted += 1;
+                            cont += 1;
+                            break;
+                        }
+                    }
+                }
+                if (cont)
+                    continue;
 
                 FreeDynArray(r.groups, r.used);
             }
