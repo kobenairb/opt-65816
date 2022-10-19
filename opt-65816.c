@@ -471,8 +471,34 @@ void OptimizeAsm(char **arr, const size_t u)
                         }
                     }
                 }
+                FreeDynArray(r.groups, r.used);
                 if (cont)
                     continue;
+
+                r = RegMatchGroups(arr[i + 1], "lda.b tcc__([rf][0-9]{0,})", 2);
+                if (r.status == 1)
+                {
+                    printf("[CAS 20] %lu: %s\n", i + 1, arr[i + 1]);
+                    if (StartsWith(arr[i + 2], "and") || StartsWith(arr[i + 2], "ora"))
+                    {
+                        printf("[CAS 21] %lu: %s\n", i + 2, arr[i + 2]);
+                        snprintf(snp_buf1, sizeof(snp_buf1), ".b tcc__%s", r.groups[1]);
+                        /* Store to preg1, load from preg2, and/or preg1 -> store to preg1, and/or preg2 */
+                        if (EndsWith(arr[i + 2], snp_buf1))
+                        {
+                            printf("[CAS 22] %lu: %s\n", i + 2, arr[i + 2]);
+
+                            text_opt[used] = malloc(strlen(arr[i]) + 1);
+                            memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
+                            used += 1;
+                            FreeDynArray(r.groups, r.used);
+
+                            i += 3;
+                            opted += 1;
+                            continue;
+                        }
+                    }
+                }
 
                 FreeDynArray(r.groups, r.used);
             }
