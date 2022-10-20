@@ -7,6 +7,7 @@
 
 /*!
  * @brief POSIX suggests a line length of 4096,
+ * but probably over sized
  */
 #define MAXLEN_LINE 4096
 

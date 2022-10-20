@@ -159,11 +159,7 @@ void OptimizeAsm(char **arr, const size_t u)
     /* optimization pass counter */
     // int opass = 0;
 
-    // regex_t regexd;
-
-    RegDynArray r;
-    // int r1;
-    RegDynArray r1;
+    RegDynArray r, r1;
 
     size_t doopt;
 
@@ -204,6 +200,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     if (r1.status == 1)
                     {
                         printf("[CAS 1] %lu: %s\n", i, arr[j]);
+                        FreeDynArray(r1.groups, r1.used);
                         doopt = 1;
                         break;
                     }
@@ -232,7 +229,6 @@ void OptimizeAsm(char **arr, const size_t u)
                     }
                 }
                 FreeDynArray(r.groups, r.used);
-                FreeDynArray(r1.groups, r1.used);
                 if (doopt)
                 {
                     /* Skip redundant store */
@@ -475,8 +471,8 @@ void OptimizeAsm(char **arr, const size_t u)
                 if (cont)
                     continue;
 
-                r = RegMatchGroups(arr[i + 1], "lda.b tcc__([rf][0-9]{0,})", 2);
-                if (r.status == 1)
+                r1 = RegMatchGroups(arr[i + 1], "lda.b tcc__([rf][0-9]{0,})", 2);
+                if (r1.status == 1)
                 {
                     printf("[CAS 20] %lu: %s\n", i + 1, arr[i + 1]);
                     if (StartsWith(arr[i + 2], "and") || StartsWith(arr[i + 2], "ora"))
@@ -491,16 +487,20 @@ void OptimizeAsm(char **arr, const size_t u)
                             text_opt[used] = malloc(strlen(arr[i]) + 1);
                             memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
                             used += 1;
-                            FreeDynArray(r.groups, r.used);
+                            snprintf(snp_buf1, sizeof(snp_buf1), "%.3s", arr[i + 2]);
+                            snprintf(snp_buf2, sizeof(snp_buf2), "%s.b tcc__%s", snp_buf1, r1.groups[1]);
+                            printf("debug: %s\n", snp_buf2);
+                            text_opt[used] = malloc(strlen(snp_buf2) + 1);
+                            memcpy(text_opt[used], snp_buf2, strlen(snp_buf2) + 1);
+                            used += 1;
 
                             i += 3;
                             opted += 1;
                             continue;
                         }
                     }
+                    FreeDynArray(r1.groups, r1.used);
                 }
-
-                FreeDynArray(r.groups, r.used);
             }
         }
         i++;
