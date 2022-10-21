@@ -555,7 +555,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       ASM Optimization           */
     /* -------------------------------- */
-    // OptimizeAsm(file.arr, file.used);
+    OptimizeAsm(file.arr, file.used);
 
     /* -------------------------------- */
     /*       Free pointers              */
