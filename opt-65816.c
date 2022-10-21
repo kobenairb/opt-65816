@@ -136,7 +136,8 @@ DynArray StoreBss(char **arr, const size_t n)
         if (!StartsWith(arr[i], BSS_START) && bss_on)
         {
             bss[used] = malloc(strlen(arr[i]) + 1);
-            memcpy(bss[used], strtok_r(arr[i], " ", &saveptr), strlen(arr[i]) + 1);
+            memcpy(bss[used], arr[i], strlen(arr[i]) + 1);
+            strtok_r(bss[used], " ", &saveptr);
             used += 1;
         }
     }
@@ -487,11 +488,9 @@ void OptimizeAsm(char **arr, const size_t u)
                             text_opt[used] = malloc(strlen(arr[i]) + 1);
                             memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
                             used += 1;
-                            snprintf(snp_buf1, sizeof(snp_buf1), "%.3s", arr[i + 2]);
-                            snprintf(snp_buf2, sizeof(snp_buf2), "%s.b tcc__%s", snp_buf1, r1.groups[1]);
-                            printf("debug: %s\n", snp_buf2);
-                            text_opt[used] = malloc(strlen(snp_buf2) + 1);
-                            memcpy(text_opt[used], snp_buf2, strlen(snp_buf2) + 1);
+                            snprintf(snp_buf1, sizeof(snp_buf1), "%.3s.b tcc__%s", arr[i + 2], r1.groups[1]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                             used += 1;
 
                             i += 3;
@@ -542,10 +541,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*      Store BSS instuctions       */
     /* -------------------------------- */
-    /* Too lazy to write a function to copy
-        file.arr. TODO */
-    DynArray tmp = TidyFile(argc, argv);
-    DynArray bss = StoreBss(tmp.arr, file.used);
+    DynArray bss = StoreBss(file.arr, file.used);
 
     if (verbose == 2)
     {
@@ -559,12 +555,11 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       ASM Optimization           */
     /* -------------------------------- */
-    OptimizeAsm(file.arr, file.used);
+    // OptimizeAsm(file.arr, file.used);
 
     /* -------------------------------- */
     /*       Free pointers              */
     /* -------------------------------- */
-    FreeDynArray(tmp.arr, tmp.used);
     FreeDynArray(bss.arr, bss.used);
     FreeDynArray(file.arr, file.used);
 }
