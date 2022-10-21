@@ -40,7 +40,7 @@ make doc
 
 ### Memory checker using valgrind
 
-If you want to modify the code, you can use this make command.
+If you want to modify the code, you can use this make command to test memory leaks.
 
 ```
 make valgrind
