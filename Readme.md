@@ -75,4 +75,8 @@ This project is released under the GNU Public License.
 
 ## Acknowledgements
 
-- TODO
+- Ulrich Hecht
+- Mic_
+- Alekmaul
+
+And all the other contributors that I forget to name.
