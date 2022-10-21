@@ -51,20 +51,20 @@ typedef struct RegDynArray
 } RegDynArray;
 
 /**
- * @brief Enable verbosity if OPT_816_QUIET is set
- * OPT_816_QUIET can be set with the following value:
- * 0, 1 or 2. Or just unset.
- * @return 0 (disable), 1 (normal mode) or 2 (debug mode)
+ * @brief Enable verbosity if OPT_65816_VERBOSE is set
+ * OPT_65816_VERBOSE can be set with the following value:
+ * 0, 1 or 2, or just unset.
+ * @return 0 (disable), 1 (normal) or 2 (debug)
  */
 int verbosity()
 {
-    char *OPT_816_QUIET = getenv("OPT_816_QUIET");
+    char *OPT_65816_VERBOSE = getenv("OPT_65816_VERBOSE");
 
-    if (!OPT_816_QUIET || *OPT_816_QUIET == '0')
+    if (!OPT_65816_VERBOSE || *OPT_65816_VERBOSE == '0')
         return 0;
-    else if (OPT_816_QUIET && *OPT_816_QUIET == '1')
+    else if (*OPT_65816_VERBOSE == '1')
         return 1;
-    else if (OPT_816_QUIET && *OPT_816_QUIET == '2')
+    else if (*OPT_65816_VERBOSE == '2')
         return 2;
     /* Unmaned case, should we exit? */
     return 3;

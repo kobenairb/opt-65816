@@ -202,6 +202,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     {
                         printf("[CAS 1] %lu: %s\n", i, arr[j]);
                         FreeDynArray(r1.groups, r1.used);
+
                         doopt = 1;
                         break;
                     }
@@ -222,7 +223,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     }
                     /* #2 Use as a pointer */
                     snprintf(snp_buf1, sizeof(snp_buf1), "[tcc__%s", r.groups[2]);
-                    snp_buf1[strlen(snp_buf1) - 1] = '\0';
+                    snp_buf1[strlen(snp_buf1) - 1] = '\0'; // Remove the last char
                     if (EndsWith(r.groups[2], "h") && IsInText(arr[j], snp_buf1))
                     {
                         printf("[CAS 4] %lu: %s\n", i, arr[j]);
@@ -254,6 +255,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 2;
@@ -273,6 +275,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 2;
@@ -297,6 +300,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 2;
@@ -319,6 +323,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     memcpy(text_opt[used], arr[i],
                            strlen(arr[i]) + 1); // Keep store
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 2; // Omit load
@@ -337,6 +342,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(arr[i + 1]) + 1);
                     memcpy(text_opt[used], arr[i + 1], strlen(arr[i + 1]) + 1);
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 3; // Omit load
@@ -353,6 +359,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen("pha") + 1);
                     memcpy(text_opt[used], "pha", strlen("pha") + 1);
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 2;
@@ -371,6 +378,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen("pha") + 1);
                     memcpy(text_opt[used], "pha", strlen("pha") + 1);
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 2;
@@ -389,6 +397,7 @@ void OptimizeAsm(char **arr, const size_t u)
                     text_opt[used] = malloc(strlen(arr[i]) + 1);
                     memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
                     used += 1;
+
                     FreeDynArray(r.groups, r.used);
 
                     i += 3;
@@ -434,6 +443,8 @@ void OptimizeAsm(char **arr, const size_t u)
                                 printf("[CAS 16] %lu: %s\n", i, arr[i]);
                                 i += 3;
                             }
+                            FreeDynArray(r.groups, r.used);
+
                             opted += 1;
                             cont += 1;
                             break;
@@ -462,13 +473,15 @@ void OptimizeAsm(char **arr, const size_t u)
                                 printf("[CAS 19] %lu: %s\n", i, arr[i]);
                                 i += 2;
                             }
+
+                            FreeDynArray(r.groups, r.used);
+
                             opted += 1;
                             cont += 1;
                             break;
                         }
                     }
                 }
-                FreeDynArray(r.groups, r.used);
                 if (cont)
                     continue;
 
@@ -492,6 +505,7 @@ void OptimizeAsm(char **arr, const size_t u)
                             text_opt[used] = malloc(strlen(snp_buf1) + 1);
                             memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                             used += 1;
+                            FreeDynArray(r1.groups, r1.used);
 
                             i += 3;
                             opted += 1;
@@ -500,9 +514,35 @@ void OptimizeAsm(char **arr, const size_t u)
                     }
                     FreeDynArray(r1.groups, r1.used);
                 }
+                /* Store to preg, switch to 8 bits, load from preg => skip the load */
+                snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
+                if (strcmp(arr[i + 1], "sep #$20") == 0 &&
+                    strcmp(arr[i + 2], snp_buf1) == 0)
+                {
+                    printf("[CAS 23] %lu: %s\n", i + 2, arr[i + 2]);
+
+                    text_opt[used] = malloc(strlen(arr[i]) + 1);
+                    memcpy(text_opt[used], arr[i], strlen(arr[i]) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen(arr[i + 1]) + 1);
+                    memcpy(text_opt[used], arr[i + 1], strlen(arr[i + 1]) + 1);
+                    used += 1;
+                    FreeDynArray(r.groups, r.used);
+
+                    i += 3; // Skip load
+                    opted += 1;
+                    continue;
+                }
+                FreeDynArray(r.groups, r.used);
             }
         }
         i++;
+    }
+
+    printf("\n\n______________[ASM CODE]_________________\n");
+    for (size_t i = 0; i < used; i++)
+    {
+        printf("%s\n", text_opt[i]);
     }
 
     FreeDynArray(text_opt, used);
