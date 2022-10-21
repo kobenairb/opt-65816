@@ -46,8 +46,7 @@ If you want to modify the code, you can use this make command to test memory lea
 make valgrind
 ```
 
-It will launch `opt-65816` with **valgrind** and will iterate over the `samples/*.ps` files *(
-these ASM files come from the examples available in the [pvsneslib](https://github.com/alekmaul/pvsneslib) project)*.
+It will launch `opt-65816` with **valgrind** and will iterate over the `samples/*.ps` files *(these ASM files come from the examples available in the [pvsneslib](https://github.com/alekmaul/pvsneslib) project)*.
 
 
 ### Usage
