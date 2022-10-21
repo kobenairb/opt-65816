@@ -18,15 +18,15 @@
 /**
  * @struct DynArray
  * @brief Structure to store the return of BssStore and TidyFile.
- * @var DynArray::arr
- * Member 'arr' contains the array of strings.
+ * @var DynArray::text
+ * Member 'text' contains the array of strings.
  * @var DynArray::used
  * Member 'used' contains the number of strings (elements)
  * in the array.
  */
 typedef struct DynArray
 {
-    char **arr;
+    char **text;
     size_t used;
 } DynArray;
 
