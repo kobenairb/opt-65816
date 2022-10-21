@@ -2,8 +2,8 @@
  * opt-65816 - Assembly code optimizer for WDC65816.
  *
  * Description: Assembly code optimizer for the WDC65816 processor produced
- * by the 65816 Tiny C Compiler (816-tcc) developed by AlekMaul.
- * This library is a C port of the 816-opt python tool developed by nArnoSNES.
+ * by the 65816 Tiny C Compiler (816-tcc).
+ * This library is a C port of the 816-opt python tool.
  *
  * Author: kobenairb (kobenairb@gmail.com).
  *
