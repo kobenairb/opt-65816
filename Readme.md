@@ -16,10 +16,9 @@
 
 ## About
 
-Assembly code optimizer for the **WDC 65816** processor produced
-by the `816-tcc` *(65816 Tiny C Compiler)*.
+Assembly code optimizer for the [WDC 65816](https://en.wikipedia.org/wiki/WDC_65C816) processor produced by the [816-tcc](https://github.com/alekmaul/tcc) *(65816 Tiny C Compiler)*.
 
-This library is a **C** port of the `816-opt` Python tool.
+This project is a **C** port of the `816-opt` Python tool.
 
 ## Getting Started
 
