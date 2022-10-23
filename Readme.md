@@ -79,8 +79,8 @@ The main contributors of the `816-opt` python tool:
 
 - Ulrich Hecht
 - Mic_
-- Alekmaul
+- @Alekmaul
 
 And all the other contributors that I forget to name.
 
-- Ianmackinnon for allowing me to understand how groups work with the **regex.h** library ([match.c](https://gist.github.com/ianmackinnon/3294587)).
+- @Ianmackinnon for allowing me to understand how groups work with the **regex.h** library ([match.c](https://gist.github.com/ianmackinnon/3294587)).
