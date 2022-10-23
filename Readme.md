@@ -16,10 +16,10 @@
 
 ## About
 
-Assembly code optimizer for the **WDC65816** processor produced
-by the *65816 Tiny C Compiler* (`816-tcc`).
+Assembly code optimizer for the **WDC 65816** processor produced
+by the `816-tcc` *(65816 Tiny C Compiler)*.
 
-This library is a `C` port of the `816-opt` Python tool.
+This library is a **C** port of the `816-opt` Python tool.
 
 ## Getting Started
 
@@ -40,7 +40,7 @@ make doc
 
 ### Memory checker using valgrind
 
-If you want to modify the code, you can use this make command to test memory leaks.
+If you want to modify the code, you can use the following `make` command to test memory leaks.
 
 ```
 make valgrind
@@ -76,10 +76,11 @@ This project is released under the GNU Public License.
 ## Acknowledgements
 
 The main contributors of the `816-opt` python tool:
+
 - Ulrich Hecht
 - Mic_
 - Alekmaul
 
 And all the other contributors that I forget to name.
 
-
+- Ianmackinnon for allowing me to understand how groups work with the **regex.h** library ([match.c](https://gist.github.com/ianmackinnon/3294587)).
