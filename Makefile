@@ -15,12 +15,14 @@ $(BIN): $(OBJ)
 
 valgrind: all
 	for file in $$(ls -1 samples/*); do \
+	    echo "$$file"; \
 	    valgrind --quiet \
 		    --leak-check=full \
 		    --track-origins=yes \
 		    --exit-on-first-error=yes \
 		    --error-exitcode=1 \
-		    ./opt-65816 $${file}; \
+		    ./opt-65816 $${file} >/dev/null; \
+		    [ $$? -eq 0 ] || exit $$?; \
 	done
 
 doc:

@@ -1,0 +1,30 @@
+{
+    "version": 4,
+    "env": {
+        "opt-816": [
+            "${workspaceFolder}"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "opt-816",
+            "compilerArgs": [
+                "-Wall",
+                "-Wextra",
+                "-O2",
+                "-g"
+            ],
+            "includePath": [
+                "${opt-816}"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "",
+                "path": [
+                    "${opt-816}"
+                ]
+            },
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ]
+}

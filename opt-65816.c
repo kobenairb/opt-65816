@@ -1,8 +1,8 @@
 /*
- * opt-65816 - Assembly code optimizer for WDC65816.
+ * opt-65816 - Assembly code optimizer for the WDC65816 processor.
  *
- * Description: Assembly code optimizer for the WDC65816 processor produced
- * by the 65816 Tiny C Compiler (816-tcc).
+ * Description: Assembly code optimizer produced
+ * by the 816 Tiny C Compiler (816-tcc).
  * This library is a C port of the 816-opt python tool.
  *
  * Author: kobenairb (kobenairb@gmail.com).
@@ -114,6 +114,7 @@ DynArray StoreBss(char **text, const size_t n)
     size_t used = 0;
     size_t bss_on = 0;
     size_t nptrs = n;
+    size_t len;
 
     if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
     {
@@ -135,8 +136,9 @@ DynArray StoreBss(char **text, const size_t n)
         }
         if (!StartsWith(text[i], BSS_START) && bss_on)
         {
-            bss[used] = malloc(strlen(text[i]) + 1);
-            memcpy(bss[used], text[i], strlen(text[i]) + 1);
+            len = strlen(text[i]);
+            bss[used] = malloc(len + 1);
+            memcpy(bss[used], text[i], len + 1);
             strtok_r(bss[used], " ", &saveptr);
             used += 1;
         }
@@ -191,7 +193,7 @@ void OptimizeAsm(char **text, const size_t n)
         {
             /* eliminate redundant stores */
             r = RegMatchGroups(text[i], STORE_AXYZ_TO_PSEUDO, 3);
-            if (r.status == 1)
+            if (r.status)
             {
                 doopt = 0;
                 for (size_t j = (i + 1); j < (size_t)FindMin(n, (i + 30)); j++)
@@ -241,7 +243,7 @@ void OptimizeAsm(char **text, const size_t n)
             }
             /* Stores (x/y) to pseudo-registers */
             r = RegMatchGroups(text[i], STORE_XY_TO_PSEUDO, 3);
-            if (r.status == 1)
+            if (r.status)
             {
                 /* Store hwreg to preg, push preg,
                     function call -> push hwreg, function call */
@@ -311,7 +313,7 @@ void OptimizeAsm(char **text, const size_t n)
             }
             /* Stores (accu only) to pseudo-registers */
             r = RegMatchGroups(text[i], STORE_A_TO_PSEUDO, 2);
-            if (r.status == 1)
+            if (r.status)
             {
                 /* Store preg followed by load preg */
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
@@ -488,7 +490,7 @@ void OptimizeAsm(char **text, const size_t n)
                     continue;
 
                 r1 = RegMatchGroups(text[i + 1], "lda.b tcc__([rf][0-9]{0,})", 2);
-                if (r1.status == 1)
+                if (r1.status)
                 {
                     printf("[CAS 20] %lu: %s\n", i + 1, text[i + 1]);
                     if (StartsWith(text[i + 2], "and") || StartsWith(text[i + 2], "ora"))
@@ -507,6 +509,8 @@ void OptimizeAsm(char **text, const size_t n)
                             text_opt[used] = malloc(strlen(snp_buf1) + 1);
                             memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                             used += 1;
+
+                            FreeDynArray(r.groups, r.used);
                             FreeDynArray(r1.groups, r1.used);
 
                             i += 3;
@@ -516,6 +520,7 @@ void OptimizeAsm(char **text, const size_t n)
                     }
                     FreeDynArray(r1.groups, r1.used);
                 }
+
                 /* Store to preg, switch to 8 bits, load from preg => skip the load */
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
                 if (strcmp(text[i + 1], "sep #$20") == 0 &&
@@ -538,8 +543,8 @@ void OptimizeAsm(char **text, const size_t n)
 
                 /* Two stores to preg without control flow or other uses of preg => skip first store */
                 snprintf(snp_buf1, sizeof(snp_buf1), "tcc__%s", r.groups[1]);
-                if (IsControl(text[i + 1]) == 0 &&
-                    IsInText(text[i + 1], snp_buf1) == 0)
+                if (!IsControl(text[i + 1]) &&
+                    !IsInText(text[i + 1], snp_buf1))
                 {
                     printf("[CAS 24] %lu: %s\n", i + 1, text[i + 1]);
                     if (strcmp(text[i + 2], text[i]) == 0)
@@ -556,6 +561,60 @@ void OptimizeAsm(char **text, const size_t n)
                         FreeDynArray(r.groups, r.used);
 
                         i += 3; // Skip first store
+                        opted += 1;
+                        continue;
+                    }
+                }
+
+                /* Store hwreg to preg, load hwreg from preg -> store hwreg to preg,
+                    transfer hwreg/hwreg (shorter) */
+                snprintf(snp_buf1, sizeof(snp_buf1), "ld([xy]).b tcc__%s", r.groups[1]);
+                r1 = RegMatchGroups(text[i + 1], snp_buf1, 2);
+                if (r1.status)
+                {
+
+                    printf("[CAS 26] %lu: %s\n", i + 1, text[i + 1]);
+
+                    text_opt[used] = malloc(strlen(text[i]) + 1);
+                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
+                    used += 1;
+                    snprintf(snp_buf1, sizeof(snp_buf1), "ta%s", r1.groups[1]);
+                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                    used += 1;
+
+                    FreeDynArray(r.groups, r.used);
+                    FreeDynArray(r1.groups, r1.used);
+
+                    i += 2;
+                    opted += 1;
+                    continue;
+                }
+
+                /* Store accu to preg then load accu from preg,
+                    with something in-between that does not alter */
+                snprintf(snp_buf1, sizeof(snp_buf1), "tcc__%s", r.groups[1]);
+                if (!(IsControl(text[i + 1]) ||
+                      ChangesAccu(text[i + 1]) ||
+                      IsInText(text[i + 1], snp_buf1)))
+                {
+                    printf("[CAS 27] %lu: %s\n", i + 1, text[i + 1]);
+
+                    snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s", r.groups[1]);
+                    if (strcmp(text[i + 2], snp_buf1) == 0)
+                    {
+                        printf("[CAS 28] %lu: %s\n", i + 1, text[i + 1]);
+
+                        text_opt[used] = malloc(strlen(text[i]) + 1);
+                        memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
+                        used += 1;
+                        text_opt[used] = malloc(strlen(text[i + 1]) + 1);
+                        memcpy(text_opt[used], text[i + 1], strlen(text[i + 1]) + 1);
+                        used += 1;
+
+                        FreeDynArray(r.groups, r.used);
+
+                        i += 3; // Skip load
                         opted += 1;
                         continue;
                     }

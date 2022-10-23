@@ -226,6 +226,7 @@ RegDynArray RegMatchGroups(char *source, char *regex, const size_t maxGroups)
     size_t used = 0;
     char *cursor = source;
     char **groups = NULL;
+    size_t len;
 
     int re = regcomp(&regexCompiled, regex, REG_EXTENDED);
 
@@ -259,10 +260,12 @@ RegDynArray RegMatchGroups(char *source, char *regex, const size_t maxGroups)
             strcpy(cursorCopy, cursor);
             cursorCopy[groupArray[g].rm_eo] = 0;
 
+            len = strlen(cursorCopy + groupArray[g].rm_so);
+
             /* allocate storage for line */
-            (groups[used] = malloc(strlen(cursorCopy + groupArray[g].rm_so) + 1));
-            memcpy(groups[used], cursorCopy + groupArray[g].rm_so, strlen(cursorCopy + groupArray[g].rm_so) + 1);
-            ++used;
+            groups[used] = malloc(len + 1);
+            memcpy(groups[used], cursorCopy + groupArray[g].rm_so, len + 1);
+            used += 1;
         }
 
         regfree(&regexCompiled);

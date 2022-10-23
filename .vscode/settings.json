@@ -94,5 +94,6 @@
     },
     "files.trimTrailingWhitespace": true,
     "python.languageServer": "Pylance",
-    "terminal.integrated.fontSize": 14
+    "terminal.integrated.fontSize": 14,
+    "makefile.ignoreDirectoryCommands": false
 }

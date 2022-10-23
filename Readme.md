@@ -75,8 +75,11 @@ This project is released under the GNU Public License.
 
 ## Acknowledgements
 
+The main contributors of the `816-opt` python tool:
 - Ulrich Hecht
 - Mic_
 - Alekmaul
 
 And all the other contributors that I forget to name.
+
+
