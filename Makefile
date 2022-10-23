@@ -14,15 +14,20 @@ $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 valgrind: all
-	for file in $$(ls -1 samples/*); do \
-	    echo "$$file"; \
+	@for file in $$(ls -1 samples/*); do \
+	    echo -n "Optimizing $$file "; \
 	    valgrind --quiet \
 		    --leak-check=full \
 		    --track-origins=yes \
 		    --exit-on-first-error=yes \
 		    --error-exitcode=1 \
 		    ./opt-65816 $${file} >/dev/null; \
-		    [ $$? -eq 0 ] || exit $$?; \
+		if [[ $$? -eq 0 ]]; then \
+		    echo "[OK]"; \
+		else \
+		    echo "[KO]"; \
+		    exit $$?; \
+		fi \
 	done
 
 doc:
