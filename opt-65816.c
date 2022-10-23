@@ -26,7 +26,6 @@
 #endif
 
 #include "opt-65816.h"
-#include "libopt-65816.c"
 
 /**
  * @brief Create an array of strings from a file
