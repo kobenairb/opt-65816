@@ -1,9 +1,9 @@
-# Assembly code Optimizer for WDC65816
+# Assembly code Optimizer for the WDC 65816
 
 > **[WIP]** Don't use it please!
 
 
-- [Assembly code Optimizer for WDC65816](#assembly-code-optimizer-for-wdc65816)
+- [Assembly code Optimizer for the WDC 65816](#assembly-code-optimizer-for-the-wdc-65816)
   - [About](#about)
   - [Getting Started](#getting-started)
     - [Build it](#build-it)
