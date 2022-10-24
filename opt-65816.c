@@ -1,5 +1,5 @@
 /*
- * opt-65816 - Assembly code optimizer for the WDC65816 processor.
+ * opt-65816 - Assembly code optimizer for the WDC 65816 processor.
  *
  * Description: Assembly code optimizer produced
  * by the 816 Tiny C Compiler (816-tcc).
@@ -154,11 +154,11 @@ DynArray StoreBss(char **text, const size_t n)
  */
 void OptimizeAsm(char **text, const size_t n)
 {
-    /* total number of optimizations performed */
+    /* Total number of optimizations performed */
     // int totalopt = 0;
-    /* have we OptimizeAsmd in this pass */
+    /* Have we OptimizeAsmd in this pass */
     int opted = -1;
-    /* optimization pass counter */
+    /* Optimization pass counter */
     // int opass = 0;
 
     RegDynArray r, r1;
@@ -169,7 +169,7 @@ void OptimizeAsm(char **text, const size_t n)
 
     char crem[2][4] = {"inc", "dec"};
 
-    /* some char to handle snprintf buffers */
+    /* Some char to handle snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
         snp_buf2[MAXLEN_LINE];
 
@@ -616,6 +616,42 @@ void OptimizeAsm(char **text, const size_t n)
                         i += 3; // Skip load
                         opted += 1;
                         continue;
+                    }
+                }
+
+                /* Store preg1, clc, load preg2,
+                    add preg1 -> store preg1, clc, add preg2 */
+                if (strcmp(text[i + 1], "clc") == 0)
+                {
+                    printf("[CAS 29] %lu: %s\n", i + 1, text[i + 1]);
+
+                    r1 = RegMatchGroups(text[i + 2], "lda.b tcc__(r[0-9]{0,})", 2);
+                    if (r1.status)
+                    {
+                        snprintf(snp_buf1, sizeof(snp_buf1), "adc.b tcc__%s", r.groups[1]);
+                        if (strcmp(text[i + 3], snp_buf1) == 0)
+                        {
+                            printf("[CAS 30] %lu: %s\n", i + 3, text[i + 3]);
+
+                            text_opt[used] = malloc(strlen(text[i]) + 1);
+                            memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
+                            used += 1;
+                            text_opt[used] = malloc(strlen(text[i + 1]) + 1);
+                            memcpy(text_opt[used], text[i + 1], strlen(text[i + 1]) + 1);
+                            used += 1;
+                            snprintf(snp_buf1, sizeof(snp_buf1), "adc.b tcc__%s", r1.groups[1]);
+                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                            memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                            used += 1;
+
+                            FreeDynArray(r.groups, r.used);
+                            FreeDynArray(r1.groups, r1.used);
+
+                            i += 4; // Skip load
+                            opted += 1;
+                            continue;
+                        }
+                        FreeDynArray(r1.groups, r1.used);
                     }
                 }
 

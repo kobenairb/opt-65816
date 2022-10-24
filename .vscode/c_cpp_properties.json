@@ -2,7 +2,7 @@
     "version": 4,
     "env": {
         "opt-816": [
-            "${workspaceFolder}"
+            "${workspaceFolder}/**"
         ]
     },
     "configurations": [
