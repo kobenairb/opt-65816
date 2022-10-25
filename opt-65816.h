@@ -329,6 +329,29 @@ char *StrSlice(char *str, int slice_from, int slice_to)
 }
 
 /**
+ * @brief Replace a substring in string by another substring.
+ * @param str The string.
+ * @param orig The substring to replace.
+ * @param rep The substring to replace with.
+ * @return The modified string.
+ */
+char *ReplaceStr(char *str, char *orig, char *rep)
+{
+    static char buffer[4096];
+    char *p;
+
+    if (!(p = strstr(str, orig)))
+        return str;
+
+    strncpy(buffer, str, p - str);
+    buffer[p - str] = '\0';
+
+    sprintf(buffer + (p - str), "%s%s", rep, p + strlen(orig));
+
+    return buffer;
+}
+
+/**
  * @brief Wrapper to match groups with regex.
  * @param source The string.
  * @param regex The POSIX regex.

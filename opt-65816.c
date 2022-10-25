@@ -494,7 +494,8 @@ void OptimizeAsm(char **text, const size_t n)
                 if (r1.status)
                 {
                     printf("[CAS 20] %lu: %s\n", i + 1, text[i + 1]);
-                    if (StartsWith(text[i + 2], "and") || StartsWith(text[i + 2], "ora"))
+                    if (StringsMatch(StrSlice(text[i + 2], 0, 3), "and") ||
+                        StringsMatch(StrSlice(text[i + 2], 0, 3), "ora"))
                     {
                         printf("[CAS 21] %lu: %s\n", i + 2, text[i + 2]);
                         snprintf(snp_buf1, sizeof(snp_buf1), ".b tcc__%s", r.groups[1]);
@@ -506,7 +507,8 @@ void OptimizeAsm(char **text, const size_t n)
                             text_opt[used] = malloc(strlen(text[i]) + 1);
                             memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
                             used += 1;
-                            snprintf(snp_buf1, sizeof(snp_buf1), "%.3s.b tcc__%s", text[i + 2], r1.groups[1]);
+                            snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
+                                     StrSlice(text[i + 2], 0, 3), r1.groups[1]);
                             text_opt[used] = malloc(strlen(snp_buf1) + 1);
                             memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                             used += 1;
@@ -701,7 +703,18 @@ void OptimizeAsm(char **text, const size_t n)
                 }
                 FreeDynArray(r.groups, r.used);
             }
-        }
+        } // End of StartsWith(text[i], "st")
+
+        if (StartsWith(text[i], "ld"))
+        {
+            r = RegMatchGroups(text[i], "ldx #0", 1);
+            if (r.status)
+            {
+                r1 = RegMatchGroups(text[i], "lda.l (.{0,}),x$", 2);
+                FreeDynArray(r.groups, r.used);
+            }
+        } // End of StartsWith(text[i], "ld")
+
         i++;
     }
 
