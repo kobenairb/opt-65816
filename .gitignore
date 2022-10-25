@@ -10,3 +10,4 @@ tests
 Doxyfile
 doc/**
 816-opt.py
+test.sh

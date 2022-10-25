@@ -127,31 +127,45 @@ void FreeDynArray(char **p, size_t n)
 }
 
 /**
- * @brief Check if the source string starts with the pattern string.
- * @param source Source string.
- * @param pattern Pattern string.
+ * @brief Check if two strings are identical.
+ * @param str1 Source string.
+ * @param str2 Pattern string.
  * @return 1 (true) or 0 (false).
  */
-int StartsWith(const char *source, const char *pattern)
+int StringsMatch(const char *str1, const char *str2)
 {
-    if (strncmp(source, pattern, strlen(pattern)) == 0)
+    if (strcmp(str1, str2) == 0)
         return 1;
 
     return 0;
 }
 
 /**
- * @brief Check if the source string ends with the pattern string.
+ * @brief Check if the source string starts with the prefix string.
  * @param source Source string.
- * @param pattern Pattern string.
+ * @param prefix Pattern string.
  * @return 1 (true) or 0 (false).
  */
-int EndsWith(const char *source, const char *pattern)
+int StartsWith(const char *source, const char *prefix)
+{
+    if (strncmp(source, prefix, strlen(prefix)) == 0)
+        return 1;
+
+    return 0;
+}
+
+/**
+ * @brief Check if the source string ends with the prefix string.
+ * @param source Source string.
+ * @param prefix Pattern string.
+ * @return 1 (true) or 0 (false).
+ */
+int EndsWith(const char *source, const char *prefix)
 {
     size_t slen = strlen(source);
-    size_t plen = strlen(pattern);
+    size_t plen = strlen(prefix);
 
-    if (strcmp(source + slen - plen, pattern) == 0)
+    if (strncmp(source + slen - plen, prefix, plen) == 0)
         return 1;
     return 0;
 }
@@ -255,6 +269,66 @@ int IsControl(const char *a)
 }
 
 /**
+ * @brief Extracts a selection of string.
+ * It supports both negative and positive indexes.
+ * @param str The string.
+ * @param slice_from Starting position (index).
+ * @param slice_to Ending position (index).
+ * @return A new string or NULL.
+ */
+char *StrSlice(char *str, int slice_from, int slice_to)
+{
+    /*
+        From Padymko: https://stackoverflow.com/a/42283266
+    */
+
+    // if a string is empty, returns nothing
+    if (str[0] == '\0')
+        return NULL;
+
+    char *buffer;
+    size_t str_len, buffer_len;
+
+    // for negative indexes "slice_from" must be less "slice_to"
+    if (slice_to < 0 && slice_from < slice_to)
+    {
+        str_len = strlen(str);
+
+        // if "slice_to" goes beyond permissible limits
+        if (abs(slice_to) > str_len - 1)
+            return NULL;
+
+        // if "slice_from" goes beyond permissible limits
+        if (abs(slice_from) > str_len)
+            slice_from = (-1) * str_len;
+
+        buffer_len = slice_to - slice_from;
+        str += (str_len + slice_from);
+
+        // for positive indexes "slice_from" must be more "slice_to"
+    }
+    else if (slice_from >= 0 && slice_to > slice_from)
+    {
+        str_len = strlen(str);
+
+        // if "slice_from" goes beyond permissible limits
+        if (slice_from > (int)str_len - 1)
+            return NULL;
+
+        buffer_len = slice_to - slice_from;
+        str += slice_from;
+
+        // otherwise, returns NULL
+    }
+    else
+        return NULL;
+
+    buffer = calloc(buffer_len, sizeof(char));
+    strncpy(buffer, str, buffer_len);
+    return buffer;
+}
+
+/**
  * @brief Wrapper to match groups with regex.
  * @param source The string.
  * @param regex The POSIX regex.
@@ -264,8 +338,7 @@ int IsControl(const char *a)
 RegDynArray RegMatchGroups(char *source, char *regex, const size_t maxGroups)
 {
     /*
-        All credits to ianmackinnon
-        (https://gist.github.com/ianmackinnon/3294587)
+        From Ianmackinnon https://gist.github.com/ianmackinnon/3294587
     */
 
     regex_t regexCompiled;
