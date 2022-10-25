@@ -323,8 +323,8 @@ char *StrSlice(char *str, int slice_from, int slice_to)
     else
         return NULL;
 
-    buffer = calloc(buffer_len, sizeof(char));
-    strncpy(buffer, str, buffer_len);
+    buffer = calloc(buffer_len + 1, sizeof(char));
+    strncpy(buffer, str, buffer_len + 1);
     return buffer;
 }
 
