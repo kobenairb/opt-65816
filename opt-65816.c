@@ -382,8 +382,8 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 11] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                    memcpy(text_opt[used], text[i + 1], strlen(text[i + 1]) + 1);
+                    text_opt[used] = malloc(strlen(text[i]) + 1);
+                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
                     used += 1;
                     text_opt[used] = malloc(strlen("pha") + 1);
                     memcpy(text_opt[used], "pha", strlen("pha") + 1);
@@ -407,6 +407,9 @@ void OptimizeAsm(char **text, const size_t n)
                     used += 1;
                     text_opt[used] = malloc(strlen(text[i]) + 1);
                     memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen("pha") + 1);
+                    memcpy(text_opt[used], "pha", strlen("pha") + 1);
                     used += 1;
 
                     FreeDynArray(r.groups, r.used);
@@ -518,8 +521,8 @@ void OptimizeAsm(char **text, const size_t n)
                     {
                         printf("[CAS 21] %lu: %s\n", i + 2, text[i + 2]);
 
-                        snprintf(snp_buf1, sizeof(snp_buf1), ".b tcc__%s", r.groups[1]);
                         /* Store to preg1, load from preg2, and/or preg1 -> store to preg1, and/or preg2 */
+                        snprintf(snp_buf1, sizeof(snp_buf1), ".b tcc__%s", r.groups[1]);
                         if (EndsWith(text[i + 2], snp_buf1))
                         {
 
@@ -528,7 +531,6 @@ void OptimizeAsm(char **text, const size_t n)
                             text_opt[used] = malloc(strlen(text[i]) + 1);
                             memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
                             used += 1;
-                            ss_buffer = StrSlice(text[i + 2], 0, 3);
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
                                      ss_buffer, r1.groups[1]);
                             text_opt[used] = malloc(strlen(snp_buf1) + 1);
@@ -739,14 +741,56 @@ void OptimizeAsm(char **text, const size_t n)
 
         if (StartsWith(text[i], "ld"))
         {
+
+            printf("[CAS 33] %lu: %s\n", i, text[i]);
+
             r = RegMatchGroups(text[i], "ldx #0", 1);
             if (r.status)
             {
+                printf("[CAS 34] %lu: %s\n", i, text[i]);
+
                 r1 = RegMatchGroups(text[i], "lda.l (.{0,}),x$", 2);
-                if (r1.status)
+                if (r1.status && !EndsWith(text[i + 3], ",x"))
                 {
+
+                    printf("[CAS 35] %lu: %s\n", i + 3, text[i + 3]);
+
+                    snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s", r1.groups[1]);
+                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                    used += 1;
+
                     FreeDynArray(r1.groups, r1.used);
                     FreeDynArray(r.groups, r.used);
+
+                    i += 2;
+                    opted += 1;
+                    continue;
+                }
+                else if (r1.status)
+                {
+
+                    printf("[CAS 36] %lu: %s\n", i, text[i]);
+
+                    snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s", r1.groups[1]);
+                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
+                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen(text[i + 2]) + 1);
+                    memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen(ReplaceStr(text[i + 3], ",x", "")) + 1);
+                    memcpy(text_opt[used],
+                           ReplaceStr(text[i + 3], ",x", ""),
+                           strlen(ReplaceStr(text[i + 3], ",x", "")) + 1);
+                    used += 1;
+
+                    FreeDynArray(r1.groups, r1.used);
+                    FreeDynArray(r.groups, r.used);
+
+                    i += 4;
+                    opted += 1;
+                    continue;
                 }
 
                 FreeDynArray(r.groups, r.used);

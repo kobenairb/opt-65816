@@ -287,7 +287,7 @@ char *StrSlice(char *str, int slice_from, int slice_to)
         return NULL;
 
     char *buffer;
-    size_t str_len, buffer_len;
+    int str_len, buffer_len;
 
     // for negative indexes "slice_from" must be less "slice_to"
     if (slice_to < 0 && slice_from < slice_to)
@@ -312,7 +312,7 @@ char *StrSlice(char *str, int slice_from, int slice_to)
         str_len = strlen(str);
 
         // if "slice_from" goes beyond permissible limits
-        if (slice_from > (int)str_len - 1)
+        if (slice_from > str_len - 1)
             return NULL;
 
         buffer_len = slice_to - slice_from;
@@ -323,8 +323,8 @@ char *StrSlice(char *str, int slice_from, int slice_to)
     else
         return NULL;
 
-    buffer = calloc(buffer_len + 1, sizeof(char));
-    strncpy(buffer, str, buffer_len + 1);
+    buffer = calloc(buffer_len, sizeof(char) + 1);
+    strncpy(buffer, str, buffer_len);
     return buffer;
 }
 
@@ -337,7 +337,7 @@ char *StrSlice(char *str, int slice_from, int slice_to)
  */
 char *ReplaceStr(char *str, char *orig, char *rep)
 {
-    static char buffer[4096];
+    static char buffer[MAXLEN_LINE];
     char *p;
 
     if (!(p = strstr(str, orig)))

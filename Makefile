@@ -14,7 +14,7 @@ $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 valgrind: all
-	@for file in $$(ls -1 samples/*); do \
+	@for file in samples/*.ps; do \
 	    echo -n "Optimizing $$file "; \
 	    valgrind --quiet \
 		    --leak-check=full \
