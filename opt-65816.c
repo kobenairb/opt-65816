@@ -37,10 +37,10 @@
  */
 DynArray TidyFile(const int argc, char** argv)
 {
-    char buf[MAXLEN_LINE];
+    char   buf[MAXLEN_LINE];
     char** lines = NULL;
     size_t nptrs = 1;
-    size_t used = 0;
+    size_t used  = 0;
     size_t len;
 
     if (argc > 2)
@@ -108,11 +108,11 @@ DynArray TidyFile(const int argc, char** argv)
 DynArray StoreBss(char** text, const size_t n)
 {
     char** bss = NULL;
-    char* saveptr;
+    char*  saveptr;
 
-    size_t used = 0;
+    size_t used   = 0;
     size_t bss_on = 0;
-    size_t nptrs = n;
+    size_t nptrs  = n;
     size_t len;
 
     if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
@@ -135,7 +135,7 @@ DynArray StoreBss(char** text, const size_t n)
         }
         if (!StringsMatch(text[i], BSS_START) && bss_on)
         {
-            len = strlen(text[i]);
+            len       = strlen(text[i]);
             bss[used] = malloc(len + 1);
             memcpy(bss[used], text[i], len + 1);
             strtok_r(bss[used], " ", &saveptr);
@@ -177,8 +177,8 @@ void OptimizeAsm(char** text, const size_t n)
 
     /* Manage pointers */
     char** text_opt = NULL;
-    size_t used = 0;
-    size_t nptrs = n;
+    size_t used     = 0;
+    size_t nptrs    = n;
 
     if ((text_opt = malloc(nptrs * sizeof *text_opt)) == NULL)
     {
