@@ -123,17 +123,17 @@ DynArray StoreBss(char** text, const size_t n)
 
     for (size_t i = 0; i < n; i++)
     {
-        if (StringsMatch(text[i], BSS_START))
+        if (StringMatchs(text[i], BSS_START))
         {
             bss_on = 1;
             continue;
         }
-        if (StringsMatch(text[i], BSS_END) && bss_on)
+        if (StringMatchs(text[i], BSS_END) && bss_on)
         {
             bss_on = 0;
             continue;
         }
-        if (!StringsMatch(text[i], BSS_START) && bss_on)
+        if (!StringMatchs(text[i], BSS_START) && bss_on)
         {
             len       = strlen(text[i]);
             bss[used] = malloc(len + 1);
@@ -169,11 +169,16 @@ void OptimizeAsm(char** text, const size_t n)
 
     char crem[2][4] = { "inc", "dec" };
 
-    /* Some char to handle snprintf buffers */
-    char snp_buf1[MAXLEN_LINE], snp_buf2[MAXLEN_LINE];
+    /* Store snprintf buffers */
+    char snp_buf1[MAXLEN_LINE],
+        snp_buf2[MAXLEN_LINE];
 
-    /* Store StrSlice buffer */
-    char *ss_buffer1, *ss_buffer2;
+    /* Store StrSlice */
+    char *ss_buffer1,
+        *ss_buffer2;
+
+    /* Store ReplaceStr */
+    char* rs_buffer1;
 
     /* Manage pointers */
     char** text_opt = NULL;
@@ -260,7 +265,7 @@ void OptimizeAsm(char** text, const size_t n)
                     function call -> push hwreg, function call */
                 snprintf(snp_buf1, sizeof(snp_buf1), "pei (tcc__%s)",
                          r.groups[2]);
-                if (StringsMatch(text[i + 1], snp_buf1)
+                if (StringMatchs(text[i + 1], snp_buf1)
                     && StartsWith(text[i + 2], "jsr.l "))
                 {
                     printf("[CAS 5] %lu: %s\n", i + 1, text[i + 1]);
@@ -278,7 +283,7 @@ void OptimizeAsm(char** text, const size_t n)
                 }
                 /* Store hwreg to preg, push preg -> store hwreg to preg,
                     push hwreg (shorter) */
-                if (StringsMatch(text[i + 1], snp_buf1))
+                if (StringMatchs(text[i + 1], snp_buf1))
                 {
                     printf("[CAS 6] %lu: %s\n", i + 1, text[i + 1]);
 
@@ -302,8 +307,8 @@ void OptimizeAsm(char** text, const size_t n)
                          r.groups[2]);
                 snprintf(snp_buf2, sizeof(snp_buf2),
                          "lda.b tcc__%s ; DON'T OPTIMIZE", r.groups[2]);
-                if (StringsMatch(text[i + 1], snp_buf1)
-                    || StringsMatch(text[i + 1], snp_buf2))
+                if (StringMatchs(text[i + 1], snp_buf1)
+                    || StringMatchs(text[i + 1], snp_buf2))
                 {
                     printf("[CAS 7] %lu: %s\n", i + 1, text[i + 1]);
 
@@ -332,7 +337,7 @@ void OptimizeAsm(char** text, const size_t n)
                 /* Store preg followed by load preg */
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s",
                          r.groups[1]);
-                if (StringsMatch(text[i + 1], snp_buf1))
+                if (StringMatchs(text[i + 1], snp_buf1))
                 {
                     printf("[CAS 8] %lu: %s\n", i + 1, text[i + 1]);
 
@@ -350,7 +355,7 @@ void OptimizeAsm(char** text, const size_t n)
                 /* Store preg followed by load preg with ldx/ldy in between */
                 if ((StartsWith(text[i + 1], "ldx")
                      || StartsWith(text[i + 1], "ldy"))
-                    && StringsMatch(text[i + 2], snp_buf1))
+                    && StringMatchs(text[i + 2], snp_buf1))
                 {
                     printf("[CAS 9] %lu: %s\n", i + 1, text[i + 1]);
 
@@ -373,7 +378,7 @@ void OptimizeAsm(char** text, const size_t n)
                     function call */
                 snprintf(snp_buf1, sizeof(snp_buf1), "pei (tcc__%s)",
                          r.groups[1]);
-                if (StringsMatch(text[i + 1], snp_buf1)
+                if (StringMatchs(text[i + 1], snp_buf1)
                     && StartsWith(text[i + 2], "jsr.l "))
                 {
                     printf("[CAS 10] %lu: %s\n", i + 1, text[i + 1]);
@@ -390,7 +395,7 @@ void OptimizeAsm(char** text, const size_t n)
                 }
                 /* Store accu to preg, push preg -> store accu to preg,
                     push accu (shorter) */
-                if (StringsMatch(text[i + 1], snp_buf1))
+                if (StringMatchs(text[i + 1], snp_buf1))
                 {
                     printf("[CAS 11] %lu: %s\n", i + 1, text[i + 1]);
 
@@ -410,7 +415,7 @@ void OptimizeAsm(char** text, const size_t n)
                 /* Store accu to preg1, push preg2, push preg1 -> store accu to
                    preg1, push preg2, push accu */
                 else if (StartsWith(text[i + 1], "pei ")
-                         && StringsMatch(text[i + 2], snp_buf1))
+                         && StringMatchs(text[i + 2], snp_buf1))
                 {
                     printf("[CAS 12] %lu: %s\n", i + 1, text[i + 1]);
 
@@ -437,11 +442,11 @@ void OptimizeAsm(char** text, const size_t n)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
                              crem[k], r.groups[1]);
-                    if (StringsMatch(text[i + 1], snp_buf1))
+                    if (StringMatchs(text[i + 1], snp_buf1))
                     {
                         printf("[CAS 13] %lu: %s\n", i + 1, text[i + 1]);
                         /* Store to preg followed by crement on preg */
-                        if (StringsMatch(text[i + 2], snp_buf1)
+                        if (StringMatchs(text[i + 2], snp_buf1)
                             && StartsWith(text[i + 3], "lda"))
                         {
 
@@ -471,7 +476,7 @@ void OptimizeAsm(char** text, const size_t n)
                              * is already in the accu) */
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "lda.b tcc__%s", r.groups[1]);
-                            if (StringsMatch(text[i + 3], snp_buf1))
+                            if (StringMatchs(text[i + 3], snp_buf1))
                             {
 
                                 printf("[CAS 15] %lu: %s\n", i + 3,
@@ -512,7 +517,7 @@ void OptimizeAsm(char** text, const size_t n)
 
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "lda.b tcc__%s", r.groups[1]);
-                            if (StringsMatch(text[i + 2], snp_buf1))
+                            if (StringMatchs(text[i + 2], snp_buf1))
                             {
 
                                 printf("[CAS 18] %lu: %s\n", i + 2,
@@ -546,8 +551,8 @@ void OptimizeAsm(char** text, const size_t n)
                     printf("[CAS 20] %lu: %s\n", i + 1, text[i + 1]);
 
                     ss_buffer1 = StrSlice(text[i + 2], 0, 3);
-                    if (StringsMatch(ss_buffer1, "and")
-                        || StringsMatch(ss_buffer1, "ora"))
+                    if (StringMatchs(ss_buffer1, "and")
+                        || StringMatchs(ss_buffer1, "ora"))
                     {
                         printf("[CAS 21] %lu: %s\n", i + 2, text[i + 2]);
 
@@ -588,8 +593,8 @@ void OptimizeAsm(char** text, const size_t n)
                  * load */
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s",
                          r.groups[1]);
-                if (StringsMatch(text[i + 1], "sep #$20")
-                    && StringsMatch(text[i + 2], snp_buf1))
+                if (StringMatchs(text[i + 1], "sep #$20")
+                    && StringMatchs(text[i + 2], snp_buf1))
                 {
 
                     printf("[CAS 23] %lu: %s\n", i + 2, text[i + 2]);
@@ -616,7 +621,7 @@ void OptimizeAsm(char** text, const size_t n)
                 {
                     printf("[CAS 24] %lu: %s\n", i + 1, text[i + 1]);
 
-                    if (StringsMatch(text[i + 2], text[i]))
+                    if (StringMatchs(text[i + 2], text[i]))
                     {
 
                         printf("[CAS 25] %lu: %s\n", i + 2, text[i + 2]);
@@ -675,7 +680,7 @@ void OptimizeAsm(char** text, const size_t n)
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s",
                              r.groups[1]);
-                    if (StringsMatch(text[i + 2], snp_buf1))
+                    if (StringMatchs(text[i + 2], snp_buf1))
                     {
                         printf("[CAS 28] %lu: %s\n", i + 1, text[i + 1]);
 
@@ -697,7 +702,7 @@ void OptimizeAsm(char** text, const size_t n)
 
                 /* Store preg1, clc, load preg2,
                     add preg1 -> store preg1, clc, add preg2 */
-                if (StringsMatch(text[i + 1], "clc"))
+                if (StringMatchs(text[i + 1], "clc"))
                 {
 
                     printf("[CAS 29] %lu: %s\n", i + 1, text[i + 1]);
@@ -708,7 +713,7 @@ void OptimizeAsm(char** text, const size_t n)
                     {
                         snprintf(snp_buf1, sizeof(snp_buf1), "adc.b tcc__%s",
                                  r.groups[1]);
-                        if (StringsMatch(text[i + 3], snp_buf1))
+                        if (StringMatchs(text[i + 3], snp_buf1))
                         {
 
                             printf("[CAS 30] %lu: %s\n", i + 3, text[i + 3]);
@@ -745,7 +750,7 @@ void OptimizeAsm(char** text, const size_t n)
                  */
                 snprintf(snp_buf1, sizeof(snp_buf1), "asl.b tcc__%s",
                          r.groups[1]);
-                if (StringsMatch(text[i + 1], snp_buf1))
+                if (StringMatchs(text[i + 1], snp_buf1))
                 {
 
                     printf("[CAS 31] %lu: %s\n", i + 1, text[i + 1]);
@@ -770,7 +775,7 @@ void OptimizeAsm(char** text, const size_t n)
             if (r.status)
             {
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda %s,s", r.groups[1]);
-                if (StringsMatch(text[i + 1], snp_buf1))
+                if (StringMatchs(text[i + 1], snp_buf1))
                 {
 
                     printf("[CAS 32] %lu: %s\n", i + 1, text[i + 1]);
@@ -823,19 +828,16 @@ void OptimizeAsm(char** text, const size_t n)
 
                     printf("[CAS 36] %lu: %s\n", i, text[i]);
 
-                    snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s",
-                             r1.groups[1]);
+                    snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s", r1.groups[1]);
                     text_opt[used] = malloc(strlen(snp_buf1) + 1);
                     memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                     used += 1;
                     text_opt[used] = malloc(strlen(text[i + 2]) + 1);
-                    memcpy(text_opt[used], text[i + 2],
-                           strlen(text[i + 2]) + 1);
+                    memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
                     used += 1;
-                    text_opt[used] =
-                        malloc(strlen(ReplaceStr(text[i + 3], ",x", "")) + 1);
-                    memcpy(text_opt[used], ReplaceStr(text[i + 3], ",x", ""),
-                           strlen(ReplaceStr(text[i + 3], ",x", "")) + 1);
+                    rs_buffer1     = ReplaceStr(text[i + 3], ",x", "");
+                    text_opt[used] = malloc(strlen(rs_buffer1) + 1);
+                    memcpy(text_opt[used], rs_buffer1, strlen(rs_buffer1) + 1);
                     used += 1;
 
                     FreeDynArray(r1.groups, r1.used);
@@ -849,13 +851,13 @@ void OptimizeAsm(char** text, const size_t n)
             }
 
             if (StartsWith(text[i], "lda.w #")
-                && StringsMatch(text[i + 1], "sta.b tcc__r9")
+                && StringMatchs(text[i + 1], "sta.b tcc__r9")
                 && StartsWith(text[i + 2], "lda.w #")
-                && StringsMatch(text[i + 3], "sta.b tcc__r9h")
-                && StringsMatch(text[i + 4], "sep #$20")
+                && StringMatchs(text[i + 3], "sta.b tcc__r9h")
+                && StringMatchs(text[i + 4], "sep #$20")
                 && StartsWith(text[i + 5], "lda.b ")
-                && StringsMatch(text[i + 6], "sta.b [tcc__r9]")
-                && StringsMatch(text[i + 7], "rep #$20"))
+                && StringMatchs(text[i + 6], "sta.b [tcc__r9]")
+                && StringMatchs(text[i + 7], "rep #$20"))
             {
 
                 printf("[CAS 37] %lu: %s\n", i, text[i]);
@@ -884,6 +886,61 @@ void OptimizeAsm(char** text, const size_t n)
                 opted += 1;
                 continue;
             }
+
+            if (StringMatchs(text[i], "lda.w #0"))
+            {
+                printf("[CAS 38] %lu: %s\n", i, text[i]);
+
+                if (StartsWith(text[i + 1], "sta.b ")
+                    && StartsWith(text[i + 2], "lda"))
+                {
+
+                    printf("[CAS 39] %lu: %s\n", i + 1, text[i + 1]);
+
+                    rs_buffer1     = ReplaceStr(text[i + 1], "sta.", "stz.");
+                    text_opt[used] = malloc(strlen(rs_buffer1) + 1);
+                    memcpy(text_opt[used], rs_buffer1, strlen(rs_buffer1) + 1);
+                    used += 1;
+
+                    i += 2;
+                    opted += 1;
+                    continue;
+                }
+            }
+            else if (StartsWith(text[i], "lda.w #"))
+            {
+
+                printf("[CAS 40] %lu: %s\n", i, text[i]);
+
+                if (StringMatchs(text[i + 1], "sep #$20")
+                    && StartsWith(text[i + 2], "sta ")
+                    && StringMatchs(text[i + 4], "rep #$20")
+                    && StartsWith(text[i + 4], "lda"))
+                {
+
+                    printf("[CAS 41] %lu: %s\n", i + 1, text[i + 1]);
+
+                    text_opt[used] = malloc(strlen("sep #$20") + 1);
+                    memcpy(text_opt[used], "sep #$20", strlen("sep #$20") + 1);
+                    used += 1;
+                    rs_buffer1     = ReplaceStr(text[i], "lda.w", "lda.b");
+                    text_opt[used] = malloc(strlen(rs_buffer1) + 1);
+                    memcpy(text_opt[used], rs_buffer1,
+                           strlen(rs_buffer1) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen(text[i + 2]) + 1);
+                    memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
+                    used += 1;
+                    text_opt[used] = malloc(strlen(text[i + 3]) + 1);
+                    memcpy(text_opt[used], text[i + 3], strlen(text[i + 3]) + 1);
+                    used += 1;
+
+                    i += 4;
+                    opted += 1;
+                    continue;
+                }
+            }
+
         } // End of StartsWith(text[i], "ld")
 
         i++;
@@ -903,7 +960,7 @@ void OptimizeAsm(char** text, const size_t n)
  as argument or stdin.
  * @param argc The number of arguments provided.
  * @param argv The arguments provided.
- * @return 0
+ * @return 0 or 1 if exit on error.
  */
 int main(int argc, char** argv)
 {
