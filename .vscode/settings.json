@@ -1,7 +1,8 @@
 {
     "[c]": {
         "editor.formatOnSave": true,
-        "editor.semanticHighlighting.enabled": true
+        "editor.semanticHighlighting.enabled": true,
+        "editor.defaultFormatter": "ms-vscode.cpptools"
     },
     "[makefile]": {
         "editor.detectIndentation": false,
@@ -10,6 +11,7 @@
     "C_Cpp.dimInactiveRegions": true,
     "C_Cpp.vcFormat.indent.preserveWithinParentheses": false,
     "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyFunction": true,
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: WebKit, UseTab: Never, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Allman, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 80, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false, BreakBeforeBinaryOperators: NonAssignment, AlignAfterOpenBracket: Align, AlignOperands: true }",
     "editor.detectIndentation": true,
     "editor.formatOnSave": true,
     "editor.tabSize": 4,
