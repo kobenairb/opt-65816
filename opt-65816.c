@@ -35,10 +35,10 @@
  * @param argv The arguments provided.
  * @return A structure (DynArray).
  */
-DynArray TidyFile(const int argc, char** argv)
+DynArray TidyFile(const int argc, char **argv)
 {
     char   buf[MAXLEN_LINE];
-    char** lines = NULL;
+    char **lines = NULL;
     size_t nptrs = 1;
     size_t used  = 0;
     size_t len;
@@ -51,7 +51,7 @@ DynArray TidyFile(const int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    FILE* fp = argc > 1 ? fopen(argv[1], "r") : stdin;
+    FILE *fp = argc > 1 ? fopen(argv[1], "r") : stdin;
 
     if (!fp)
     {
@@ -73,7 +73,7 @@ DynArray TidyFile(const int argc, char** argv)
         {
             if (used == nptrs)
             {
-                void* tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
+                void *tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
                 if (!tmp)
                 {
                     perror("realloc-lines");
@@ -105,10 +105,10 @@ DynArray TidyFile(const int argc, char** argv)
  * @param n The number of elements in the array.
  * @return A structure (DynArray).
  */
-DynArray StoreBss(char** text, const size_t n)
+DynArray StoreBss(char **text, const size_t n)
 {
-    char** bss = NULL;
-    char*  saveptr;
+    char **bss = NULL;
+    char  *saveptr;
 
     size_t used   = 0;
     size_t bss_on = 0;
@@ -152,7 +152,7 @@ DynArray StoreBss(char** text, const size_t n)
  * @param text
  * @param n
  */
-void OptimizeAsm(char** text, const size_t n)
+void OptimizeAsm(char **text, const size_t n)
 {
     /* Total number of optimizations performed */
     // int totalopt = 0;
@@ -178,10 +178,10 @@ void OptimizeAsm(char** text, const size_t n)
         *ss_buffer2;
 
     /* Store ReplaceStr */
-    char* rs_buffer1;
+    char *rs_buffer1;
 
     /* Manage pointers */
-    char** text_opt = NULL;
+    char **text_opt = NULL;
     size_t used     = 0;
     size_t nptrs    = n;
 
@@ -941,6 +941,66 @@ void OptimizeAsm(char** text, const size_t n)
                 }
             }
 
+            if (StartsWith(text[i], "lda.b")
+                && !IsControl(text[i + 1])
+                && !IsInText(text[i + 1], "a")
+                && StartsWith(text[i + 2], "lda.b"))
+            {
+                printf("[CAS 42] %lu: %s\n", i, text[i]);
+
+                text_opt[used] = malloc(strlen(text[i + 1]) + 1);
+                memcpy(text_opt[used], text[i + 1], strlen(text[i + 1]) + 1);
+                used += 1;
+                text_opt[used] = malloc(strlen(text[i + 2]) + 1);
+                memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
+                used += 1;
+
+                i += 3;
+                opted += 1;
+                continue;
+            }
+
+            /* Don't write preg high back to stack if
+                it hasn't been updated */
+            if (EndsWith(text[i + 1], "h")
+                && StartsWith(text[i + 1], "sta.b tcc__r")
+                && StartsWith(text[i], "lda ")
+                && EndsWith(text[i], ",s"))
+            {
+
+                printf("[CAS 43] %lu: %s\n", i + 1, text[i + 1]);
+
+                char *local = StrSlice(text[i], 4, strlen(text[i]));
+                char *reg   = StrSlice(text[i + 1], 6, strlen(text[i + 1]));
+
+                /* lda stack ; store high preg ; ...
+                    ; load high preg ; sta stack */
+                size_t j = i + 2;
+                while (j < (n - 2)
+                       && !IsControl(text[j])
+                       && !IsInText(text[j], reg))
+                {
+                    printf("[CAS 44] %lu: %s\n", j, text[j]);
+                    j += 1;
+                }
+                snprintf(snp_buf1, sizeof(snp_buf1), "lda.b %s", reg);
+                snprintf(snp_buf2, sizeof(snp_buf2), "sta %s", local);
+                if (StringMatchs(text[j], snp_buf1)
+                    && StringMatchs(text[j + 1], snp_buf2))
+                {
+                    while (i < j)
+                    {
+                        text_opt[used] = malloc(strlen(text[i]) + 1);
+                        memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
+                        used += 1;
+                        i += 1;
+                    }
+                    i += 2; // Skip load high preg ; sta stack
+                    opted += 1;
+                    continue;
+                }
+            }
+
         } // End of StartsWith(text[i], "ld")
 
         i++;
@@ -962,7 +1022,7 @@ void OptimizeAsm(char** text, const size_t n)
  * @param argv The arguments provided.
  * @return 0 or 1 if exit on error.
  */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     /* -------------------------------- */
     /*       Enable verbosity level     */
