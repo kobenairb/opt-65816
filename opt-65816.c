@@ -163,22 +163,9 @@ void OptimizeAsm(char **text, const size_t n)
 
     RegDynArray r, r1;
 
-    size_t doopt;
-
-    size_t cont;
-
-    char crem[2][4] = { "inc", "dec" };
-
     /* Store snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
         snp_buf2[MAXLEN_LINE];
-
-    /* Store StrSlice */
-    char *ss_buffer1,
-        *ss_buffer2;
-
-    /* Store ReplaceStr */
-    char *rs_buffer1;
 
     /* Manage pointers */
     char **text_opt = NULL;
@@ -192,7 +179,6 @@ void OptimizeAsm(char **text, const size_t n)
     }
 
     size_t i = 0;
-
     while (i < n)
     {
         if (StartsWith(text[i], "st"))
@@ -201,7 +187,7 @@ void OptimizeAsm(char **text, const size_t n)
             r = RegMatchGroups(text[i], STORE_AXYZ_TO_PSEUDO, 3);
             if (r.status)
             {
-                doopt = 0;
+                size_t doopt = 0;
                 for (size_t j = (i + 1); j < (size_t)FindMin(n, (i + 30)); j++)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1),
@@ -437,7 +423,8 @@ void OptimizeAsm(char **text, const size_t n)
                     continue;
                 }
                 /* Convert incs/decs on pregs incs/decs on hwregs */
-                cont = 0;
+                size_t cont       = 0;
+                char   crem[2][4] = { "inc", "dec" };
                 for (size_t k = 0; k < sizeof(crem) / sizeof(crem[0]); k++)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
@@ -550,9 +537,9 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 20] %lu: %s\n", i + 1, text[i + 1]);
 
-                    ss_buffer1 = StrSlice(text[i + 2], 0, 3);
-                    if (StringMatchs(ss_buffer1, "and")
-                        || StringMatchs(ss_buffer1, "ora"))
+                    char *ss_buffer = StrSlice(text[i + 2], 0, 3);
+                    if (StringMatchs(ss_buffer, "and")
+                        || StringMatchs(ss_buffer, "ora"))
                     {
                         printf("[CAS 21] %lu: %s\n", i + 2, text[i + 2]);
 
@@ -570,13 +557,13 @@ void OptimizeAsm(char **text, const size_t n)
                                    strlen(text[i]) + 1);
                             used += 1;
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
-                                     ss_buffer1, r1.groups[1]);
+                                     ss_buffer, r1.groups[1]);
                             text_opt[used] = malloc(strlen(snp_buf1) + 1);
                             memcpy(text_opt[used], snp_buf1,
                                    strlen(snp_buf1) + 1);
                             used += 1;
 
-                            free(ss_buffer1);
+                            free(ss_buffer);
                             FreeDynArray(r.groups, r.used);
                             FreeDynArray(r1.groups, r1.used);
 
@@ -585,7 +572,7 @@ void OptimizeAsm(char **text, const size_t n)
                             continue;
                         }
                     }
-                    free(ss_buffer1);
+                    free(ss_buffer);
                     FreeDynArray(r1.groups, r1.used);
                 }
 
@@ -835,9 +822,9 @@ void OptimizeAsm(char **text, const size_t n)
                     text_opt[used] = malloc(strlen(text[i + 2]) + 1);
                     memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
                     used += 1;
-                    rs_buffer1     = ReplaceStr(text[i + 3], ",x", "");
-                    text_opt[used] = malloc(strlen(rs_buffer1) + 1);
-                    memcpy(text_opt[used], rs_buffer1, strlen(rs_buffer1) + 1);
+                    char *rs_buffer = ReplaceStr(text[i + 3], ",x", "");
+                    text_opt[used]  = malloc(strlen(rs_buffer) + 1);
+                    memcpy(text_opt[used], rs_buffer, strlen(rs_buffer) + 1);
                     used += 1;
 
                     FreeDynArray(r1.groups, r1.used);
@@ -868,10 +855,10 @@ void OptimizeAsm(char **text, const size_t n)
                 text_opt[used] = malloc(strlen(text[i + 5]) + 1);
                 memcpy(text_opt[used], text[i + 5], strlen(text[i + 5]) + 1);
                 used += 1;
-                ss_buffer1 = StrSlice(text[i + 2], 7, strlen(text[i + 2]));
-                ss_buffer2 = StrSlice(text[i], 7, strlen(text[i]));
+                char *ss_buffer  = StrSlice(text[i + 2], 7, strlen(text[i + 2]));
+                char *ss_buffer2 = StrSlice(text[i], 7, strlen(text[i]));
                 snprintf(snp_buf1, sizeof(snp_buf1), "sta.l %lu",
-                         atol(ss_buffer1) * 65536 + atol(ss_buffer2));
+                         atol(ss_buffer) * 65536 + atol(ss_buffer2));
                 text_opt[used] = malloc(strlen(snp_buf1) + 1);
                 memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
                 used += 1;
@@ -879,7 +866,7 @@ void OptimizeAsm(char **text, const size_t n)
                 memcpy(text_opt[used], "rep #$20", strlen("rep #$20") + 1);
                 used += 1;
 
-                free(ss_buffer1);
+                free(ss_buffer);
                 free(ss_buffer2);
 
                 i += 8;
@@ -897,9 +884,9 @@ void OptimizeAsm(char **text, const size_t n)
 
                     printf("[CAS 39] %lu: %s\n", i + 1, text[i + 1]);
 
-                    rs_buffer1     = ReplaceStr(text[i + 1], "sta.", "stz.");
-                    text_opt[used] = malloc(strlen(rs_buffer1) + 1);
-                    memcpy(text_opt[used], rs_buffer1, strlen(rs_buffer1) + 1);
+                    char *rs_buffer = ReplaceStr(text[i + 1], "sta.", "stz.");
+                    text_opt[used]  = malloc(strlen(rs_buffer) + 1);
+                    memcpy(text_opt[used], rs_buffer, strlen(rs_buffer) + 1);
                     used += 1;
 
                     i += 2;
@@ -923,10 +910,10 @@ void OptimizeAsm(char **text, const size_t n)
                     text_opt[used] = malloc(strlen("sep #$20") + 1);
                     memcpy(text_opt[used], "sep #$20", strlen("sep #$20") + 1);
                     used += 1;
-                    rs_buffer1     = ReplaceStr(text[i], "lda.w", "lda.b");
-                    text_opt[used] = malloc(strlen(rs_buffer1) + 1);
-                    memcpy(text_opt[used], rs_buffer1,
-                           strlen(rs_buffer1) + 1);
+                    char *rs_buffer = ReplaceStr(text[i], "lda.w", "lda.b");
+                    text_opt[used]  = malloc(strlen(rs_buffer) + 1);
+                    memcpy(text_opt[used], rs_buffer,
+                           strlen(rs_buffer) + 1);
                     used += 1;
                     text_opt[used] = malloc(strlen(text[i + 2]) + 1);
                     memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
@@ -995,10 +982,16 @@ void OptimizeAsm(char **text, const size_t n)
                         used += 1;
                         i += 1;
                     }
+
+                    free(reg);
+                    free(local);
+
                     i += 2; // Skip load high preg ; sta stack
                     opted += 1;
                     continue;
                 }
+                free(reg);
+                free(local);
             }
 
         } // End of StartsWith(text[i], "ld")
