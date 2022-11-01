@@ -70,39 +70,39 @@
 /* -------------------------------- */
 
 /**
- * @struct DynArray
+ * @struct dynArray
  * @brief Structure to store the return of BssStore and TidyFile.
- * @var DynArray::text
+ * @var dynArray::text
  * Member 'text' contains the array of strings.
- * @var DynArray::used
+ * @var dynArray::used
  * Member 'used' contains the number of strings (elements)
  * in the array.
  */
-typedef struct DynArray
+typedef struct dynArray
 {
     char **text;
     size_t used;
-} DynArray;
+} dynArray;
 
 /**
- * @struct RegDynArray
- * @brief Structure to store the return of RegMatchGroups.
- * @var RegDynArray::status
+ * @struct regexdynArray
+ * @brief Structure to store the return of regexMatchGroups.
+ * @var regexdynArray::status
  * Member 'status' contains the status if the function.
  * 1 if the regexp matchs groups, or 0 if not.
- * @var RegDynArray::regexCompiled
+ * @var regexdynArray::regexCompiled
  * Member 'regexCompiled' contains the adress of
  the compiled regex.
- * @var RegDynArray::groups
+ * @var regexdynArray::groups
  * Member 'groups' contains the array of strings
  * of matched groups.
  */
-typedef struct RegDynArray
+typedef struct regexdynArray
 {
     size_t status;
     char **groups;
     size_t used;
-} RegDynArray;
+} regexdynArray;
 
 /* -------------------------------- */
 /*             Functions            */
@@ -133,7 +133,7 @@ int verbosity()
  * @param p Pointers of pointer.
  * @param n Number of pointers of pointer.
  */
-void FreeDynArray(char **p, size_t n)
+void freedynArray(char **p, size_t n)
 {
     for (size_t i = 0; i < n; i++)
     {
@@ -148,7 +148,7 @@ void FreeDynArray(char **p, size_t n)
  * @param str2 Pattern string.
  * @return 1 (true) or 0 (false).
  */
-int MatchStrings(const char *str1, const char *str2)
+int matchString(const char *str1, const char *str2)
 {
     if (strcmp(str1, str2) == 0)
         return 1;
@@ -162,7 +162,7 @@ int MatchStrings(const char *str1, const char *str2)
  * @param prefix Pattern string.
  * @return 1 (true) or 0 (false).
  */
-int StartWith(const char *source, const char *prefix)
+int startWith(const char *source, const char *prefix)
 {
     if (strncmp(source, prefix, strlen(prefix)) == 0)
         return 1;
@@ -176,7 +176,7 @@ int StartWith(const char *source, const char *prefix)
  * @param prefix Pattern string.
  * @return 1 (true) or 0 (false).
  */
-int EndWith(const char *source, const char *prefix)
+int endWith(const char *source, const char *prefix)
 {
     size_t slen = strlen(source);
     size_t plen = strlen(prefix);
@@ -192,7 +192,7 @@ int EndWith(const char *source, const char *prefix)
  * @param pattern Pattern string.
  * @return 1 (true) or 0 (false)
  */
-int IsInText(const char *source, const char *pattern)
+int isInText(const char *source, const char *pattern)
 {
     if (strstr(source, pattern) != NULL)
         return 1;
@@ -205,7 +205,7 @@ int IsInText(const char *source, const char *pattern)
  * @param b Second numbers.
  * @return The smallest number.
  */
-int FindMin(const int a, const int b)
+int findMin(const int a, const int b)
 {
     if (a > b)
         return b;
@@ -218,7 +218,7 @@ int FindMin(const int a, const int b)
  * @param str the string to trim.
  * @return The trimmed string.
  */
-char *TrimWhiteSpace(char *str)
+char *trimWhiteSpace(char *str)
 {
     char *end;
 
@@ -246,13 +246,13 @@ char *TrimWhiteSpace(char *str)
  * @param a The asm instruction.
  * @return 1 (true) or 0 (false).
  */
-int ChangeAccu(const char *a)
+int changeAccu(const char *a)
 {
     if (strlen(a) > 2)
     {
-        if (a[2] == 'a' && (!StartWith(a, "pha") && !StartWith(a, "sta")))
+        if (a[2] == 'a' && (!startWith(a, "pha") && !startWith(a, "sta")))
             return 1;
-        if (strlen(a) == 5 && EndWith(a, " a"))
+        if (strlen(a) == 5 && endWith(a, " a"))
             return 1;
     }
 
@@ -264,16 +264,16 @@ int ChangeAccu(const char *a)
  * @param a The asm instruction.
  * @return 1 (true) or 0 (false).
  */
-int IsControl(const char *a)
+int isControl(const char *a)
 {
     if (strlen(a) > 0)
     {
-        if (EndWith(a, ":"))
+        if (endWith(a, ":"))
         {
             return 1;
         }
-        if (StartWith(a, "j") || StartWith(a, "b") || StartWith(a, "-")
-            || StartWith(a, "+"))
+        if (startWith(a, "j") || startWith(a, "b") || startWith(a, "-")
+            || startWith(a, "+"))
         {
             return 1;
         }
@@ -290,7 +290,7 @@ int IsControl(const char *a)
  * @param slice_to Ending position (index).
  * @return A new string or NULL.
  */
-char *StrSlice(char *str, int slice_from, int slice_to)
+char *sliceStr(char *str, int slice_from, int slice_to)
 {
     /*
         From Padymko: https://stackoverflow.com/a/42283266
@@ -349,7 +349,7 @@ char *StrSlice(char *str, int slice_from, int slice_to)
  * @param rep The substring to replace with.
  * @return The modified string.
  */
-char *ReplaceStr(char *str, char *orig, char *rep)
+char *replaceStr(char *str, char *orig, char *rep)
 {
     static char buffer[MAXLEN_LINE];
     char       *p;
@@ -370,9 +370,9 @@ char *ReplaceStr(char *str, char *orig, char *rep)
  * @param source The string.
  * @param regex The POSIX regex.
  * @param maxGroups The maximum number of groups to match.
- * @return A structure (RegDynArray).
+ * @return A structure (regexdynArray).
  */
-RegDynArray RegMatchGroups(char *source, char *regex, const size_t maxGroups)
+regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
 {
     /*
         From Ianmackinnon https://gist.github.com/ianmackinnon/3294587
@@ -427,14 +427,14 @@ RegDynArray RegMatchGroups(char *source, char *regex, const size_t maxGroups)
 
         regfree(&regexCompiled);
 
-        RegDynArray r = { 1, groups, used };
+        regexdynArray r = { 1, groups, used };
         return r;
     }
     else if (re == REG_NOMATCH)
     {
         regfree(&regexCompiled);
 
-        RegDynArray r = { 0, groups, used };
+        regexdynArray r = { 0, groups, used };
         return r;
     }
     else
