@@ -873,8 +873,47 @@ void OptimizeAsm(char **text, const size_t n)
 
         } // End of startWith(text[i], "ld")
 
+        /* Reorder copying of 32-bit value to preg if it looks as
+            if that could allow further optimization.
+            Looking for:
+                lda something
+                sta.b tcc_rX
+                lda something
+                sta.b tcc_rYh
+                ...tcc_rX...
+        */
+        if (startWith(text[i], "lda")
+            && startWith(text[i + 1], "sta.b tcc__r"))
+        {
+            printf("[CAS 45] %lu: %s\n", i, text[i]);
+
+            char *reg = sliceStr(text[i + 1], 6, strlen(text[i + 1]));
+            if (!endWith(reg, "h")
+                && startWith(text[i + 2], "lda")
+                && !endWith(text[i + 2], reg)
+                && startWith(text[i + 3], "sta.b tcc__r")
+                && endWith(text[i + 3], "h")
+                && endWith(text[i + 4], reg))
+            {
+                printf("[CAS 46] %lu: %s\n", i + 2, text[i + 2]);
+
+                text_opt = addToArray(arr, text[i + 2], text_opt.used);
+                text_opt = addToArray(arr, text[i + 3], text_opt.used);
+                text_opt = addToArray(arr, text[i], text_opt.used);
+                text_opt = addToArray(arr, text[i + 1], text_opt.used);
+
+                free(reg);
+
+                i += 4;
+                // this is not an optimization per se, so we don't count it
+                continue;
+            }
+            free(reg);
+        }
+
         i++;
-    }
+
+    } // End of while (i < n)
 
     if (text_opt.used > 0)
     {

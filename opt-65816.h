@@ -164,6 +164,10 @@ int matchString(const char *str1, const char *str2)
  */
 int startWith(const char *source, const char *prefix)
 {
+    // if a string is empty, returns false
+    if (source[0] == '\0')
+        return 0;
+
     if (strncmp(source, prefix, strlen(prefix)) == 0)
         return 1;
 
@@ -178,8 +182,15 @@ int startWith(const char *source, const char *prefix)
  */
 int endWith(const char *source, const char *prefix)
 {
+    // if a string is empty, returns false
+    if (source[0] == '\0')
+        return 0;
+
     size_t slen = strlen(source);
     size_t plen = strlen(prefix);
+
+    if (slen < plen)
+        return 0;
 
     if (strncmp(source + slen - plen, prefix, plen) == 0)
         return 1;
@@ -194,6 +205,10 @@ int endWith(const char *source, const char *prefix)
  */
 int isInText(const char *source, const char *pattern)
 {
+    // if a string is empty, returns false
+    if (source[0] == '\0')
+        return 0;
+
     if (strstr(source, pattern) != NULL)
         return 1;
     return 0;
