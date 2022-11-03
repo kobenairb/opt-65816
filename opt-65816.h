@@ -72,15 +72,15 @@
 /**
  * @struct dynArray
  * @brief Structure to store the return of BssStore and TidyFile.
- * @var dynArray::text
- * Member 'text' contains the array of strings.
+ * @var dynArray::arr
+ * Member 'arr' contains the array of strings.
  * @var dynArray::used
  * Member 'used' contains the number of strings (elements)
  * in the array.
  */
 typedef struct dynArray
 {
-    char **text;
+    char **arr;
     size_t used;
 } dynArray;
 
@@ -444,4 +444,22 @@ regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups
         fprintf(stderr, "Regex match failed: %s\n", msgbuf);
         exit(EXIT_FAILURE);
     }
+}
+
+/**
+ * @brief Add string to array.
+ * @param arr The array of strings.
+ * @param str The string to add.
+ * @param used The current last index of the index.
+ * @return A structure (dynArray).
+ */
+dynArray addToArray(char **arr, char *str, int used)
+{
+
+    arr[used] = malloc(strlen(str) + 1);
+    memcpy(arr[used], str, strlen(str) + 1);
+    used += 1;
+
+    dynArray b = { arr, used };
+    return b;
 }

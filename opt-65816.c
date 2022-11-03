@@ -146,18 +146,18 @@ void OptimizeAsm(char **text, const size_t n)
     int opted = -1; // Have we Optimized in this pass
     // int opass = 0;    // Optimization pass counter
 
-    /* Manage pointers */
-    char **text_opt = NULL;
-    size_t used     = 0;
-    size_t nptrs    = n;
-
     regexdynArray r, r1;
 
     /* Store snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
         snp_buf2[MAXLEN_LINE];
 
-    if ((text_opt = malloc(nptrs * sizeof *text_opt)) == NULL)
+    /* Manage pointers */
+    char   **arr;
+    size_t   nptrs    = n;
+    dynArray text_opt = { NULL, 0 };
+
+    if ((arr = malloc(nptrs * sizeof *arr)) == NULL)
     {
         perror("malloc-lines");
         exit(EXIT_FAILURE);
@@ -241,9 +241,7 @@ void OptimizeAsm(char **text, const size_t n)
                     printf("[CAS 5] %lu: %s\n", i + 1, text[i + 1]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.groups[1]);
-                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -257,13 +255,10 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 6] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
+
                     snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.groups[1]);
-                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -282,15 +277,12 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 7] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
+
                     snprintf(snp_buf1, sizeof(snp_buf1), "t%sa",
                              r.groups[1]); // FIXME: shouldn't this be marked as
                                            // DON'T OPTIMIZE again?
-                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -311,10 +303,7 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 8] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i],
-                           strlen(text[i]) + 1); // Keep store
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -329,14 +318,8 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 9] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i],
-                           strlen(text[i]) + 1); // Keep store
-                    used += 1;
-                    text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                    memcpy(text_opt[used], text[i + 1],
-                           strlen(text[i + 1]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
+                    text_opt = addToArray(arr, text[i + 1], text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -353,9 +336,7 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 10] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen("pha") + 1);
-                    memcpy(text_opt[used], "pha", strlen("pha") + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, "pha", text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -369,12 +350,8 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 11] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen("pha") + 1);
-                    memcpy(text_opt[used], "pha", strlen("pha") + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
+                    text_opt = addToArray(arr, "pha", text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -389,16 +366,9 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     printf("[CAS 12] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                    memcpy(text_opt[used], text[i + 1],
-                           strlen(text[i + 1]) + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen("pha") + 1);
-                    memcpy(text_opt[used], "pha", strlen("pha") + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i + 1], text_opt.used);
+                    text_opt = addToArray(arr, text[i], text_opt.used);
+                    text_opt = addToArray(arr, "pha", text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -428,20 +398,11 @@ void OptimizeAsm(char **text, const size_t n)
                              */
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s a",
                                      crem[k]);
-                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                            memcpy(text_opt[used], snp_buf1,
-                                   strlen(snp_buf1) + 1);
-                            used += 1;
-                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                            memcpy(text_opt[used], snp_buf1,
-                                   strlen(snp_buf1) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, snp_buf1, text_opt.used);
+                            text_opt = addToArray(arr, snp_buf1, text_opt.used);
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "sta.b tcc__%s", r.groups[1]);
-                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                            memcpy(text_opt[used], snp_buf1,
-                                   strlen(snp_buf1) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                             /* A subsequent load can be omitted (the right value
                              * is already in the accu) */
@@ -475,16 +436,11 @@ void OptimizeAsm(char **text, const size_t n)
 
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s a",
                                      crem[k]);
-                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                            memcpy(text_opt[used], snp_buf1,
-                                   strlen(snp_buf1) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, snp_buf1, text_opt.used);
+
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "sta.b tcc__%s", r.groups[1]);
-                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                            memcpy(text_opt[used], snp_buf1,
-                                   strlen(snp_buf1) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "lda.b tcc__%s", r.groups[1]);
@@ -536,16 +492,11 @@ void OptimizeAsm(char **text, const size_t n)
 
                             printf("[CAS 22] %lu: %s\n", i + 2, text[i + 2]);
 
-                            text_opt[used] = malloc(strlen(text[i]) + 1);
-                            memcpy(text_opt[used], text[i],
-                                   strlen(text[i]) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, text[i], text_opt.used);
+
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
                                      ss_buffer, r1.groups[1]);
-                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                            memcpy(text_opt[used], snp_buf1,
-                                   strlen(snp_buf1) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                             free(ss_buffer);
                             freedynArray(r.groups, r.used);
@@ -570,13 +521,9 @@ void OptimizeAsm(char **text, const size_t n)
 
                     printf("[CAS 23] %lu: %s\n", i + 2, text[i + 2]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                    memcpy(text_opt[used], text[i + 1],
-                           strlen(text[i + 1]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
+                    text_opt = addToArray(arr, text[i + 1], text_opt.used);
+
                     freedynArray(r.groups, r.used);
 
                     i += 3; // Skip load
@@ -597,14 +544,8 @@ void OptimizeAsm(char **text, const size_t n)
 
                         printf("[CAS 25] %lu: %s\n", i + 2, text[i + 2]);
 
-                        text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                        memcpy(text_opt[used], text[i + 1],
-                               strlen(text[i + 1]) + 1);
-                        used += 1;
-                        text_opt[used] = malloc(strlen(text[i + 2]) + 1);
-                        memcpy(text_opt[used], text[i + 2],
-                               strlen(text[i + 2]) + 1);
-                        used += 1;
+                        text_opt = addToArray(arr, text[i + 1], text_opt.used);
+                        text_opt = addToArray(arr, text[i + 2], text_opt.used);
 
                         freedynArray(r.groups, r.used);
 
@@ -624,13 +565,10 @@ void OptimizeAsm(char **text, const size_t n)
 
                     printf("[CAS 26] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
+
                     snprintf(snp_buf1, sizeof(snp_buf1), "ta%s", r1.groups[1]);
-                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                     freedynArray(r.groups, r.used);
                     freedynArray(r1.groups, r1.used);
@@ -655,13 +593,8 @@ void OptimizeAsm(char **text, const size_t n)
                     {
                         printf("[CAS 28] %lu: %s\n", i + 1, text[i + 1]);
 
-                        text_opt[used] = malloc(strlen(text[i]) + 1);
-                        memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                        used += 1;
-                        text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                        memcpy(text_opt[used], text[i + 1],
-                               strlen(text[i + 1]) + 1);
-                        used += 1;
+                        text_opt = addToArray(arr, text[i], text_opt.used);
+                        text_opt = addToArray(arr, text[i + 1], text_opt.used);
 
                         freedynArray(r.groups, r.used);
 
@@ -689,20 +622,12 @@ void OptimizeAsm(char **text, const size_t n)
 
                             printf("[CAS 30] %lu: %s\n", i + 3, text[i + 3]);
 
-                            text_opt[used] = malloc(strlen(text[i]) + 1);
-                            memcpy(text_opt[used], text[i],
-                                   strlen(text[i]) + 1);
-                            used += 1;
-                            text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                            memcpy(text_opt[used], text[i + 1],
-                                   strlen(text[i + 1]) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, text[i], text_opt.used);
+                            text_opt = addToArray(arr, text[i + 1], text_opt.used);
+
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "adc.b tcc__%s", r1.groups[1]);
-                            text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                            memcpy(text_opt[used], snp_buf1,
-                                   strlen(snp_buf1) + 1);
-                            used += 1;
+                            text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                             freedynArray(r.groups, r.used);
                             freedynArray(r1.groups, r1.used);
@@ -726,12 +651,8 @@ void OptimizeAsm(char **text, const size_t n)
 
                     printf("[CAS 31] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen("asl a") + 1);
-                    memcpy(text_opt[used], "asl a", strlen("asl a") + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, "asl a", text_opt.used);
+                    text_opt = addToArray(arr, text[i], text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -751,9 +672,7 @@ void OptimizeAsm(char **text, const size_t n)
 
                     printf("[CAS 32] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen(text[i]) + 1);
-                    memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, text[i], text_opt.used);
 
                     freedynArray(r.groups, r.used);
 
@@ -783,9 +702,7 @@ void OptimizeAsm(char **text, const size_t n)
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s",
                              r1.groups[1]);
-                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, snp_buf1, text_opt.used);
 
                     freedynArray(r1.groups, r1.used);
                     freedynArray(r.groups, r.used);
@@ -800,16 +717,12 @@ void OptimizeAsm(char **text, const size_t n)
                     printf("[CAS 36] %lu: %s\n", i, text[i]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s", r1.groups[1]);
-                    text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                    memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen(text[i + 2]) + 1);
-                    memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, snp_buf1, text_opt.used);
+
+                    text_opt = addToArray(arr, text[i + 2], text_opt.used);
+
                     char *rs_buffer = replaceStr(text[i + 3], ",x", "");
-                    text_opt[used]  = malloc(strlen(rs_buffer) + 1);
-                    memcpy(text_opt[used], rs_buffer, strlen(rs_buffer) + 1);
-                    used += 1;
+                    text_opt        = addToArray(arr, rs_buffer, text_opt.used);
 
                     freedynArray(r1.groups, r1.used);
                     freedynArray(r.groups, r.used);
@@ -833,22 +746,16 @@ void OptimizeAsm(char **text, const size_t n)
 
                 printf("[CAS 37] %lu: %s\n", i, text[i]);
 
-                text_opt[used] = malloc(strlen("sep #$20") + 1);
-                memcpy(text_opt[used], "sep #$20", strlen("sep #$20") + 1);
-                used += 1;
-                text_opt[used] = malloc(strlen(text[i + 5]) + 1);
-                memcpy(text_opt[used], text[i + 5], strlen(text[i + 5]) + 1);
-                used += 1;
+                text_opt = addToArray(arr, "sep #$20", text_opt.used);
+                text_opt = addToArray(arr, text[i + 5], text_opt.used);
+
                 char *ss_buffer  = sliceStr(text[i + 2], 7, strlen(text[i + 2]));
                 char *ss_buffer2 = sliceStr(text[i], 7, strlen(text[i]));
                 snprintf(snp_buf1, sizeof(snp_buf1), "sta.l %lu",
                          atol(ss_buffer) * 65536 + atol(ss_buffer2));
-                text_opt[used] = malloc(strlen(snp_buf1) + 1);
-                memcpy(text_opt[used], snp_buf1, strlen(snp_buf1) + 1);
-                used += 1;
-                text_opt[used] = malloc(strlen("rep #$20") + 1);
-                memcpy(text_opt[used], "rep #$20", strlen("rep #$20") + 1);
-                used += 1;
+                text_opt = addToArray(arr, snp_buf1, text_opt.used);
+
+                text_opt = addToArray(arr, "rep #$20", text_opt.used);
 
                 free(ss_buffer);
                 free(ss_buffer2);
@@ -869,9 +776,7 @@ void OptimizeAsm(char **text, const size_t n)
                     printf("[CAS 39] %lu: %s\n", i + 1, text[i + 1]);
 
                     char *rs_buffer = replaceStr(text[i + 1], "sta.", "stz.");
-                    text_opt[used]  = malloc(strlen(rs_buffer) + 1);
-                    memcpy(text_opt[used], rs_buffer, strlen(rs_buffer) + 1);
-                    used += 1;
+                    text_opt        = addToArray(arr, rs_buffer, text_opt.used);
 
                     i += 2;
                     opted += 1;
@@ -891,20 +796,13 @@ void OptimizeAsm(char **text, const size_t n)
 
                     printf("[CAS 41] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt[used] = malloc(strlen("sep #$20") + 1);
-                    memcpy(text_opt[used], "sep #$20", strlen("sep #$20") + 1);
-                    used += 1;
+                    text_opt = addToArray(arr, "sep #$20", text_opt.used);
+
                     char *rs_buffer = replaceStr(text[i], "lda.w", "lda.b");
-                    text_opt[used]  = malloc(strlen(rs_buffer) + 1);
-                    memcpy(text_opt[used], rs_buffer,
-                           strlen(rs_buffer) + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen(text[i + 2]) + 1);
-                    memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
-                    used += 1;
-                    text_opt[used] = malloc(strlen(text[i + 3]) + 1);
-                    memcpy(text_opt[used], text[i + 3], strlen(text[i + 3]) + 1);
-                    used += 1;
+                    text_opt        = addToArray(arr, rs_buffer, text_opt.used);
+
+                    text_opt = addToArray(arr, text[i + 2], text_opt.used);
+                    text_opt = addToArray(arr, text[i + 3], text_opt.used);
 
                     i += 4;
                     opted += 1;
@@ -919,12 +817,8 @@ void OptimizeAsm(char **text, const size_t n)
             {
                 printf("[CAS 42] %lu: %s\n", i, text[i]);
 
-                text_opt[used] = malloc(strlen(text[i + 1]) + 1);
-                memcpy(text_opt[used], text[i + 1], strlen(text[i + 1]) + 1);
-                used += 1;
-                text_opt[used] = malloc(strlen(text[i + 2]) + 1);
-                memcpy(text_opt[used], text[i + 2], strlen(text[i + 2]) + 1);
-                used += 1;
+                text_opt = addToArray(arr, text[i + 1], text_opt.used);
+                text_opt = addToArray(arr, text[i + 2], text_opt.used);
 
                 i += 3;
                 opted += 1;
@@ -961,9 +855,8 @@ void OptimizeAsm(char **text, const size_t n)
                 {
                     while (i < j)
                     {
-                        text_opt[used] = malloc(strlen(text[i]) + 1);
-                        memcpy(text_opt[used], text[i], strlen(text[i]) + 1);
-                        used += 1;
+                        text_opt = addToArray(arr, text[i], text_opt.used);
+
                         i += 1;
                     }
 
@@ -983,13 +876,20 @@ void OptimizeAsm(char **text, const size_t n)
         i++;
     }
 
-    printf("\n\n______________[ASM CODE]_________________\n");
-    for (size_t i = 0; i < used; i++)
+    if (text_opt.used > 0)
     {
-        printf("%s\n", text_opt[i]);
+        printf("\n\n______________[ASM CODE]_________________\n");
+        for (size_t i = 0; i < text_opt.used; i++)
+        {
+            printf("%s\n", text_opt.arr[i]);
+        }
+        freedynArray(text_opt.arr, text_opt.used);
     }
-
-    freedynArray(text_opt, used);
+    else
+    {
+        printf("\n\n______________[ASM CODE]_________________\n");
+        free(arr);
+    }
 }
 
 /**
@@ -1017,7 +917,7 @@ int main(int argc, char **argv)
     {
         for (size_t i = 0; i < file.used; i++)
         {
-            fprintf(stderr, "line[%6lu] : %s\n", i, file.text[i]);
+            fprintf(stderr, "line[%6lu] : %s\n", i, file.arr[i]);
         }
         fprintf(stderr, "\n");
     }
@@ -1025,13 +925,13 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*      Store BSS instuctions       */
     /* -------------------------------- */
-    dynArray bss = StoreBss(file.text, file.used);
+    dynArray bss = StoreBss(file.arr, file.used);
 
     if (verbose == 2)
     {
         for (size_t i = 0; i < bss.used; i++)
         {
-            fprintf(stderr, "line[%5lu] : %s\n", i, bss.text[i]);
+            fprintf(stderr, "line[%5lu] : %s\n", i, bss.arr[i]);
         }
         fprintf(stderr, "\n");
     }
@@ -1039,11 +939,11 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       ASM Optimization           */
     /* -------------------------------- */
-    OptimizeAsm(file.text, file.used);
+    OptimizeAsm(file.arr, file.used);
 
     /* -------------------------------- */
     /*       Free pointers              */
     /* -------------------------------- */
-    freedynArray(bss.text, bss.used);
-    freedynArray(file.text, file.used);
+    freedynArray(bss.arr, bss.used);
+    freedynArray(file.arr, file.used);
 }
