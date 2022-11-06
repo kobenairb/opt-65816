@@ -23,9 +23,9 @@
  * @param argv The arguments provided.
  * @return A structure (dynArray).
  */
-dynArray TidyFile(const int argc, char **argv)
+dynArray tidyFile(const int argc, char **argv)
 {
-    char   buf[MAXLEN_LINE];
+    char buf[MAXLEN_LINE];
     char **lines = NULL;
     size_t nptrs = 1;
     size_t used  = 0;
@@ -93,10 +93,10 @@ dynArray TidyFile(const int argc, char **argv)
  * @param n The number of elements in the array.
  * @return A structure (dynArray).
  */
-dynArray StoreBss(char **text, const size_t n)
+dynArray storeBss(char **text, const size_t n)
 {
     char **bss = NULL;
-    char  *saveptr;
+    char *saveptr;
 
     size_t used   = 0;
     size_t bss_on = 0;
@@ -123,8 +123,13 @@ dynArray StoreBss(char **text, const size_t n)
         }
         if (!matchString(text[i], BSS_START) && bss_on)
         {
-            len       = strlen(text[i]);
-            bss[used] = malloc(len + 1);
+            len = strlen(text[i]);
+
+            if ((bss[used] = malloc(len + 1)) == NULL)
+            {
+                perror("malloc-lines");
+                exit(EXIT_FAILURE);
+            }
             memcpy(bss[used], text[i], len + 1);
             strtok_r(bss[used], " ", &saveptr);
             used += 1;
@@ -140,7 +145,7 @@ dynArray StoreBss(char **text, const size_t n)
  * @param text
  * @param n
  */
-void OptimizeAsm(char **text, const size_t n)
+void optimizeAsm(char **text, const size_t n)
 {
     // int totalopt = 0; // Total number of optimizations performed
     int opted = -1; // Have we Optimized in this pass
@@ -153,8 +158,8 @@ void OptimizeAsm(char **text, const size_t n)
         snp_buf2[MAXLEN_LINE];
 
     /* Manage pointers */
-    char   **arr;
-    size_t   nptrs    = n;
+    char **arr;
+    size_t nptrs      = n;
     dynArray text_opt = { NULL, 0 };
 
     if ((arr = malloc(nptrs * sizeof *arr)) == NULL)
@@ -196,8 +201,8 @@ void OptimizeAsm(char **text, const size_t n)
                         doopt = 1;
                         break;
                     }
-                    /* Cases in which we don't pursue optimization further */
-                    /* #1 Branch or other use of the pseudo register */
+                    /* Cases in which we don't pursue optimization further
+                        #1 Branch or other use of the pseudo register */
                     snprintf(snp_buf1, sizeof(snp_buf1), "tcc__%s",
                              r.groups[2]);
                     if (isControl(text[j]) || isInText(text[j], snp_buf1))
@@ -209,8 +214,7 @@ void OptimizeAsm(char **text, const size_t n)
                     /* #2 Use as a pointer */
                     snprintf(snp_buf1, sizeof(snp_buf1), "[tcc__%s",
                              r.groups[2]);
-                    snp_buf1[strlen(snp_buf1) - 1] =
-                        '\0'; // Remove the last char
+                    snp_buf1[strlen(snp_buf1) - 1] = '\0'; // Remove the last char
                     if (endWith(r.groups[2], "h")
                         && isInText(text[j], snp_buf1))
                     {
@@ -377,8 +381,8 @@ void OptimizeAsm(char **text, const size_t n)
                     continue;
                 }
                 /* Convert incs/decs on pregs incs/decs on hwregs */
-                size_t cont       = 0;
-                char   crem[2][4] = { "inc", "dec" };
+                size_t cont     = 0;
+                char crem[2][4] = { "inc", "dec" };
                 for (size_t k = 0; k < sizeof(crem) / sizeof(crem[0]); k++)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
@@ -911,6 +915,46 @@ void OptimizeAsm(char **text, const size_t n)
             free(reg);
         }
 
+        /* Compare optimizations inspired by optimore
+            These opts simplify compare operations, which are monstrous because
+            they have to take the long long case into account.
+            We try to detect those cases by checking if a tya follows the
+            comparison (not sure if this is reliable, but it passes the test suite)
+        */
+        if (matchString(text[i], "ldx #1")
+            && startWith(text[i + 1], "lda.b tcc__")
+            && matchString(text[i + 2], "sec")
+            && startWith(text[i + 3], "sbc #")
+            && matchString(text[i + 4], "tay")
+            && matchString(text[i + 5], "beq +")
+            && matchString(text[i + 6], "dex")
+            && matchString(text[i + 7], "+")
+            && startWith(text[i + 8], "stx.b tcc__")
+            && matchString(text[i + 9], "txa")
+            && matchString(text[i + 10], "bne +")
+            && startWith(text[i + 11], "brl ")
+            && matchString(text[i + 12], "+")
+            && !matchString(text[i + 13], "tya"))
+        {
+            printf("[CAS 47] %lu: %s\n", i, text[i]);
+
+            text_opt = addToArray(arr, text[i + 1], text_opt.used);
+
+            char *ins = sliceStr(text[i + 3], 5, strlen(text[i + 1]));
+            snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
+            text_opt = addToArray(arr, snp_buf1, text_opt.used);
+
+            text_opt = addToArray(arr, text[i + 5], text_opt.used);
+            text_opt = addToArray(arr, text[i + 11], text_opt.used); // brl
+            text_opt = addToArray(arr, text[i + 12], text_opt.used); // +
+
+            free(ins);
+
+            i += 13;
+            opted += 1;
+            continue;
+        }
+
         i++;
 
     } // End of while (i < n)
@@ -950,7 +994,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       Store trimmed file         */
     /* -------------------------------- */
-    dynArray file = TidyFile(argc, argv);
+    dynArray file = tidyFile(argc, argv);
 
     if (verbose == 2)
     {
@@ -964,7 +1008,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*      Store BSS instuctions       */
     /* -------------------------------- */
-    dynArray bss = StoreBss(file.arr, file.used);
+    dynArray bss = storeBss(file.arr, file.used);
 
     if (verbose == 2)
     {
@@ -978,7 +1022,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       ASM Optimization           */
     /* -------------------------------- */
-    OptimizeAsm(file.arr, file.used);
+    optimizeAsm(file.arr, file.used);
 
     /* -------------------------------- */
     /*       Free pointers              */

@@ -316,7 +316,7 @@ char *sliceStr(char *str, int slice_from, int slice_to)
         return NULL;
 
     char *buffer;
-    int   str_len, buffer_len;
+    int str_len, buffer_len;
 
     // for negative indexes "slice_from" must be less "slice_to"
     if (slice_to < 0 && slice_from < slice_to)
@@ -367,7 +367,7 @@ char *sliceStr(char *str, int slice_from, int slice_to)
 char *replaceStr(char *str, char *orig, char *rep)
 {
     static char buffer[MAXLEN_LINE];
-    char       *p;
+    char *p;
 
     if (!(p = strstr(str, orig)))
         return str;
@@ -393,12 +393,12 @@ regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups
         From Ianmackinnon https://gist.github.com/ianmackinnon/3294587
     */
 
-    regex_t    regexCompiled;
+    regex_t regexCompiled;
     regmatch_t groupArray[maxGroups];
-    size_t     used   = 0;
-    char      *cursor = source;
-    char     **groups = NULL;
-    size_t     len;
+    size_t used   = 0;
+    char *cursor  = source;
+    char **groups = NULL;
+    size_t len;
 
     int re = regcomp(&regexCompiled, regex, REG_EXTENDED);
 
@@ -470,9 +470,15 @@ regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups
  */
 dynArray addToArray(char **arr, char *str, int used)
 {
+    size_t len = strlen(str);
 
-    arr[used] = malloc(strlen(str) + 1);
-    memcpy(arr[used], str, strlen(str) + 1);
+    if ((arr[used] = malloc(len + 1)) == NULL)
+    {
+        perror("malloc-lines");
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(arr[used], str, len + 1);
     used += 1;
 
     dynArray b = { arr, used };
