@@ -6,8 +6,6 @@ opt-65816
 *.txt
 node_modules
 examples
-tests
 Doxyfile
 doc/**
-816-opt.py
 test.sh

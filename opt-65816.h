@@ -468,7 +468,7 @@ regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups
  * @param used The current last index of the index.
  * @return A structure (dynArray).
  */
-dynArray addToArray(char **arr, char *str, int used)
+dynArray pushToArray(char **arr, char *str, int used)
 {
     size_t len = strlen(str);
 
