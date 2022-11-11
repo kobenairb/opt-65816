@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O2 -g
 
-BIN = opt-65816
+BIN = 816-tcc-opt
 
 SRC = src
 OBJ = build

@@ -6,7 +6,7 @@ vgcore.*
 *.txt
 
 # Binary
-opt-65816
+816-tcc-opt
 
 # Documentation
 doc/**
