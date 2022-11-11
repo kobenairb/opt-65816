@@ -1,13 +1,13 @@
 {
     "version": 4,
     "env": {
-        "opt-816": [
-            "${workspaceFolder}/**"
+        "65816-optimizer": [
+            "${workspaceFolder}/src/**"
         ]
     },
     "configurations": [
         {
-            "name": "opt-816",
+            "name": "65816-optimizer",
             "compilerArgs": [
                 "-Wall",
                 "-Wextra",
@@ -15,15 +15,16 @@
                 "-g"
             ],
             "includePath": [
-                "${opt-816}"
+                "${65816-optimizer}"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": "",
                 "path": [
-                    "${opt-816}"
+                    "${65816-optimizer}"
                 ]
-            }
+            },
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ]
 }

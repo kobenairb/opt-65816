@@ -13,7 +13,68 @@
  *
  */
 
-#include "opt-65816.h"
+#include "optimizer.h"
+
+/**
+ * @brief Enable verbosity if OPT_65816_VERBOSE is set
+ * OPT_65816_VERBOSE can be set with the following value:
+ * 0, 1 or 2, or just unset.
+ * @return 0 (disable), 1 (normal) or 2 (debug)
+ */
+int verbosity()
+{
+    char *OPT_65816_VERBOSE = getenv("OPT_65816_VERBOSE");
+
+    if (!OPT_65816_VERBOSE || *OPT_65816_VERBOSE == '0')
+        return 0;
+    else if (*OPT_65816_VERBOSE == '1')
+        return 1;
+    else if (*OPT_65816_VERBOSE == '2')
+        return 2;
+    /* Unmanaged case, should we exit? */
+    return 3;
+}
+
+/**
+ * @brief Checksif it touches the accumulator register.
+ * @param a The asm instruction.
+ * @return 1 (true) or 0 (false).
+ */
+int changeAccu(const char *a)
+{
+    if (strlen(a) > 2)
+    {
+        if (a[2] == 'a' && (!startWith(a, "pha") && !startWith(a, "sta")))
+            return 1;
+        if (strlen(a) == 5 && endWith(a, " a"))
+            return 1;
+    }
+
+    return 0;
+}
+
+/**
+ * @brief Check if the line alters the control flow.
+ * @param a The asm instruction.
+ * @return 1 (true) or 0 (false).
+ */
+int isControl(const char *a)
+{
+    if (strlen(a) > 0)
+    {
+        if (endWith(a, ":"))
+        {
+            return 1;
+        }
+        if (startWith(a, "j") || startWith(a, "b") || startWith(a, "-")
+            || startWith(a, "+"))
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 /**
  * @brief Create an array of strings from a file
@@ -27,7 +88,7 @@ dynArray tidyFile(const int argc, char **argv)
 {
     char buf[MAXLEN_LINE];
     char **lines = NULL;
-    size_t nptrs = 1;
+    size_t nptrs = 10;
     size_t used  = 0;
     size_t len;
 
@@ -61,7 +122,7 @@ dynArray tidyFile(const int argc, char **argv)
         {
             if (used == nptrs)
             {
-                void *tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
+                void *tmp = realloc(lines, (2 * nptrs) * sizeof(*lines));
                 if (!tmp)
                 {
                     perror("realloc-lines");
@@ -973,60 +1034,4 @@ void optimizeAsm(char **text, const size_t n)
         printf("\n\n______________[ASM CODE]_________________\n");
         free(arr);
     }
-}
-
-/**
- * @brief The main function. Accept an ASM file
- as argument or stdin.
- * @param argc The number of arguments provided.
- * @param argv The arguments provided.
- * @return 0 or 1 if exit on error.
- */
-int main(int argc, char **argv)
-{
-    /* -------------------------------- */
-    /*       Enable verbosity level     */
-    /* -------------------------------- */
-    size_t verbose = verbosity();
-    if (verbose)
-        fprintf(stderr, "Verbose mode is activated: %lu\n", verbose);
-
-    /* -------------------------------- */
-    /*       Store trimmed file         */
-    /* -------------------------------- */
-    dynArray file = tidyFile(argc, argv);
-
-    if (verbose == 2)
-    {
-        for (size_t i = 0; i < file.used; i++)
-        {
-            fprintf(stderr, "line[%6lu] : %s\n", i, file.arr[i]);
-        }
-        fprintf(stderr, "\n");
-    }
-
-    /* -------------------------------- */
-    /*      Store BSS instuctions       */
-    /* -------------------------------- */
-    dynArray bss = storeBss(file.arr, file.used);
-
-    if (verbose == 2)
-    {
-        for (size_t i = 0; i < bss.used; i++)
-        {
-            fprintf(stderr, "line[%5lu] : %s\n", i, bss.arr[i]);
-        }
-        fprintf(stderr, "\n");
-    }
-
-    /* -------------------------------- */
-    /*       ASM Optimization           */
-    /* -------------------------------- */
-    optimizeAsm(file.arr, file.used);
-
-    /* -------------------------------- */
-    /*       Free pointers              */
-    /* -------------------------------- */
-    freedynArray(bss.arr, bss.used);
-    freedynArray(file.arr, file.used);
 }

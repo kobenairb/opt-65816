@@ -8,6 +8,9 @@
         "editor.detectIndentation": false,
         "editor.insertSpaces": false
     },
+    "[doxyfile]": {
+        "editor.formatOnSave": false
+    },
     "C_Cpp.clang_format_style": "{BasedOnStyle: WebKit, UseTab: Never, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Allman, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 0, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false, BreakBeforeBinaryOperators: NonAssignment, AlignAfterOpenBracket: Align, AlignOperands: true, AlignConsecutiveAssignments: true, AlignConsecutiveDeclarations: false, PointerAlignment: Right, AlignTrailingComments: true}",
     "C_Cpp.dimInactiveRegions": true,
     "C_Cpp.vcFormat.indent.preserveWithinParentheses": false,
@@ -22,7 +25,8 @@
         "ctype.h": "c",
         "opt-816.h": "c",
         "stdlib.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "Doxyfile": "doxyfile"
     },
     "files.trimTrailingWhitespace": true,
     "makefile.ignoreDirectoryCommands": false,

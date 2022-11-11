@@ -1,8 +1,8 @@
 /*
- * opt-65816 - Assembly code optimizer for WDC 65816.
+ * opt-65816 - Assembly code optimizer for the WDC 65816 processor.
  *
- * Description: Assembly code optimizer for the WDC65816 processor produced
- * by the 65816 Tiny C Compiler (816-tcc).
+ * Description: Assembly code optimizer produced
+ * by the 816 Tiny C Compiler (816-tcc).
  * This library is a C port of the 816-opt python tool.
  *
  * Author: kobenairb (kobenairb@gmail.com).
@@ -13,120 +13,7 @@
  *
  */
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-#ifdef __linux__
-#include <ctype.h>
-#include <regex.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#endif
-
-/*!
- * @brief For Windows compatibility
- */
-#ifdef _WIN32
-#define strtok_r strtok_s
-#endif
-
-/*!
- * @brief POSIX suggests a line length of 4096,
- * but probably over sized
- */
-#define MAXLEN_LINE 4096
-
-/*!
- * @brief Define comment for ASM files
- */
-#define COMMENT ";"
-
-/*!
- * @brief BSS begining of block
- */
-#define BSS_START ".RAMSECTION \".bss\" BANK $7e SLOT 2"
-/*!
- * @brief BSS end of block
- */
-#define BSS_END ".ENDS"
-
-/*!
- * @brief Stores (accu/x/y/zero) to pseudo-registers
- */
-#define STORE_AXYZ_TO_PSEUDO "st([axyz]).b tcc__([rf][0-9]{0,}h{0,1})$"
-/*!
- * @brief Stores (x/y) to pseudo-registers
- */
-#define STORE_XY_TO_PSEUDO "st([xy]).b tcc__([rf][0-9]{0,}h{0,1})$"
-/*!
- * @brief Stores (accu only) to pseudo-registers
- */
-#define STORE_A_TO_PSEUDO "sta.b tcc__([rf][0-9]{0,}h{0,1})$"
-
-/* -------------------------------- */
-/*             Structures           */
-/* -------------------------------- */
-
-/**
- * @struct dynArray
- * @brief Structure to store the return of BssStore and TidyFile.
- * @var dynArray::arr
- * Member 'arr' contains the array of strings.
- * @var dynArray::used
- * Member 'used' contains the number of strings (elements)
- * in the array.
- */
-typedef struct dynArray
-{
-    char **arr;
-    size_t used;
-} dynArray;
-
-/**
- * @struct regexdynArray
- * @brief Structure to store the return of regexMatchGroups.
- * @var regexdynArray::status
- * Member 'status' contains the status if the function.
- * 1 if the regexp matchs groups, or 0 if not.
- * @var regexdynArray::regexCompiled
- * Member 'regexCompiled' contains the adress of
- the compiled regex.
- * @var regexdynArray::groups
- * Member 'groups' contains the array of strings
- * of matched groups.
- */
-typedef struct regexdynArray
-{
-    size_t status;
-    char **groups;
-    size_t used;
-} regexdynArray;
-
-/* -------------------------------- */
-/*             Functions            */
-/* -------------------------------- */
-
-/**
- * @brief Enable verbosity if OPT_65816_VERBOSE is set
- * OPT_65816_VERBOSE can be set with the following value:
- * 0, 1 or 2, or just unset.
- * @return 0 (disable), 1 (normal) or 2 (debug)
- */
-int verbosity()
-{
-    char *OPT_65816_VERBOSE = getenv("OPT_65816_VERBOSE");
-
-    if (!OPT_65816_VERBOSE || *OPT_65816_VERBOSE == '0')
-        return 0;
-    else if (*OPT_65816_VERBOSE == '1')
-        return 1;
-    else if (*OPT_65816_VERBOSE == '2')
-        return 2;
-    /* Unmanaged case, should we exit? */
-    return 3;
-}
+#include "helpers.h"
 
 /**
  * @brief Free pointers.
@@ -222,10 +109,9 @@ int isInText(const char *source, const char *pattern)
  */
 int findMin(const int a, const int b)
 {
-    if (a > b)
+    if (a && b && (a > b))
         return b;
-    else
-        return a;
+    return a;
 }
 
 /**
@@ -254,47 +140,6 @@ char *trimWhiteSpace(char *str)
     end[1] = '\0';
 
     return str;
-}
-
-/**
- * @brief Checksif it touches the accumulator register.
- * @param a The asm instruction.
- * @return 1 (true) or 0 (false).
- */
-int changeAccu(const char *a)
-{
-    if (strlen(a) > 2)
-    {
-        if (a[2] == 'a' && (!startWith(a, "pha") && !startWith(a, "sta")))
-            return 1;
-        if (strlen(a) == 5 && endWith(a, " a"))
-            return 1;
-    }
-
-    return 0;
-}
-
-/**
- * @brief Check if the line alters the control flow.
- * @param a The asm instruction.
- * @return 1 (true) or 0 (false).
- */
-int isControl(const char *a)
-{
-    if (strlen(a) > 0)
-    {
-        if (endWith(a, ":"))
-        {
-            return 1;
-        }
-        if (startWith(a, "j") || startWith(a, "b") || startWith(a, "-")
-            || startWith(a, "+"))
-        {
-            return 1;
-        }
-    }
-
-    return 0;
 }
 
 /**

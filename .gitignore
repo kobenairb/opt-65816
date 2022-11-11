@@ -1,11 +1,12 @@
+# logs, coredump, objects...
 vgcore.*
 *.log
 *.o
-opt-65816
 *.out
 *.txt
-node_modules
-examples
-Doxyfile
+
+# Binary
+opt-65816
+
+# Documentation
 doc/**
-test.sh

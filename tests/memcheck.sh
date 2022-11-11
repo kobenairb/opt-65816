@@ -1,17 +1,19 @@
 #!/bin/bash
 
-for file in samples/*.ps; do
-    echo -n "Optimizing $file "
-    valgrind --quiet \
+echo -e "\n==> Perform memory check...\n"
+
+for file in tests/samples/*.ps; do
+    echo -n "$file "
+
+    if valgrind --quiet \
         --leak-check=full \
         --track-origins=yes \
         --exit-on-first-error=yes \
         --error-exitcode=1 \
-        ./opt-65816 ${file} >/dev/null
-    if [[ $? -eq 0 ]]; then
-        echo "[OK]"
+        ./opt-65816 "${file}" >/dev/null; then
+        echo "[PASS]"
     else
-        echo "[KO]"
-        exit $?
+        echo "[FAILED]"
+        exit 1
     fi
 done
