@@ -1,24 +1,11 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-#ifdef __linux__
 #include <ctype.h>
 #include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#endif
-
-/*!
- * @brief For Windows compatibility
- */
-#ifdef _WIN32
-#define strtok_r strtok_s
-#endif
 
 /*!
  * @brief Max length of the line.

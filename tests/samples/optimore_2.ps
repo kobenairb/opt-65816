@@ -1,0 +1,13 @@
+ldx #1
+sec
+sbc #SOMETHING
+tay
+beq +
+dex
++
+stx.b tcc__SOMETHING
+txa
+bne +
+brl SOMETHING
++
+tya

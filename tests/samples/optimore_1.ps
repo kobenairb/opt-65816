@@ -1,0 +1,14 @@
+ldx #1
+lda.b tcc__something
+sec
+bc #something
+tay
+beq +
+dex
++
+stx.b tcc__something
+txa
+bne +
+brl something
++
+nottya

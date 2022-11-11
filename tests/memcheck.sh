@@ -10,7 +10,7 @@ for file in tests/samples/*.ps; do
         --track-origins=yes \
         --exit-on-first-error=yes \
         --error-exitcode=1 \
-        ./opt-65816 "${file}" >/dev/null; then
+        ./816-tcc-opt "${file}" >/dev/null; then
         echo "[PASS]"
     else
         echo "[FAILED]"

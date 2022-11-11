@@ -474,28 +474,29 @@ while i < len(text):
             opted += 1
             continue
 
-    #     if (
-    #         text[i] == "ldx #1"
-    #         and text[i + 1] == "sec"
-    #         and text[i + 2].startswith("sbc #")
-    #         and text[i + 3] == "tay"
-    #         and text[i + 4] == "beq +"
-    #         and text[i + 5] == "dex"
-    #         and text[i + 6] == "+"
-    #         and text[i + 7].startswith("stx.b tcc__")
-    #         and text[i + 8] == "txa"
-    #         and text[i + 9] == "bne +"
-    #         and text[i + 10].startswith("brl ")
-    #         and text[i + 11] == "+"
-    #         and text[i + 12] != "tya"
-    #     ):
-    #         text_opt += ["cmp #" + text[i + 2][5:]]
-    #         text_opt += [text[i + 4]]
-    #         text_opt += [text[i + 10]]  # brl
-    #         text_opt += [text[i + 11]]  # +
-    #         i += 12
-    #         opted += 1
-    #         continue
+        if (
+            text[i] == "ldx #1"
+            and text[i + 1] == "sec"
+            and text[i + 2].startswith("sbc #")
+            and text[i + 3] == "tay"
+            and text[i + 4] == "beq +"
+            and text[i + 5] == "dex"
+            and text[i + 6] == "+"
+            and text[i + 7].startswith("stx.b tcc__")
+            and text[i + 8] == "txa"
+            and text[i + 9] == "bne +"
+            and text[i + 10].startswith("brl ")
+            and text[i + 11] == "+"
+            and text[i + 12] != "tya"
+        ):
+            print(f"[USECASE #48] {i}: {text[i]}")
+            text_opt += ["cmp #" + text[i + 2][5:]]
+            text_opt += [text[i + 4]]
+            text_opt += [text[i + 10]]  # brl
+            text_opt += [text[i + 11]]  # +
+            i += 12
+            opted += 1
+            continue
 
     #     if (
     #         text[i] == "ldx #1"

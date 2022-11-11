@@ -157,14 +157,13 @@ dynArray tidyFile(const int argc, char **argv)
 dynArray storeBss(char **text, const size_t n)
 {
     char **bss = NULL;
-    char *saveptr;
 
     size_t used   = 0;
     size_t bss_on = 0;
     size_t nptrs  = n;
     size_t len;
 
-    if ((bss = malloc(nptrs * sizeof *bss)) == NULL)
+    if ((bss = malloc(nptrs * (sizeof *bss))) == NULL)
     {
         perror("malloc-lines");
         exit(EXIT_FAILURE);
@@ -172,17 +171,17 @@ dynArray storeBss(char **text, const size_t n)
 
     for (size_t i = 0; i < n; i++)
     {
-        if (matchString(text[i], BSS_START))
+        if (matchString(text[i], BSS_SECTION_START))
         {
             bss_on = 1;
             continue;
         }
-        if (matchString(text[i], BSS_END) && bss_on)
+        if (matchString(text[i], SECTION_END) && bss_on)
         {
             bss_on = 0;
             continue;
         }
-        if (!matchString(text[i], BSS_START) && bss_on)
+        if (!matchString(text[i], BSS_SECTION_START) && bss_on)
         {
             len = strlen(text[i]);
 
@@ -192,7 +191,7 @@ dynArray storeBss(char **text, const size_t n)
                 exit(EXIT_FAILURE);
             }
             memcpy(bss[used], text[i], len + 1);
-            strtok_r(bss[used], " ", &saveptr);
+            strtok(bss[used], " ");
             used += 1;
         }
     }
@@ -241,8 +240,7 @@ void optimizeAsm(char **text, const size_t n)
                 size_t doopt = 0;
                 for (size_t j = (i + 1); j < (size_t)findMin(n, (i + 30)); j++)
                 {
-                    snprintf(snp_buf1, sizeof(snp_buf1),
-                             "st([axyz]).b tcc__%s$", r.groups[2]);
+                    snprintf(snp_buf1, sizeof(snp_buf1), "st([axyz]).b tcc__%s$", r.groups[2]);
                     r1 = regexMatchGroups(text[j], snp_buf1, 2);
                     if (r1.status == 1)
                     {
@@ -264,8 +262,7 @@ void optimizeAsm(char **text, const size_t n)
                     }
                     /* Cases in which we don't pursue optimization further
                         #1 Branch or other use of the pseudo register */
-                    snprintf(snp_buf1, sizeof(snp_buf1), "tcc__%s",
-                             r.groups[2]);
+                    snprintf(snp_buf1, sizeof(snp_buf1), "tcc__%s", r.groups[2]);
                     if (isControl(text[j]) || isInText(text[j], snp_buf1))
                     {
                         printf("[USECASE #3] %lu: %s\n", j, text[j]);
@@ -273,16 +270,18 @@ void optimizeAsm(char **text, const size_t n)
                         break;
                     }
                     /* #2 Use as a pointer */
-                    snprintf(snp_buf1, sizeof(snp_buf1), "[tcc__%s",
-                             r.groups[2]);
-                    snp_buf1[strlen(snp_buf1) - 1] = '\0'; // Remove the last char
+                    snprintf(snp_buf1, sizeof(snp_buf1), "[tcc__%s", r.groups[2]);
+                    char *ss_buffer = sliceStr(snp_buf1, 0, strlen(snp_buf1) - 1); // Remove the last char
                     if (endWith(r.groups[2], "h")
-                        && isInText(text[j], snp_buf1))
+                        && isInText(text[j], ss_buffer))
                     {
                         printf("[USECASE #4] %lu: %s\n", j, text[j]);
 
+                        free(ss_buffer);
+
                         break;
                     }
+                    free(ss_buffer);
                 }
                 freedynArray(r.groups, r.used);
                 if (doopt)
@@ -1012,6 +1011,35 @@ void optimizeAsm(char **text, const size_t n)
             free(ins);
 
             i += 13;
+            opted += 1;
+            continue;
+        }
+
+        if (matchString(text[i], "ldx #1")
+            && matchString(text[i + 1], "sec")
+            && startWith(text[i + 2], "sbc #")
+            && matchString(text[i + 3], "tay")
+            && matchString(text[i + 4], "beq +")
+            && matchString(text[i + 5], "dex")
+            && matchString(text[i + 6], "+")
+            && startWith(text[i + 7], "stx.b tcc__")
+            && matchString(text[i + 8], "txa")
+            && matchString(text[i + 9], "bne +")
+            && startWith(text[i + 10], "brl ")
+            && matchString(text[i + 11], "+")
+            && !matchString(text[i + 12], "tya"))
+        {
+            printf("[USECASE #48] %lu: %s\n", i, text[i]);
+
+            char *ins = sliceStr(text[i + 2], 5, strlen(text[i + 2]));
+            snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
+            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+
+            text_opt = pushToArray(arr, text[i + 4], text_opt.used);
+            text_opt = pushToArray(arr, text[i + 10], text_opt.used); // brl
+            text_opt = pushToArray(arr, text[i + 11], text_opt.used); // +
+
+            i += 12;
             opted += 1;
             continue;
         }

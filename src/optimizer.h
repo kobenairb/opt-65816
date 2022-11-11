@@ -9,13 +9,14 @@
 #define COMMENT ";"
 
 /*!
- * @brief BSS begining of block
+ * @brief BSS start of a section block
  */
-#define BSS_START ".RAMSECTION \".bss\" BANK $7e SLOT 2"
+#define BSS_SECTION_START ".RAMSECTION \".bss\" BANK $7e SLOT 2"
+
 /*!
- * @brief BSS end of block
+ * @brief End of a section block
  */
-#define BSS_END ".ENDS"
+#define SECTION_END ".ENDS"
 
 /*!
  * @brief Stores (accu/x/y/zero) to pseudo-registers
