@@ -1044,6 +1044,40 @@ void optimizeAsm(char **text, const size_t n)
             continue;
         }
 
+        if (matchString(text[i], "ldx #1")
+            && startWith(text[i + 1], "lda.b tcc__r")
+            && matchString(text[i + 2], "sec")
+            && startWith(text[i + 3], "sbc.b tcc__r")
+            && matchString(text[i + 4], "tya")
+            && matchString(text[i + 5], "beq +")
+            && matchString(text[i + 6], "bcs ++")
+            && matchString(text[i + 7], "+ dex")
+            && matchString(text[i + 8], "++")
+            && startWith(text[i + 9], "stx.b tcc__r")
+            && matchString(text[i + 10], "txa")
+            && matchString(text[i + 11], "bne +")
+            && startWith(text[i + 12], "brl")
+            && matchString(text[i + 13], "+")
+            && !matchString(text[i + 14], "tya"))
+        {
+
+            text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+
+            char *ins = sliceStr(text[i + 3], 6, strlen(text[i + 3]));
+            snprintf(snp_buf1, sizeof(snp_buf1), "cmp b %s", ins);
+            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+
+            text_opt = pushToArray(arr, text[i + 5], text_opt.used);
+            text_opt = pushToArray(arr, "bcc +", text_opt.used);
+            text_opt = pushToArray(arr, "brl ++", text_opt.used);
+            text_opt = pushToArray(arr, "+", text_opt.used);
+            text_opt = pushToArray(arr, text[i + 12], text_opt.used);
+            text_opt = pushToArray(arr, "++", text_opt.used);
+
+            i += 14;
+            opted += 1;
+            continue;
+        }
         i++;
 
     } // End of while (i < n)

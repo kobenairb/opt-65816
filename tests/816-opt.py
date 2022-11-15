@@ -498,34 +498,34 @@ while i < len(text):
             opted += 1
             continue
 
-    #     if (
-    #         text[i] == "ldx #1"
-    #         and text[i + 1].startswith("lda.b tcc__r")
-    #         and text[i + 2] == "sec"
-    #         and text[i + 3].startswith("sbc.b tcc__r")
-    #         and text[i + 4] == "tay"
-    #         and text[i + 5] == "beq +"
-    #         and text[i + 6] == "bcs ++"
-    #         and text[i + 7] == "+ dex"
-    #         and text[i + 8] == "++"
-    #         and text[i + 9].startswith("stx.b tcc__r")
-    #         and text[i + 10] == "txa"
-    #         and text[i + 11] == "bne +"
-    #         and text[i + 12].startswith("brl ")
-    #         and text[i + 13] == "+"
-    #         and text[i + 14] != "tya"
-    #     ):
-    #         text_opt += [text[i + 1]]
-    #         text_opt += ["cmp.b " + text[i + 3][6:]]
-    #         text_opt += [text[i + 5]]
-    #         text_opt += ["bcc +"]
-    #         text_opt += ["brl ++"]
-    #         text_opt += ["+"]
-    #         text_opt += [text[i + 12]]
-    #         text_opt += ["++"]
-    #         i += 14
-    #         opted += 1
-    #         continue
+        if (
+            text[i] == "ldx #1"
+            and text[i + 1].startswith("lda.b tcc__r")
+            and text[i + 2] == "sec"
+            and text[i + 3].startswith("sbc.b tcc__r")
+            and text[i + 4] == "tay"
+            and text[i + 5] == "beq +"
+            and text[i + 6] == "bcs ++"
+            and text[i + 7] == "+ dex"
+            and text[i + 8] == "++"
+            and text[i + 9].startswith("stx.b tcc__r")
+            and text[i + 10] == "txa"
+            and text[i + 11] == "bne +"
+            and text[i + 12].startswith("brl ")
+            and text[i + 13] == "+"
+            and text[i + 14] != "tya"
+        ):
+            text_opt += [text[i + 1]]
+            text_opt += ["cmp.b " + text[i + 3][6:]]
+            text_opt += [text[i + 5]]
+            text_opt += ["bcc +"]
+            text_opt += ["brl ++"]
+            text_opt += ["+"]
+            text_opt += [text[i + 12]]
+            text_opt += ["++"]
+            i += 14
+            opted += 1
+            continue
 
     #     if (
     #         text[i] == "ldx #1"
