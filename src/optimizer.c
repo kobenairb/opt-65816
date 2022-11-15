@@ -1039,6 +1039,8 @@ void optimizeAsm(char **text, const size_t n)
             text_opt = pushToArray(arr, text[i + 10], text_opt.used); // brl
             text_opt = pushToArray(arr, text[i + 11], text_opt.used); // +
 
+            free(ins);
+
             i += 12;
             opted += 1;
             continue;
@@ -1048,7 +1050,7 @@ void optimizeAsm(char **text, const size_t n)
             && startWith(text[i + 1], "lda.b tcc__r")
             && matchString(text[i + 2], "sec")
             && startWith(text[i + 3], "sbc.b tcc__r")
-            && matchString(text[i + 4], "tya")
+            && matchString(text[i + 4], "tay")
             && matchString(text[i + 5], "beq +")
             && matchString(text[i + 6], "bcs ++")
             && matchString(text[i + 7], "+ dex")
@@ -1056,15 +1058,16 @@ void optimizeAsm(char **text, const size_t n)
             && startWith(text[i + 9], "stx.b tcc__r")
             && matchString(text[i + 10], "txa")
             && matchString(text[i + 11], "bne +")
-            && startWith(text[i + 12], "brl")
+            && startWith(text[i + 12], "brl ")
             && matchString(text[i + 13], "+")
             && !matchString(text[i + 14], "tya"))
         {
+            printf("[USECASE #49] %lu: %s\n", i, text[i]);
 
             text_opt = pushToArray(arr, text[i + 1], text_opt.used);
 
             char *ins = sliceStr(text[i + 3], 6, strlen(text[i + 3]));
-            snprintf(snp_buf1, sizeof(snp_buf1), "cmp b %s", ins);
+            snprintf(snp_buf1, sizeof(snp_buf1), "cmp.b %s", ins);
             text_opt = pushToArray(arr, snp_buf1, text_opt.used);
 
             text_opt = pushToArray(arr, text[i + 5], text_opt.used);
@@ -1073,6 +1076,8 @@ void optimizeAsm(char **text, const size_t n)
             text_opt = pushToArray(arr, "+", text_opt.used);
             text_opt = pushToArray(arr, text[i + 12], text_opt.used);
             text_opt = pushToArray(arr, "++", text_opt.used);
+
+            free(ins);
 
             i += 14;
             opted += 1;

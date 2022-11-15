@@ -515,6 +515,7 @@ while i < len(text):
             and text[i + 13] == "+"
             and text[i + 14] != "tya"
         ):
+            print(f"[USECASE #49] {i}: {text[i]}")
             text_opt += [text[i + 1]]
             text_opt += ["cmp.b " + text[i + 3][6:]]
             text_opt += [text[i + 5]]
