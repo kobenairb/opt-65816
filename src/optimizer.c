@@ -935,154 +935,276 @@ void optimizeAsm(char **text, const size_t n)
                 free(local);
             }
 
-        } // End of startWith(text[i], "ld")
-
-        /* Reorder copying of 32-bit value to preg if it looks as
-            if that could allow further optimization.
-            Looking for:
-                lda something
-                sta.b tcc_rX
-                lda something
-                sta.b tcc_rYh
-                ...tcc_rX...
-        */
-        if (startWith(text[i], "lda")
-            && startWith(text[i + 1], "sta.b tcc__r"))
-        {
-            printf("[USECASE #45] %lu: %s\n", i, text[i]);
-
-            char *reg = sliceStr(text[i + 1], 6, strlen(text[i + 1]));
-            if (!endWith(reg, "h")
-                && startWith(text[i + 2], "lda")
-                && !endWith(text[i + 2], reg)
-                && startWith(text[i + 3], "sta.b tcc__r")
-                && endWith(text[i + 3], "h")
-                && endWith(text[i + 4], reg))
+            /* Reorder copying of 32-bit value to preg if it looks as
+                if that could allow further optimization.
+                Looking for:
+                    lda something
+                    sta.b tcc_rX
+                    lda something
+                    sta.b tcc_rYh
+                    ...tcc_rX...
+            */
+            if (startWith(text[i], "lda")
+                && startWith(text[i + 1], "sta.b tcc__r"))
             {
-                printf("[USECASE #46] %lu: %s\n", i + 2, text[i + 2]);
+                printf("[USECASE #45] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 3], text_opt.used);
-                text_opt = pushToArray(arr, text[i], text_opt.used);
+                char *reg = sliceStr(text[i + 1], 6, strlen(text[i + 1]));
+                if (!endWith(reg, "h")
+                    && startWith(text[i + 2], "lda")
+                    && !endWith(text[i + 2], reg)
+                    && startWith(text[i + 3], "sta.b tcc__r")
+                    && endWith(text[i + 3], "h")
+                    && endWith(text[i + 4], reg))
+                {
+                    printf("[USECASE #46] %lu: %s\n", i + 2, text[i + 2]);
+
+                    text_opt = pushToArray(arr, text[i + 2], text_opt.used);
+                    text_opt = pushToArray(arr, text[i + 3], text_opt.used);
+                    text_opt = pushToArray(arr, text[i], text_opt.used);
+                    text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+
+                    free(reg);
+
+                    i += 4;
+                    // this is not an optimization per se, so we don't count it
+                    continue;
+                }
+                free(reg);
+            }
+
+            /* Compare optimizations inspired by optimore
+                These opts simplify compare operations, which are monstrous because
+                they have to take the long long case into account.
+                We try to detect those cases by checking if a tya follows the
+                comparison (not sure if this is reliable, but it passes the test suite)
+            */
+            if (matchString(text[i], "ldx #1")
+                && startWith(text[i + 1], "lda.b tcc__")
+                && matchString(text[i + 2], "sec")
+                && startWith(text[i + 3], "sbc #")
+                && matchString(text[i + 4], "tay")
+                && matchString(text[i + 5], "beq +")
+                && matchString(text[i + 6], "dex")
+                && matchString(text[i + 7], "+")
+                && startWith(text[i + 8], "stx.b tcc__")
+                && matchString(text[i + 9], "txa")
+                && matchString(text[i + 10], "bne +")
+                && startWith(text[i + 11], "brl ")
+                && matchString(text[i + 12], "+")
+                && !matchString(text[i + 13], "tya"))
+            {
+                printf("[USECASE #47] %lu: %s\n", i, text[i]);
+
                 text_opt = pushToArray(arr, text[i + 1], text_opt.used);
 
-                free(reg);
+                char *ins = sliceStr(text[i + 3], 5, strlen(text[i + 1]));
+                snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
+                text_opt = pushToArray(arr, snp_buf1, text_opt.used);
 
-                i += 4;
-                // this is not an optimization per se, so we don't count it
+                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 11], text_opt.used); // brl
+                text_opt = pushToArray(arr, text[i + 12], text_opt.used); // +
+
+                free(ins);
+
+                i += 13;
+                opted += 1;
                 continue;
             }
-            free(reg);
-        }
 
-        /* Compare optimizations inspired by optimore
-            These opts simplify compare operations, which are monstrous because
-            they have to take the long long case into account.
-            We try to detect those cases by checking if a tya follows the
-            comparison (not sure if this is reliable, but it passes the test suite)
-        */
-        if (matchString(text[i], "ldx #1")
-            && startWith(text[i + 1], "lda.b tcc__")
-            && matchString(text[i + 2], "sec")
-            && startWith(text[i + 3], "sbc #")
-            && matchString(text[i + 4], "tay")
-            && matchString(text[i + 5], "beq +")
-            && matchString(text[i + 6], "dex")
-            && matchString(text[i + 7], "+")
-            && startWith(text[i + 8], "stx.b tcc__")
-            && matchString(text[i + 9], "txa")
-            && matchString(text[i + 10], "bne +")
-            && startWith(text[i + 11], "brl ")
-            && matchString(text[i + 12], "+")
-            && !matchString(text[i + 13], "tya"))
+            if (matchString(text[i], "ldx #1")
+                && matchString(text[i + 1], "sec")
+                && startWith(text[i + 2], "sbc #")
+                && matchString(text[i + 3], "tay")
+                && matchString(text[i + 4], "beq +")
+                && matchString(text[i + 5], "dex")
+                && matchString(text[i + 6], "+")
+                && startWith(text[i + 7], "stx.b tcc__")
+                && matchString(text[i + 8], "txa")
+                && matchString(text[i + 9], "bne +")
+                && startWith(text[i + 10], "brl ")
+                && matchString(text[i + 11], "+")
+                && !matchString(text[i + 12], "tya"))
+            {
+                printf("[USECASE #48] %lu: %s\n", i, text[i]);
+
+                char *ins = sliceStr(text[i + 2], 5, strlen(text[i + 2]));
+                snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
+                text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+
+                text_opt = pushToArray(arr, text[i + 4], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 10], text_opt.used); // brl
+                text_opt = pushToArray(arr, text[i + 11], text_opt.used); // +
+
+                free(ins);
+
+                i += 12;
+                opted += 1;
+                continue;
+            }
+
+            if (matchString(text[i], "ldx #1")
+                && startWith(text[i + 1], "lda.b tcc__r")
+                && matchString(text[i + 2], "sec")
+                && startWith(text[i + 3], "sbc.b tcc__r")
+                && matchString(text[i + 4], "tay")
+                && matchString(text[i + 5], "beq +")
+                && matchString(text[i + 6], "bcs ++")
+                && matchString(text[i + 7], "+ dex")
+                && matchString(text[i + 8], "++")
+                && startWith(text[i + 9], "stx.b tcc__r")
+                && matchString(text[i + 10], "txa")
+                && matchString(text[i + 11], "bne +")
+                && startWith(text[i + 12], "brl ")
+                && matchString(text[i + 13], "+")
+                && !matchString(text[i + 14], "tya"))
+            {
+                printf("[USECASE #49] %lu: %s\n", i, text[i]);
+
+                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+
+                char *ins = sliceStr(text[i + 3], 6, strlen(text[i + 3]));
+                snprintf(snp_buf1, sizeof(snp_buf1), "cmp.b %s", ins);
+                text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+
+                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
+                text_opt = pushToArray(arr, "bcc +", text_opt.used);
+                text_opt = pushToArray(arr, "brl ++", text_opt.used);
+                text_opt = pushToArray(arr, "+", text_opt.used);
+                text_opt = pushToArray(arr, text[i + 12], text_opt.used);
+                text_opt = pushToArray(arr, "++", text_opt.used);
+
+                free(ins);
+
+                i += 14;
+                opted += 1;
+                continue;
+            }
+
+            if (matchString(text[i], "ldx #1")
+                && matchString(text[i + 1], "sec")
+                && startWith(text[i + 2], "sbc.w #")
+                && matchString(text[i + 3], "tay")
+                && matchString(text[i + 4], "bvc +")
+                && matchString(text[i + 5], "eor #$8000")
+                && matchString(text[i + 6], "+")
+                && matchString(text[i + 7], "bmi +++")
+                && matchString(text[i + 8], "++")
+                && matchString(text[i + 9], "dex")
+                && matchString(text[i + 10], "+++")
+                && startWith(text[i + 11], "stx.b tcc__r")
+                && matchString(text[i + 12], "txa")
+                && matchString(text[i + 13], "bne +")
+                && startWith(text[i + 14], "brl ")
+                && matchString(text[i + 15], "+")
+                && !matchString(text[i + 16], "tya"))
+            {
+                printf("[USECASE #50] %lu: %s\n", i, text[i]);
+
+                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 4], text_opt.used);
+                text_opt = pushToArray(arr, "eor #$8000", text_opt.used);
+                text_opt = pushToArray(arr, "+", text_opt.used);
+                text_opt = pushToArray(arr, "bmi +", text_opt.used);
+                text_opt = pushToArray(arr, text[i + 14], text_opt.used);
+                text_opt = pushToArray(arr, "+", text_opt.used);
+
+                i += 16;
+                opted += 1;
+                continue;
+            }
+
+            if (matchString(text[i], "ldx #1")
+                && startWith(text[i + 1], "lda.b tcc__r")
+                && matchString(text[i + 2], "sec")
+                && startWith(text[i + 3], "sbc.b tcc__r")
+                && matchString(text[i + 4], "tay")
+                && matchString(text[i + 5], "bvc +")
+                && matchString(text[i + 6], "eor #$8000")
+                && matchString(text[i + 7], "+")
+                && matchString(text[i + 8], "bmi +++")
+                && matchString(text[i + 9], "++")
+                && matchString(text[i + 10], "dex")
+                && matchString(text[i + 11], "+++")
+                && startWith(text[i + 12], "stx.b tcc__r")
+                && matchString(text[i + 13], "txa")
+                && matchString(text[i + 14], "bne +")
+                && startWith(text[i + 15], "brl ")
+                && matchString(text[i + 16], "+")
+                && !matchString(text[i + 17], "tya"))
+            {
+                printf("[USECASE #51] %lu: %s\n", i, text[i]);
+
+                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 3], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 6], text_opt.used);
+                text_opt = pushToArray(arr, "+", text_opt.used);
+                text_opt = pushToArray(arr, "bmi +", text_opt.used);
+                text_opt = pushToArray(arr, text[i + 15], text_opt.used);
+                text_opt = pushToArray(arr, "+", text_opt.used);
+
+                i += 17;
+                opted += 1;
+                continue;
+            }
+
+            if (matchString(text[i], "ldx #1")
+                && matchString(text[i + 1], "sec")
+                && startWith(text[i + 2], "sbc.b tcc__r")
+                && matchString(text[i + 3], "tay")
+                && matchString(text[i + 4], "bvc +")
+                && matchString(text[i + 5], "eor #$8000")
+                && matchString(text[i + 6], "+")
+                && matchString(text[i + 7], "bmi +++")
+                && matchString(text[i + 8], "++")
+                && matchString(text[i + 9], "dex")
+                && matchString(text[i + 10], "+++")
+                && startWith(text[i + 11], "stx.b tcc__r")
+                && matchString(text[i + 12], "txa")
+                && matchString(text[i + 13], "bne +")
+                && startWith(text[i + 14], "brl ")
+                && matchString(text[i + 15], "+")
+                && !matchString(text[i + 16], "tya"))
+            {
+                printf("[USECASE #52] %lu: %s\n", i, text[i]);
+
+                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 4], text_opt.used);
+                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
+                text_opt = pushToArray(arr, "+", text_opt.used);
+                text_opt = pushToArray(arr, "bmi +", text_opt.used);
+                text_opt = pushToArray(arr, text[i + 14], text_opt.used);
+                text_opt = pushToArray(arr, "+", text_opt.used);
+
+                i += 16;
+                opted += 1;
+                continue;
+            }
+        } // End of startWith(text[i], "ld")
+
+        if (matchString(text[i], "rep #$20")
+            && matchString(text[i + 1], "sep #$20"))
         {
-            printf("[USECASE #47] %lu: %s\n", i, text[i]);
+            printf("[USECASE #53] %lu: %s\n", i, text[i]);
 
-            text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-
-            char *ins = sliceStr(text[i + 3], 5, strlen(text[i + 1]));
-            snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
-            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
-
-            text_opt = pushToArray(arr, text[i + 5], text_opt.used);
-            text_opt = pushToArray(arr, text[i + 11], text_opt.used); // brl
-            text_opt = pushToArray(arr, text[i + 12], text_opt.used); // +
-
-            free(ins);
-
-            i += 13;
+            i += 2;
             opted += 1;
             continue;
         }
 
-        if (matchString(text[i], "ldx #1")
-            && matchString(text[i + 1], "sec")
-            && startWith(text[i + 2], "sbc #")
-            && matchString(text[i + 3], "tay")
-            && matchString(text[i + 4], "beq +")
-            && matchString(text[i + 5], "dex")
-            && matchString(text[i + 6], "+")
-            && startWith(text[i + 7], "stx.b tcc__")
-            && matchString(text[i + 8], "txa")
-            && matchString(text[i + 9], "bne +")
-            && startWith(text[i + 10], "brl ")
-            && matchString(text[i + 11], "+")
-            && !matchString(text[i + 12], "tya"))
+        if (matchString(text[i], "sep #$20")
+            && startWith(text[i + 1], "lda #")
+            && matchString(text[i + 2], "pha")
+            && startWith(text[i+3], "lda #")
+            && matchString(text[i+4], "pha"))
         {
-            printf("[USECASE #48] %lu: %s\n", i, text[i]);
-
-            char *ins = sliceStr(text[i + 2], 5, strlen(text[i + 2]));
-            snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
-            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
-
-            text_opt = pushToArray(arr, text[i + 4], text_opt.used);
-            text_opt = pushToArray(arr, text[i + 10], text_opt.used); // brl
-            text_opt = pushToArray(arr, text[i + 11], text_opt.used); // +
-
-            free(ins);
-
-            i += 12;
-            opted += 1;
-            continue;
         }
 
-        if (matchString(text[i], "ldx #1")
-            && startWith(text[i + 1], "lda.b tcc__r")
-            && matchString(text[i + 2], "sec")
-            && startWith(text[i + 3], "sbc.b tcc__r")
-            && matchString(text[i + 4], "tay")
-            && matchString(text[i + 5], "beq +")
-            && matchString(text[i + 6], "bcs ++")
-            && matchString(text[i + 7], "+ dex")
-            && matchString(text[i + 8], "++")
-            && startWith(text[i + 9], "stx.b tcc__r")
-            && matchString(text[i + 10], "txa")
-            && matchString(text[i + 11], "bne +")
-            && startWith(text[i + 12], "brl ")
-            && matchString(text[i + 13], "+")
-            && !matchString(text[i + 14], "tya"))
-        {
-            printf("[USECASE #49] %lu: %s\n", i, text[i]);
-
-            text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-
-            char *ins = sliceStr(text[i + 3], 6, strlen(text[i + 3]));
-            snprintf(snp_buf1, sizeof(snp_buf1), "cmp.b %s", ins);
-            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
-
-            text_opt = pushToArray(arr, text[i + 5], text_opt.used);
-            text_opt = pushToArray(arr, "bcc +", text_opt.used);
-            text_opt = pushToArray(arr, "brl ++", text_opt.used);
-            text_opt = pushToArray(arr, "+", text_opt.used);
-            text_opt = pushToArray(arr, text[i + 12], text_opt.used);
-            text_opt = pushToArray(arr, "++", text_opt.used);
-
-            free(ins);
-
-            i += 14;
-            opted += 1;
-            continue;
-        }
         i++;
 
     } // End of while (i < n)

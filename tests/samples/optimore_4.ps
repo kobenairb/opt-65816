@@ -1,0 +1,17 @@
+ldx #1
+sec
+sbc.w #SOMETHING
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__rSOMETHING
+txa
+bne +
+brl SOMETHING
++
+nottya

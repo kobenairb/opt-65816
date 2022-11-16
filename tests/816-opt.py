@@ -528,107 +528,111 @@ while i < len(text):
             opted += 1
             continue
 
-    #     if (
-    #         text[i] == "ldx #1"
-    #         and text[i + 1] == "sec"
-    #         and text[i + 2].startswith("sbc.w #")
-    #         and text[i + 3] == "tay"
-    #         and text[i + 4] == "bvc +"
-    #         and text[i + 5] == "eor #$8000"
-    #         and text[i + 6] == "+"
-    #         and text[i + 7] == "bmi +++"
-    #         and text[i + 8] == "++"
-    #         and text[i + 9] == "dex"
-    #         and text[i + 10] == "+++"
-    #         and text[i + 11].startswith("stx.b tcc__r")
-    #         and text[i + 12] == "txa"
-    #         and text[i + 13] == "bne +"
-    #         and text[i + 14].startswith("brl ")
-    #         and text[i + 15] == "+"
-    #         and text[i + 16] != "tya"
-    #     ):
-    #         text_opt += [text[i + 1]]
-    #         text_opt += [text[i + 2]]
-    #         text_opt += [text[i + 4]]
-    #         text_opt += ["eor #$8000"]
-    #         text_opt += ["+"]
-    #         text_opt += ["bmi +"]
-    #         text_opt += [text[i + 14]]
-    #         text_opt += ["+"]
-    #         i += 16
-    #         opted += 1
-    #         continue
+        if (
+            text[i] == "ldx #1"
+            and text[i + 1] == "sec"
+            and text[i + 2].startswith("sbc.w #")
+            and text[i + 3] == "tay"
+            and text[i + 4] == "bvc +"
+            and text[i + 5] == "eor #$8000"
+            and text[i + 6] == "+"
+            and text[i + 7] == "bmi +++"
+            and text[i + 8] == "++"
+            and text[i + 9] == "dex"
+            and text[i + 10] == "+++"
+            and text[i + 11].startswith("stx.b tcc__r")
+            and text[i + 12] == "txa"
+            and text[i + 13] == "bne +"
+            and text[i + 14].startswith("brl ")
+            and text[i + 15] == "+"
+            and text[i + 16] != "tya"
+        ):
+            print(f"[USECASE #50] {i}: {text[i]}")
+            text_opt += [text[i + 1]]
+            text_opt += [text[i + 2]]
+            text_opt += [text[i + 4]]
+            text_opt += ["eor #$8000"]
+            text_opt += ["+"]
+            text_opt += ["bmi +"]
+            text_opt += [text[i + 14]]
+            text_opt += ["+"]
+            i += 16
+            opted += 1
+            continue
 
-    #     if (
-    #         text[i] == "ldx #1"
-    #         and text[i + 1].startswith("lda.b tcc__r")
-    #         and text[i + 2] == "sec"
-    #         and text[i + 3].startswith("sbc.b tcc__r")
-    #         and text[i + 4] == "tay"
-    #         and text[i + 5] == "bvc +"
-    #         and text[i + 6] == "eor #$8000"
-    #         and text[i + 7] == "+"
-    #         and text[i + 8] == "bmi +++"
-    #         and text[i + 9] == "++"
-    #         and text[i + 10] == "dex"
-    #         and text[i + 11] == "+++"
-    #         and text[i + 12].startswith("stx.b tcc__r")
-    #         and text[i + 13] == "txa"
-    #         and text[i + 14] == "bne +"
-    #         and text[i + 15].startswith("brl ")
-    #         and text[i + 16] == "+"
-    #         and text[i + 17] != "tya"
-    #     ):
-    #         text_opt += [text[i + 1]]
-    #         text_opt += [text[i + 2]]
-    #         text_opt += [text[i + 3]]
-    #         text_opt += [text[i + 5]]
-    #         text_opt += [text[i + 6]]
-    #         text_opt += ["+"]
-    #         text_opt += ["bmi +"]
-    #         text_opt += [text[i + 15]]
-    #         text_opt += ["+"]
-    #         i += 17
-    #         opted += 1
-    #         continue
+        if (
+            text[i] == "ldx #1"
+            and text[i + 1].startswith("lda.b tcc__r")
+            and text[i + 2] == "sec"
+            and text[i + 3].startswith("sbc.b tcc__r")
+            and text[i + 4] == "tay"
+            and text[i + 5] == "bvc +"
+            and text[i + 6] == "eor #$8000"
+            and text[i + 7] == "+"
+            and text[i + 8] == "bmi +++"
+            and text[i + 9] == "++"
+            and text[i + 10] == "dex"
+            and text[i + 11] == "+++"
+            and text[i + 12].startswith("stx.b tcc__r")
+            and text[i + 13] == "txa"
+            and text[i + 14] == "bne +"
+            and text[i + 15].startswith("brl ")
+            and text[i + 16] == "+"
+            and text[i + 17] != "tya"
+        ):
+            print(f"[USECASE #51] {i}: {text[i]}")
+            text_opt += [text[i + 1]]
+            text_opt += [text[i + 2]]
+            text_opt += [text[i + 3]]
+            text_opt += [text[i + 5]]
+            text_opt += [text[i + 6]]
+            text_opt += ["+"]
+            text_opt += ["bmi +"]
+            text_opt += [text[i + 15]]
+            text_opt += ["+"]
+            i += 17
+            opted += 1
+            continue
 
-    #     if (
-    #         text[i] == "ldx #1"
-    #         and text[i + 1] == "sec"
-    #         and text[i + 2].startswith("sbc.b tcc__r")
-    #         and text[i + 3] == "tay"
-    #         and text[i + 4] == "bvc +"
-    #         and text[i + 5] == "eor #$8000"
-    #         and text[i + 6] == "+"
-    #         and text[i + 7] == "bmi +++"
-    #         and text[i + 8] == "++"
-    #         and text[i + 9] == "dex"
-    #         and text[i + 10] == "+++"
-    #         and text[i + 11].startswith("stx.b tcc__r")
-    #         and text[i + 12] == "txa"
-    #         and text[i + 13] == "bne +"
-    #         and text[i + 14].startswith("brl ")
-    #         and text[i + 15] == "+"
-    #         and text[i + 16] != "tya"
-    #     ):
-    #         text_opt += [text[i + 1]]
-    #         text_opt += [text[i + 2]]
-    #         text_opt += [text[i + 4]]
-    #         text_opt += [text[i + 5]]
-    #         text_opt += ["+"]
-    #         text_opt += ["bmi +"]
-    #         text_opt += [text[i + 14]]
-    #         text_opt += ["+"]
-    #         i += 16
-    #         opted += 1
-    #         continue
+        if (
+            text[i] == "ldx #1"
+            and text[i + 1] == "sec"
+            and text[i + 2].startswith("sbc.b tcc__r")
+            and text[i + 3] == "tay"
+            and text[i + 4] == "bvc +"
+            and text[i + 5] == "eor #$8000"
+            and text[i + 6] == "+"
+            and text[i + 7] == "bmi +++"
+            and text[i + 8] == "++"
+            and text[i + 9] == "dex"
+            and text[i + 10] == "+++"
+            and text[i + 11].startswith("stx.b tcc__r")
+            and text[i + 12] == "txa"
+            and text[i + 13] == "bne +"
+            and text[i + 14].startswith("brl ")
+            and text[i + 15] == "+"
+            and text[i + 16] != "tya"
+        ):
+            print(f"[USECASE #52] {i}: {text[i]}")
+            text_opt += [text[i + 1]]
+            text_opt += [text[i + 2]]
+            text_opt += [text[i + 4]]
+            text_opt += [text[i + 5]]
+            text_opt += ["+"]
+            text_opt += ["bmi +"]
+            text_opt += [text[i + 14]]
+            text_opt += ["+"]
+            i += 16
+            opted += 1
+            continue
 
     # # end startswith('ld')
 
-    # if text[i] == "rep #$20" and text[i + 1] == "sep #$20":
-    #     i += 2
-    #     opted += 1
-    #     continue
+    if text[i] == "rep #$20" and text[i + 1] == "sep #$20":
+        print(f"[USECASE #53] {i}: {text[i]}")
+        i += 2
+        opted += 1
+        continue
 
     # if (
     #     text[i] == "sep #$20"
