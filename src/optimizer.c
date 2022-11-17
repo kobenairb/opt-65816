@@ -1200,9 +1200,20 @@ void optimizeAsm(char **text, const size_t n)
         if (matchString(text[i], "sep #$20")
             && startWith(text[i + 1], "lda #")
             && matchString(text[i + 2], "pha")
-            && startWith(text[i+3], "lda #")
-            && matchString(text[i+4], "pha"))
+            && startWith(text[i + 3], "lda #")
+            && matchString(text[i + 4], "pha"))
         {
+            printf("[USECASE #54] %lu: %s\n", i, text[i]);
+            char *token1, *token2;
+            token1 = splitStr(text[i + 1], "#", 1);
+            token2 = splitStr(text[i + 3], "#", 1);
+            snprintf(snp_buf1, sizeof(snp_buf1), "pea.w (%s * 256 + %s)", token1, token2);
+            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+            text_opt = pushToArray(arr, text[i], text_opt.used);
+
+            i += 5;
+            opted += 1;
+            continue;
         }
 
         i++;

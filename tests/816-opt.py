@@ -634,24 +634,25 @@ while i < len(text):
         opted += 1
         continue
 
-    # if (
-    #     text[i] == "sep #$20"
-    #     and text[i + 1].startswith("lda #")
-    #     and text[i + 2] == "pha"
-    #     and text[i + 3].startswith("lda #")
-    #     and text[i + 4] == "pha"
-    # ):
-    #     text_opt += [
-    #         "pea.w ("
-    #         + text[i + 1].split("#")[1]
-    #         + " * 256 + "
-    #         + text[i + 3].split("#")[1]
-    #         + ")"
-    #     ]
-    #     text_opt += [text[i]]
-    #     i += 5
-    #     opted += 1
-    #     continue
+    if (
+        text[i] == "sep #$20"
+        and text[i + 1].startswith("lda #")
+        and text[i + 2] == "pha"
+        and text[i + 3].startswith("lda #")
+        and text[i + 4] == "pha"
+    ):
+        print(f"[USECASE #54] {i}: {text[i]}")
+        text_opt += [
+            "pea.w ("
+            + text[i + 1].split("#")[1]
+            + " * 256 + "
+            + text[i + 3].split("#")[1]
+            + ")"
+        ]
+        text_opt += [text[i]]
+        i += 5
+        opted += 1
+        continue
 
     # r = re.match("adc #(.*)$", text[i])
     # if r:

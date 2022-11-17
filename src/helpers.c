@@ -225,6 +225,15 @@ char *replaceStr(char *str, char *orig, char *rep)
     return buffer;
 }
 
+/**
+ * @brief Split a string.
+ * @param str The string.
+ * @param sep The separator (one haracter only).
+ * @param pos The position of the substring.
+ * @return The substring or NULL (if the
+ * the separator is more than one character or if the substring
+ * doesn't exist for the given position.
+ */
 char *splitStr(char *str, char *sep, size_t pos)
 {
     if (str && sep && strlen(sep) == 1)
