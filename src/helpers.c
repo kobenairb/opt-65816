@@ -225,6 +225,27 @@ char *replaceStr(char *str, char *orig, char *rep)
     return buffer;
 }
 
+char *splitStr(char *str, char *sep, size_t pos)
+{
+    if (str && sep && strlen(sep) == 1)
+    {
+        static char tmp[sizeof(str)];
+
+        strcpy(tmp, str);
+
+        char *token = strtok(tmp, sep);
+
+        // loop through the string to extract all other tokens
+        for (size_t i = 0; i < pos; i++)
+        {
+            token = strtok(NULL, sep);
+        }
+        return token;
+    }
+
+    return NULL;
+}
+
 /**
  * @brief Wrapper to match groups with regex.
  * @param source The string.

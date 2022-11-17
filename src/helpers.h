@@ -56,6 +56,7 @@ int findMin(const int a, const int b);
 char *trimWhiteSpace(char *str);
 char *sliceStr(char *str, int slice_from, int slice_to);
 char *replaceStr(char *str, char *orig, char *rep);
+char *splitStr(char *str, char *sep, size_t pos);
 regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups);
 dynArray pushToArray(char **arr, char *str, int used);
 
