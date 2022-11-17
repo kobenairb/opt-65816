@@ -33,7 +33,7 @@
 
 int verbosity();
 dynArray tidyFile(const int argc, char **argv);
-dynArray storeBss(char **text, const size_t n);
-void optimizeAsm(char **text, const size_t n);
+dynArray storeBss(dynArray file);
+void optimizeAsm(dynArray file);
 
 #endif

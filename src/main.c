@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*      Store BSS instuctions       */
     /* -------------------------------- */
-    dynArray bss = storeBss(file.arr, file.used);
+    dynArray bss = storeBss(file);
 
     if (verbose == 2)
     {
@@ -63,11 +63,11 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       ASM Optimization           */
     /* -------------------------------- */
-    optimizeAsm(file.arr, file.used);
+    optimizeAsm(file);
 
     /* -------------------------------- */
     /*       Free pointers              */
     /* -------------------------------- */
-    freedynArray(bss.arr, bss.used);
-    freedynArray(file.arr, file.used);
+    freedynArray(bss);
+    freedynArray(file);
 }

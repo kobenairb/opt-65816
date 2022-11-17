@@ -20,13 +20,13 @@
  * @param p Pointers of pointer.
  * @param n Number of pointers of pointer.
  */
-void freedynArray(char **p, size_t n)
+void freedynArray(dynArray s)
 {
-    for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < s.used; i++)
     {
-        free(p[i]);
+        free(s.arr[i]);
     }
-    free(p);
+    free(s.arr);
 }
 
 /**
@@ -262,7 +262,7 @@ char *splitStr(char *str, char *sep, size_t pos)
  * @param maxGroups The maximum number of groups to match.
  * @return A structure (regexdynArray).
  */
-regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
+dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
 {
     /*
         From Ianmackinnon https://gist.github.com/ianmackinnon/3294587
@@ -317,14 +317,14 @@ regexdynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups
 
         regfree(&regexCompiled);
 
-        regexdynArray r = { 1, groups, used };
+        dynArray r = { groups, used };
         return r;
     }
     else if (re == REG_NOMATCH)
     {
         regfree(&regexCompiled);
 
-        regexdynArray r = { 0, groups, used };
+        dynArray r = { groups, used };
         return r;
     }
     else
