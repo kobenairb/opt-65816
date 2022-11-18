@@ -244,7 +244,8 @@ char *splitStr(char *str, char *sep, size_t pos)
 
         char *token = strtok(tmp, sep);
 
-        // loop through the string to extract all other tokens
+        // Loop through the string to extract all
+        // other tokens until the given position.
         for (size_t i = 0; i < pos; i++)
         {
             token = strtok(NULL, sep);

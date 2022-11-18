@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       ASM Optimization           */
     /* -------------------------------- */
-    optimizeAsm(file);
+    optimizeAsm(file, bss);
 
     /* -------------------------------- */
     /*       Free pointers              */

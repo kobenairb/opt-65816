@@ -36,7 +36,7 @@ int verbosity()
 }
 
 /**
- * @brief Checksif it touches the accumulator register.
+ * @brief Checks if it touches the accumulator register.
  * @param a The asm instruction.
  * @return 1 (true) or 0 (false).
  */
@@ -44,7 +44,8 @@ int changeAccu(const char *a)
 {
     if (strlen(a) > 2)
     {
-        if (a[2] == 'a' && (!startWith(a, "pha") && !startWith(a, "sta")))
+        if (a[2] == 'a'
+            && (!startWith(a, "pha") || !startWith(a, "sta")))
             return 1;
         if (strlen(a) == 5 && endWith(a, " a"))
             return 1;
@@ -66,7 +67,9 @@ int isControl(const char *a)
         {
             return 1;
         }
-        if (startWith(a, "j") || startWith(a, "b") || startWith(a, "-")
+        if (startWith(a, "j")
+            || startWith(a, "b")
+            || startWith(a, "-")
             || startWith(a, "+"))
         {
             return 1;
@@ -193,6 +196,7 @@ dynArray storeBss(dynArray file)
                 exit(EXIT_FAILURE);
             }
             memcpy(bss[used], text[i], len + 1);
+            // Get the first word only.
             strtok(bss[used], " ");
             used += 1;
         }
@@ -208,10 +212,13 @@ dynArray storeBss(dynArray file)
  * @param n
  */
 // void optimizeAsm(char **text, const size_t n)
-void optimizeAsm(dynArray file)
+void optimizeAsm(dynArray file, dynArray bss)
 {
-    char **text    = file.arr;
-    const size_t n = file.used;
+    char **text           = file.arr;
+    const size_t text_len = file.used;
+
+    char **bsswords           = bss.arr;
+    const size_t bsswords_len = bss.used;
 
     // int totalopt = 0; // Total number of optimizations performed
     int opted = -1; // Have we Optimized in this pass
@@ -225,7 +232,7 @@ void optimizeAsm(dynArray file)
 
     /* Manage pointers */
     char **arr;
-    size_t nptrs      = n;
+    size_t nptrs      = text_len;
     dynArray text_opt = { NULL, 0 };
 
     if ((arr = malloc(nptrs * sizeof *arr)) == NULL)
@@ -235,7 +242,7 @@ void optimizeAsm(dynArray file)
     }
 
     size_t i = 0;
-    while (i < n)
+    while (i < text_len)
     {
         if (startWith(text[i], "st"))
         {
@@ -244,7 +251,7 @@ void optimizeAsm(dynArray file)
             if (r.arr != NULL)
             {
                 size_t doopt = 0;
-                for (size_t j = (i + 1); j < (size_t)findMin(n, (i + 30)); j++)
+                for (size_t j = (i + 1); j < (size_t)findMin(text_len, (i + 30)); j++)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "st([axyz]).b tcc__%s$", r.arr[2]);
                     r1 = regexMatchGroups(text[j], snp_buf1, 2);
@@ -447,9 +454,9 @@ void optimizeAsm(dynArray file)
                     continue;
                 }
                 /* Convert incs/decs on pregs incs/decs on hwregs */
-                size_t cont     = 0;
-                char crem[2][4] = { "inc", "dec" };
-                for (size_t k = 0; k < sizeof(crem) / sizeof(crem[0]); k++)
+                size_t cont        = 0;
+                const char *crem[] = { "inc", "dec" };
+                for (size_t k = 0; k < sizeof(crem) / sizeof(const char *); k++)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
                              crem[k], r.arr[1]);
@@ -911,7 +918,7 @@ void optimizeAsm(dynArray file)
                 /* lda stack ; store high preg ; ...
                     ; load high preg ; sta stack */
                 size_t j = i + 2;
-                while (j < (n - 2)
+                while (j < (text_len - 2)
                        && !isControl(text[j])
                        && !isInText(text[j], reg))
                 {
@@ -1220,6 +1227,79 @@ void optimizeAsm(dynArray file)
             i += 5;
             opted += 1;
             continue;
+        }
+
+        r = regexMatchGroups(text[i], "adc #(.{0,})$", 2);
+        if (r.arr != NULL)
+        {
+            printf("[USECASE #55] %lu: %s\n", i, text[i]);
+
+            r1 = regexMatchGroups(text[i + 1], "sta.b (tcc__[fr][0-9]{0,})$", 2);
+            if (r1.arr != NULL)
+            {
+                printf("[USECASE #56] %lu: %s\n", i + 1, text[i + 1]);
+
+                snprintf(snp_buf1, sizeof(snp_buf1), "inc.b %s",
+                         r1.arr[1]);
+                if (matchString(text[i + 2], snp_buf1)
+                    && matchString(text[i + 3], snp_buf1))
+                {
+                    printf("[USECASE #57] %lu: %s\n", i + 2, text[i + 2]);
+
+                    snprintf(snp_buf1, sizeof(snp_buf1), "adc #%s + 2",
+                             r.arr[1]);
+                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                    text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+
+                    freedynArray(r1);
+                    freedynArray(r);
+
+                    i += 4;
+                    opted += 1;
+                    continue;
+                }
+
+                freedynArray(r1);
+            }
+
+            freedynArray(r);
+        }
+
+        if (strlen(text[i]) >= 6)
+        {
+            char *ss_buffer = sliceStr(text[i], 0, 6);
+
+            if (matchString(ss_buffer, "lda.l ")
+                || matchString(ss_buffer, "sta.l "))
+            {
+                size_t cont      = 0;
+                char *ss_buffer2 = sliceStr(text[i], 2, strlen(text[i]));
+
+                for (size_t b = 0; b < bsswords_len; b++)
+                {
+                    snprintf(snp_buf1, sizeof(snp_buf1), "a.l %s ",
+                             bsswords[b]);
+                    if (startWith(ss_buffer2, snp_buf1))
+                    {
+                        printf("[USECASE #58] %lu: %s\n", i, text[i]);
+
+                        char *rs_buffer = replaceStr(text[i], "a.l", "a.w");
+                        text_opt        = pushToArray(arr, rs_buffer, text_opt.used);
+
+                        i += 1;
+                        opted += 1;
+                        cont = 1;
+                        break;
+                    }
+                }
+                free(ss_buffer2);
+                if (cont)
+                {
+                    free(ss_buffer);
+                    continue;
+                }
+            }
+            free(ss_buffer);
         }
 
         i++;

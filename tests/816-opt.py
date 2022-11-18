@@ -654,33 +654,37 @@ while i < len(text):
         opted += 1
         continue
 
-    # r = re.match("adc #(.*)$", text[i])
-    # if r:
-    #     r1 = re.match("sta.b (tcc__[fr][0-9]*)$", text[i + 1])
-    #     if r1:
-    #         if (
-    #             text[i + 2] == "inc.b " + r1.groups()[0]
-    #             and text[i + 3] == "inc.b " + r1.groups()[0]
-    #         ):
-    #             text_opt += ["adc #" + r.groups()[0] + " + 2"]
-    #             text_opt += [text[i + 1]]
-    #             i += 4
-    #             opted += 1
-    #             continue
+    r = re.match("adc #(.*)$", text[i])
+    if r:
+        print(f"[USECASE #55] {i}: {text[i]}")
+        r1 = re.match("sta.b (tcc__[fr][0-9]*)$", text[i + 1])
+        if r1:
+            print(f"[USECASE #56] {i+1}: {text[i+1]}")
+            if (
+                text[i + 2] == "inc.b " + r1.groups()[0]
+                and text[i + 3] == "inc.b " + r1.groups()[0]
+            ):
+                print(f"[USECASE #57] {i+2}: {text[i+2]}")
+                text_opt += ["adc #" + r.groups()[0] + " + 2"]
+                text_opt += [text[i + 1]]
+                i += 4
+                opted += 1
+                continue
 
-    # if text[i][:6] in ["lda.l ", "sta.l "]:
-    #     cont = False
-    #     for b in bss:
-    #         if text[i][2:].startswith("a.l " + b + " "):
-    #             text_opt += [
-    #                 text[i].replace("lda.l", "lda.w").replace("sta.l", "sta.w")
-    #             ]
-    #             i += 1
-    #             opted += 1
-    #             cont = True
-    #             break
-    #     if cont:
-    #         continue
+    if text[i][:6] in ["lda.l ", "sta.l "]:
+        cont = False
+        for b in bss:
+            if text[i][2:].startswith("a.l " + b + " "):
+                print(f"[USECASE #58] {i}: {text[i]}")
+                text_opt += [
+                    text[i].replace("lda.l", "lda.w").replace("sta.l", "sta.w")
+                ]
+                i += 1
+                opted += 1
+                cont = True
+                break
+        if cont:
+            continue
 
     # if text[i].startswith("jmp.w ") or text[i].startswith("bra __"):
     #     j = i + 1

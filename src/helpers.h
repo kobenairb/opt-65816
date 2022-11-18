@@ -10,15 +10,16 @@
 /*!
  * @brief Max length of the line.
  */
-#define MAXLEN_LINE 2048
+#define MAXLEN_LINE 1024
 
 /**
  * @struct dynArray
- * @brief Structure to store the return of BssStore and TidyFile.
+ * @brief Structure to store an array of string
+ * and the lenght of the array.
  * @var dynArray::arr
  * Member 'arr' contains the array of strings.
  * @var dynArray::used
- * Member 'used' contains the number of strings (elements)
+ * Member 'used' contains length of arr (number of elements)
  * in the array.
  */
 typedef struct dynArray
