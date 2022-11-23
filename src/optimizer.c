@@ -176,17 +176,17 @@ dynArray storeBss(dynArray file)
 
     for (size_t i = 0; i < n; i++)
     {
-        if (matchString(text[i], BSS_SECTION_START))
+        if (matchStr(text[i], BSS_SECTION_START))
         {
             bss_on = 1;
             continue;
         }
-        if (matchString(text[i], SECTION_END) && bss_on)
+        if (matchStr(text[i], SECTION_END) && bss_on)
         {
             bss_on = 0;
             continue;
         }
-        if (!matchString(text[i], BSS_SECTION_START) && bss_on)
+        if (!matchStr(text[i], BSS_SECTION_START) && bss_on)
         {
             len = strlen(text[i]);
 
@@ -224,22 +224,22 @@ void optimizeAsm(dynArray file, dynArray bss)
     int opted = -1; // Have we Optimized in this pass
     // int opass = 0;    // Optimization pass counter
 
-    dynArray r, r1;
+    dynArray r, r1; // To store regexMatchGroups returns
 
-    /* Store snprintf buffers */
     char snp_buf1[MAXLEN_LINE],
-        snp_buf2[MAXLEN_LINE];
+        snp_buf2[MAXLEN_LINE]; // Store snprintf buffers
 
     /* Manage pointers */
     char **arr;
-    size_t nptrs      = text_len;
-    dynArray text_opt = { NULL, 0 };
+    size_t nptrs = text_len;
 
     if ((arr = malloc(nptrs * sizeof *arr)) == NULL)
     {
         perror("malloc-lines");
         exit(EXIT_FAILURE);
     }
+
+    dynArray text_opt = { arr, 0 };
 
     size_t i = 0;
     while (i < text_len)
@@ -251,7 +251,7 @@ void optimizeAsm(dynArray file, dynArray bss)
             if (r.arr != NULL)
             {
                 size_t doopt = 0;
-                for (size_t j = (i + 1); j < (size_t)findMin(text_len, (i + 30)); j++)
+                for (size_t j = (i + 1); j < (size_t)min(text_len, (i + 30)); j++)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "st([axyz]).b tcc__%s$", r.arr[2]);
                     r1 = regexMatchGroups(text[j], snp_buf1, 2);
@@ -312,13 +312,13 @@ void optimizeAsm(dynArray file, dynArray bss)
                     function call -> push hwreg, function call */
                 snprintf(snp_buf1, sizeof(snp_buf1), "pei (tcc__%s)",
                          r.arr[2]);
-                if (matchString(text[i + 1], snp_buf1)
+                if (matchStr(text[i + 1], snp_buf1)
                     && startWith(text[i + 2], "jsr.l "))
                 {
                     printf("[USECASE #5] %lu: %s\n", i + 1, text[i + 1]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.arr[1]);
-                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                    text_opt = pushToArray(text_opt, snp_buf1);
 
                     freedynArray(r);
 
@@ -328,14 +328,14 @@ void optimizeAsm(dynArray file, dynArray bss)
                 }
                 /* Store hwreg to preg, push preg -> store hwreg to preg,
                     push hwreg (shorter) */
-                if (matchString(text[i + 1], snp_buf1))
+                if (matchStr(text[i + 1], snp_buf1))
                 {
                     printf("[USECASE #6] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "ph%s", r.arr[1]);
-                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                    text_opt = pushToArray(text_opt, snp_buf1);
 
                     freedynArray(r);
 
@@ -349,17 +349,17 @@ void optimizeAsm(dynArray file, dynArray bss)
                          r.arr[2]);
                 snprintf(snp_buf2, sizeof(snp_buf2),
                          "lda.b tcc__%s ; DON'T OPTIMIZE", r.arr[2]);
-                if (matchString(text[i + 1], snp_buf1)
-                    || matchString(text[i + 1], snp_buf2))
+                if (matchStr(text[i + 1], snp_buf1)
+                    || matchStr(text[i + 1], snp_buf2))
                 {
                     printf("[USECASE #7] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "t%sa",
                              r.arr[1]); // FIXME: shouldn't this be marked as
                                         // DON'T OPTIMIZE again?
-                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                    text_opt = pushToArray(text_opt, snp_buf1);
 
                     freedynArray(r);
 
@@ -376,11 +376,11 @@ void optimizeAsm(dynArray file, dynArray bss)
                 /* Store preg followed by load preg */
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s",
                          r.arr[1]);
-                if (matchString(text[i + 1], snp_buf1))
+                if (matchStr(text[i + 1], snp_buf1))
                 {
                     printf("[USECASE #8] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
 
                     freedynArray(r);
 
@@ -391,12 +391,12 @@ void optimizeAsm(dynArray file, dynArray bss)
                 /* Store preg followed by load preg with ldx/ldy in between */
                 if ((startWith(text[i + 1], "ldx")
                      || startWith(text[i + 1], "ldy"))
-                    && matchString(text[i + 2], snp_buf1))
+                    && matchStr(text[i + 2], snp_buf1))
                 {
                     printf("[USECASE #9] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
-                    text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
+                    text_opt = pushToArray(text_opt, text[i + 1]);
 
                     freedynArray(r);
 
@@ -408,12 +408,12 @@ void optimizeAsm(dynArray file, dynArray bss)
                     function call */
                 snprintf(snp_buf1, sizeof(snp_buf1), "pei (tcc__%s)",
                          r.arr[1]);
-                if (matchString(text[i + 1], snp_buf1)
+                if (matchStr(text[i + 1], snp_buf1)
                     && startWith(text[i + 2], "jsr.l "))
                 {
                     printf("[USECASE #10] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, "pha", text_opt.used);
+                    text_opt = pushToArray(text_opt, "pha");
 
                     freedynArray(r);
 
@@ -423,12 +423,12 @@ void optimizeAsm(dynArray file, dynArray bss)
                 }
                 /* Store accu to preg, push preg -> store accu to preg,
                     push accu (shorter) */
-                if (matchString(text[i + 1], snp_buf1))
+                if (matchStr(text[i + 1], snp_buf1))
                 {
                     printf("[USECASE #11] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
-                    text_opt = pushToArray(arr, "pha", text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
+                    text_opt = pushToArray(text_opt, "pha");
 
                     freedynArray(r);
 
@@ -439,13 +439,13 @@ void optimizeAsm(dynArray file, dynArray bss)
                 /* Store accu to preg1, push preg2, push preg1 -> store accu to
                    preg1, push preg2, push accu */
                 else if (startWith(text[i + 1], "pei ")
-                         && matchString(text[i + 2], snp_buf1))
+                         && matchStr(text[i + 2], snp_buf1))
                 {
                     printf("[USECASE #12] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
-                    text_opt = pushToArray(arr, "pha", text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i + 1]);
+                    text_opt = pushToArray(text_opt, text[i]);
+                    text_opt = pushToArray(text_opt, "pha");
 
                     freedynArray(r);
 
@@ -460,11 +460,11 @@ void optimizeAsm(dynArray file, dynArray bss)
                 {
                     snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
                              crem[k], r.arr[1]);
-                    if (matchString(text[i + 1], snp_buf1))
+                    if (matchStr(text[i + 1], snp_buf1))
                     {
                         printf("[USECASE #13] %lu: %s\n", i + 1, text[i + 1]);
                         /* Store to preg followed by crement on preg */
-                        if (matchString(text[i + 2], snp_buf1)
+                        if (matchStr(text[i + 2], snp_buf1)
                             && startWith(text[i + 3], "lda"))
                         {
 
@@ -475,17 +475,17 @@ void optimizeAsm(dynArray file, dynArray bss)
                              */
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s a",
                                      crem[k]);
-                            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
-                            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                            text_opt = pushToArray(text_opt, snp_buf1);
+                            text_opt = pushToArray(text_opt, snp_buf1);
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "sta.b tcc__%s", r.arr[1]);
-                            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                            text_opt = pushToArray(text_opt, snp_buf1);
 
                             /* A subsequent load can be omitted (the right value
                              * is already in the accu) */
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "lda.b tcc__%s", r.arr[1]);
-                            if (matchString(text[i + 3], snp_buf1))
+                            if (matchStr(text[i + 3], snp_buf1))
                             {
 
                                 printf("[USECASE #15] %lu: %s\n", i + 3,
@@ -513,15 +513,15 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s a",
                                      crem[k]);
-                            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                            text_opt = pushToArray(text_opt, snp_buf1);
 
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "sta.b tcc__%s", r.arr[1]);
-                            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                            text_opt = pushToArray(text_opt, snp_buf1);
 
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "lda.b tcc__%s", r.arr[1]);
-                            if (matchString(text[i + 2], snp_buf1))
+                            if (matchStr(text[i + 2], snp_buf1))
                             {
 
                                 printf("[USECASE #18] %lu: %s\n", i + 2,
@@ -555,8 +555,8 @@ void optimizeAsm(dynArray file, dynArray bss)
                     printf("[USECASE #20] %lu: %s\n", i + 1, text[i + 1]);
 
                     char *ss_buffer = sliceStr(text[i + 2], 0, 3);
-                    if (matchString(ss_buffer, "and")
-                        || matchString(ss_buffer, "ora"))
+                    if (matchStr(ss_buffer, "and")
+                        || matchStr(ss_buffer, "ora"))
                     {
                         printf("[USECASE #21] %lu: %s\n", i + 2, text[i + 2]);
 
@@ -569,11 +569,11 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                             printf("[USECASE #22] %lu: %s\n", i + 2, text[i + 2]);
 
-                            text_opt = pushToArray(arr, text[i], text_opt.used);
+                            text_opt = pushToArray(text_opt, text[i]);
 
                             snprintf(snp_buf1, sizeof(snp_buf1), "%s.b tcc__%s",
                                      ss_buffer, r1.arr[1]);
-                            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                            text_opt = pushToArray(text_opt, snp_buf1);
 
                             free(ss_buffer);
                             freedynArray(r);
@@ -592,14 +592,14 @@ void optimizeAsm(dynArray file, dynArray bss)
                  * load */
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s",
                          r.arr[1]);
-                if (matchString(text[i + 1], "sep #$20")
-                    && matchString(text[i + 2], snp_buf1))
+                if (matchStr(text[i + 1], "sep #$20")
+                    && matchStr(text[i + 2], snp_buf1))
                 {
 
                     printf("[USECASE #23] %lu: %s\n", i + 2, text[i + 2]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
-                    text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
+                    text_opt = pushToArray(text_opt, text[i + 1]);
 
                     freedynArray(r);
 
@@ -616,13 +616,13 @@ void optimizeAsm(dynArray file, dynArray bss)
                 {
                     printf("[USECASE #24] %lu: %s\n", i + 1, text[i + 1]);
 
-                    if (matchString(text[i + 2], text[i]))
+                    if (matchStr(text[i + 2], text[i]))
                     {
 
                         printf("[USECASE #25] %lu: %s\n", i + 2, text[i + 2]);
 
-                        text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-                        text_opt = pushToArray(arr, text[i + 2], text_opt.used);
+                        text_opt = pushToArray(text_opt, text[i + 1]);
+                        text_opt = pushToArray(text_opt, text[i + 2]);
 
                         freedynArray(r);
 
@@ -642,10 +642,10 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                     printf("[USECASE #26] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "ta%s", r1.arr[1]);
-                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                    text_opt = pushToArray(text_opt, snp_buf1);
 
                     freedynArray(r);
                     freedynArray(r1);
@@ -666,12 +666,12 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "lda.b tcc__%s",
                              r.arr[1]);
-                    if (matchString(text[i + 2], snp_buf1))
+                    if (matchStr(text[i + 2], snp_buf1))
                     {
                         printf("[USECASE #28] %lu: %s\n", i + 1, text[i + 1]);
 
-                        text_opt = pushToArray(arr, text[i], text_opt.used);
-                        text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                        text_opt = pushToArray(text_opt, text[i]);
+                        text_opt = pushToArray(text_opt, text[i + 1]);
 
                         freedynArray(r);
 
@@ -683,7 +683,7 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                 /* Store preg1, clc, load preg2,
                     add preg1 -> store preg1, clc, add preg2 */
-                if (matchString(text[i + 1], "clc"))
+                if (matchStr(text[i + 1], "clc"))
                 {
 
                     printf("[USECASE #29] %lu: %s\n", i + 1, text[i + 1]);
@@ -694,17 +694,17 @@ void optimizeAsm(dynArray file, dynArray bss)
                     {
                         snprintf(snp_buf1, sizeof(snp_buf1), "adc.b tcc__%s",
                                  r.arr[1]);
-                        if (matchString(text[i + 3], snp_buf1))
+                        if (matchStr(text[i + 3], snp_buf1))
                         {
 
                             printf("[USECASE #30] %lu: %s\n", i + 3, text[i + 3]);
 
-                            text_opt = pushToArray(arr, text[i], text_opt.used);
-                            text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                            text_opt = pushToArray(text_opt, text[i]);
+                            text_opt = pushToArray(text_opt, text[i + 1]);
 
                             snprintf(snp_buf1, sizeof(snp_buf1),
                                      "adc.b tcc__%s", r1.arr[1]);
-                            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                            text_opt = pushToArray(text_opt, snp_buf1);
 
                             freedynArray(r);
                             freedynArray(r1);
@@ -723,13 +723,13 @@ void optimizeAsm(dynArray file, dynArray bss)
                  */
                 snprintf(snp_buf1, sizeof(snp_buf1), "asl.b tcc__%s",
                          r.arr[1]);
-                if (matchString(text[i + 1], snp_buf1))
+                if (matchStr(text[i + 1], snp_buf1))
                 {
 
                     printf("[USECASE #31] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, "asl a", text_opt.used);
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
+                    text_opt = pushToArray(text_opt, "asl a");
+                    text_opt = pushToArray(text_opt, text[i]);
 
                     freedynArray(r);
 
@@ -744,12 +744,12 @@ void optimizeAsm(dynArray file, dynArray bss)
             if (r.arr != NULL)
             {
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda %s,s", r.arr[1]);
-                if (matchString(text[i + 1], snp_buf1))
+                if (matchStr(text[i + 1], snp_buf1))
                 {
 
                     printf("[USECASE #32] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i]);
 
                     freedynArray(r);
 
@@ -779,7 +779,7 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s",
                              r1.arr[1]);
-                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                    text_opt = pushToArray(text_opt, snp_buf1);
 
                     freedynArray(r1);
                     freedynArray(r);
@@ -794,12 +794,12 @@ void optimizeAsm(dynArray file, dynArray bss)
                     printf("[USECASE #36] %lu: %s\n", i, text[i]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "lda.l %s", r1.arr[1]);
-                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                    text_opt = pushToArray(text_opt, snp_buf1);
 
-                    text_opt = pushToArray(arr, text[i + 2], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i + 2]);
 
                     char *rs_buffer = replaceStr(text[i + 3], ",x", "");
-                    text_opt        = pushToArray(arr, rs_buffer, text_opt.used);
+                    text_opt        = pushToArray(text_opt, rs_buffer);
 
                     freedynArray(r1);
                     freedynArray(r);
@@ -812,27 +812,27 @@ void optimizeAsm(dynArray file, dynArray bss)
             }
 
             if (startWith(text[i], "lda.w #")
-                && matchString(text[i + 1], "sta.b tcc__r9")
+                && matchStr(text[i + 1], "sta.b tcc__r9")
                 && startWith(text[i + 2], "lda.w #")
-                && matchString(text[i + 3], "sta.b tcc__r9h")
-                && matchString(text[i + 4], "sep #$20")
+                && matchStr(text[i + 3], "sta.b tcc__r9h")
+                && matchStr(text[i + 4], "sep #$20")
                 && startWith(text[i + 5], "lda.b ")
-                && matchString(text[i + 6], "sta.b [tcc__r9]")
-                && matchString(text[i + 7], "rep #$20"))
+                && matchStr(text[i + 6], "sta.b [tcc__r9]")
+                && matchStr(text[i + 7], "rep #$20"))
             {
 
                 printf("[USECASE #37] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, "sep #$20", text_opt.used);
-                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
+                text_opt = pushToArray(text_opt, "sep #$20");
+                text_opt = pushToArray(text_opt, text[i + 5]);
 
                 char *ss_buffer  = sliceStr(text[i + 2], 7, strlen(text[i + 2]));
                 char *ss_buffer2 = sliceStr(text[i], 7, strlen(text[i]));
                 snprintf(snp_buf1, sizeof(snp_buf1), "sta.l %lu",
                          atol(ss_buffer) * 65536 + atol(ss_buffer2));
-                text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                text_opt = pushToArray(text_opt, snp_buf1);
 
-                text_opt = pushToArray(arr, "rep #$20", text_opt.used);
+                text_opt = pushToArray(text_opt, "rep #$20");
 
                 free(ss_buffer);
                 free(ss_buffer2);
@@ -842,7 +842,7 @@ void optimizeAsm(dynArray file, dynArray bss)
                 continue;
             }
 
-            if (matchString(text[i], "lda.w #0"))
+            if (matchStr(text[i], "lda.w #0"))
             {
                 printf("[USECASE #38] %lu: %s\n", i, text[i]);
 
@@ -853,7 +853,7 @@ void optimizeAsm(dynArray file, dynArray bss)
                     printf("[USECASE #39] %lu: %s\n", i + 1, text[i + 1]);
 
                     char *rs_buffer = replaceStr(text[i + 1], "sta.", "stz.");
-                    text_opt        = pushToArray(arr, rs_buffer, text_opt.used);
+                    text_opt        = pushToArray(text_opt, rs_buffer);
 
                     i += 2;
                     opted += 1;
@@ -865,21 +865,21 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                 printf("[USECASE #40] %lu: %s\n", i, text[i]);
 
-                if (matchString(text[i + 1], "sep #$20")
+                if (matchStr(text[i + 1], "sep #$20")
                     && startWith(text[i + 2], "sta ")
-                    && matchString(text[i + 4], "rep #$20")
+                    && matchStr(text[i + 4], "rep #$20")
                     && startWith(text[i + 4], "lda"))
                 {
 
                     printf("[USECASE #41] %lu: %s\n", i + 1, text[i + 1]);
 
-                    text_opt = pushToArray(arr, "sep #$20", text_opt.used);
+                    text_opt = pushToArray(text_opt, "sep #$20");
 
                     char *rs_buffer = replaceStr(text[i], "lda.w", "lda.b");
-                    text_opt        = pushToArray(arr, rs_buffer, text_opt.used);
+                    text_opt        = pushToArray(text_opt, rs_buffer);
 
-                    text_opt = pushToArray(arr, text[i + 2], text_opt.used);
-                    text_opt = pushToArray(arr, text[i + 3], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i + 2]);
+                    text_opt = pushToArray(text_opt, text[i + 3]);
 
                     i += 4;
                     opted += 1;
@@ -894,8 +894,8 @@ void optimizeAsm(dynArray file, dynArray bss)
             {
                 printf("[USECASE #42] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
+                text_opt = pushToArray(text_opt, text[i + 1]);
+                text_opt = pushToArray(text_opt, text[i + 2]);
 
                 i += 3;
                 opted += 1;
@@ -927,12 +927,12 @@ void optimizeAsm(dynArray file, dynArray bss)
                 }
                 snprintf(snp_buf1, sizeof(snp_buf1), "lda.b %s", reg);
                 snprintf(snp_buf2, sizeof(snp_buf2), "sta %s", local);
-                if (matchString(text[j], snp_buf1)
-                    && matchString(text[j + 1], snp_buf2))
+                if (matchStr(text[j], snp_buf1)
+                    && matchStr(text[j + 1], snp_buf2))
                 {
                     while (i < j)
                     {
-                        text_opt = pushToArray(arr, text[i], text_opt.used);
+                        text_opt = pushToArray(text_opt, text[i]);
 
                         i += 1;
                     }
@@ -972,10 +972,10 @@ void optimizeAsm(dynArray file, dynArray bss)
                 {
                     printf("[USECASE #46] %lu: %s\n", i + 2, text[i + 2]);
 
-                    text_opt = pushToArray(arr, text[i + 2], text_opt.used);
-                    text_opt = pushToArray(arr, text[i + 3], text_opt.used);
-                    text_opt = pushToArray(arr, text[i], text_opt.used);
-                    text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                    text_opt = pushToArray(text_opt, text[i + 2]);
+                    text_opt = pushToArray(text_opt, text[i + 3]);
+                    text_opt = pushToArray(text_opt, text[i]);
+                    text_opt = pushToArray(text_opt, text[i + 1]);
 
                     free(reg);
 
@@ -992,32 +992,32 @@ void optimizeAsm(dynArray file, dynArray bss)
                 We try to detect those cases by checking if a tya follows the
                 comparison (not sure if this is reliable, but it passes the test suite)
             */
-            if (matchString(text[i], "ldx #1")
+            if (matchStr(text[i], "ldx #1")
                 && startWith(text[i + 1], "lda.b tcc__")
-                && matchString(text[i + 2], "sec")
+                && matchStr(text[i + 2], "sec")
                 && startWith(text[i + 3], "sbc #")
-                && matchString(text[i + 4], "tay")
-                && matchString(text[i + 5], "beq +")
-                && matchString(text[i + 6], "dex")
-                && matchString(text[i + 7], "+")
+                && matchStr(text[i + 4], "tay")
+                && matchStr(text[i + 5], "beq +")
+                && matchStr(text[i + 6], "dex")
+                && matchStr(text[i + 7], "+")
                 && startWith(text[i + 8], "stx.b tcc__")
-                && matchString(text[i + 9], "txa")
-                && matchString(text[i + 10], "bne +")
+                && matchStr(text[i + 9], "txa")
+                && matchStr(text[i + 10], "bne +")
                 && startWith(text[i + 11], "brl ")
-                && matchString(text[i + 12], "+")
-                && !matchString(text[i + 13], "tya"))
+                && matchStr(text[i + 12], "+")
+                && !matchStr(text[i + 13], "tya"))
             {
                 printf("[USECASE #47] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                text_opt = pushToArray(text_opt, text[i + 1]);
 
                 char *ins = sliceStr(text[i + 3], 5, strlen(text[i + 1]));
                 snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
-                text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                text_opt = pushToArray(text_opt, snp_buf1);
 
-                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 11], text_opt.used); // brl
-                text_opt = pushToArray(arr, text[i + 12], text_opt.used); // +
+                text_opt = pushToArray(text_opt, text[i + 5]);
+                text_opt = pushToArray(text_opt, text[i + 11]); // brl
+                text_opt = pushToArray(text_opt, text[i + 12]); // +
 
                 free(ins);
 
@@ -1026,29 +1026,29 @@ void optimizeAsm(dynArray file, dynArray bss)
                 continue;
             }
 
-            if (matchString(text[i], "ldx #1")
-                && matchString(text[i + 1], "sec")
+            if (matchStr(text[i], "ldx #1")
+                && matchStr(text[i + 1], "sec")
                 && startWith(text[i + 2], "sbc #")
-                && matchString(text[i + 3], "tay")
-                && matchString(text[i + 4], "beq +")
-                && matchString(text[i + 5], "dex")
-                && matchString(text[i + 6], "+")
+                && matchStr(text[i + 3], "tay")
+                && matchStr(text[i + 4], "beq +")
+                && matchStr(text[i + 5], "dex")
+                && matchStr(text[i + 6], "+")
                 && startWith(text[i + 7], "stx.b tcc__")
-                && matchString(text[i + 8], "txa")
-                && matchString(text[i + 9], "bne +")
+                && matchStr(text[i + 8], "txa")
+                && matchStr(text[i + 9], "bne +")
                 && startWith(text[i + 10], "brl ")
-                && matchString(text[i + 11], "+")
-                && !matchString(text[i + 12], "tya"))
+                && matchStr(text[i + 11], "+")
+                && !matchStr(text[i + 12], "tya"))
             {
                 printf("[USECASE #48] %lu: %s\n", i, text[i]);
 
                 char *ins = sliceStr(text[i + 2], 5, strlen(text[i + 2]));
                 snprintf(snp_buf1, sizeof(snp_buf1), "cmp #%s", ins);
-                text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                text_opt = pushToArray(text_opt, snp_buf1);
 
-                text_opt = pushToArray(arr, text[i + 4], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 10], text_opt.used); // brl
-                text_opt = pushToArray(arr, text[i + 11], text_opt.used); // +
+                text_opt = pushToArray(text_opt, text[i + 4]);
+                text_opt = pushToArray(text_opt, text[i + 10]); // brl
+                text_opt = pushToArray(text_opt, text[i + 11]); // +
 
                 free(ins);
 
@@ -1057,36 +1057,36 @@ void optimizeAsm(dynArray file, dynArray bss)
                 continue;
             }
 
-            if (matchString(text[i], "ldx #1")
+            if (matchStr(text[i], "ldx #1")
                 && startWith(text[i + 1], "lda.b tcc__r")
-                && matchString(text[i + 2], "sec")
+                && matchStr(text[i + 2], "sec")
                 && startWith(text[i + 3], "sbc.b tcc__r")
-                && matchString(text[i + 4], "tay")
-                && matchString(text[i + 5], "beq +")
-                && matchString(text[i + 6], "bcs ++")
-                && matchString(text[i + 7], "+ dex")
-                && matchString(text[i + 8], "++")
+                && matchStr(text[i + 4], "tay")
+                && matchStr(text[i + 5], "beq +")
+                && matchStr(text[i + 6], "bcs ++")
+                && matchStr(text[i + 7], "+ dex")
+                && matchStr(text[i + 8], "++")
                 && startWith(text[i + 9], "stx.b tcc__r")
-                && matchString(text[i + 10], "txa")
-                && matchString(text[i + 11], "bne +")
+                && matchStr(text[i + 10], "txa")
+                && matchStr(text[i + 11], "bne +")
                 && startWith(text[i + 12], "brl ")
-                && matchString(text[i + 13], "+")
-                && !matchString(text[i + 14], "tya"))
+                && matchStr(text[i + 13], "+")
+                && !matchStr(text[i + 14], "tya"))
             {
                 printf("[USECASE #49] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                text_opt = pushToArray(text_opt, text[i + 1]);
 
                 char *ins = sliceStr(text[i + 3], 6, strlen(text[i + 3]));
                 snprintf(snp_buf1, sizeof(snp_buf1), "cmp.b %s", ins);
-                text_opt = pushToArray(arr, snp_buf1, text_opt.used);
+                text_opt = pushToArray(text_opt, snp_buf1);
 
-                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
-                text_opt = pushToArray(arr, "bcc +", text_opt.used);
-                text_opt = pushToArray(arr, "brl ++", text_opt.used);
-                text_opt = pushToArray(arr, "+", text_opt.used);
-                text_opt = pushToArray(arr, text[i + 12], text_opt.used);
-                text_opt = pushToArray(arr, "++", text_opt.used);
+                text_opt = pushToArray(text_opt, text[i + 5]);
+                text_opt = pushToArray(text_opt, "bcc +");
+                text_opt = pushToArray(text_opt, "brl ++");
+                text_opt = pushToArray(text_opt, "+");
+                text_opt = pushToArray(text_opt, text[i + 12]);
+                text_opt = pushToArray(text_opt, "++");
 
                 free(ins);
 
@@ -1095,104 +1095,104 @@ void optimizeAsm(dynArray file, dynArray bss)
                 continue;
             }
 
-            if (matchString(text[i], "ldx #1")
-                && matchString(text[i + 1], "sec")
+            if (matchStr(text[i], "ldx #1")
+                && matchStr(text[i + 1], "sec")
                 && startWith(text[i + 2], "sbc.w #")
-                && matchString(text[i + 3], "tay")
-                && matchString(text[i + 4], "bvc +")
-                && matchString(text[i + 5], "eor #$8000")
-                && matchString(text[i + 6], "+")
-                && matchString(text[i + 7], "bmi +++")
-                && matchString(text[i + 8], "++")
-                && matchString(text[i + 9], "dex")
-                && matchString(text[i + 10], "+++")
+                && matchStr(text[i + 3], "tay")
+                && matchStr(text[i + 4], "bvc +")
+                && matchStr(text[i + 5], "eor #$8000")
+                && matchStr(text[i + 6], "+")
+                && matchStr(text[i + 7], "bmi +++")
+                && matchStr(text[i + 8], "++")
+                && matchStr(text[i + 9], "dex")
+                && matchStr(text[i + 10], "+++")
                 && startWith(text[i + 11], "stx.b tcc__r")
-                && matchString(text[i + 12], "txa")
-                && matchString(text[i + 13], "bne +")
+                && matchStr(text[i + 12], "txa")
+                && matchStr(text[i + 13], "bne +")
                 && startWith(text[i + 14], "brl ")
-                && matchString(text[i + 15], "+")
-                && !matchString(text[i + 16], "tya"))
+                && matchStr(text[i + 15], "+")
+                && !matchStr(text[i + 16], "tya"))
             {
                 printf("[USECASE #50] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 4], text_opt.used);
-                text_opt = pushToArray(arr, "eor #$8000", text_opt.used);
-                text_opt = pushToArray(arr, "+", text_opt.used);
-                text_opt = pushToArray(arr, "bmi +", text_opt.used);
-                text_opt = pushToArray(arr, text[i + 14], text_opt.used);
-                text_opt = pushToArray(arr, "+", text_opt.used);
+                text_opt = pushToArray(text_opt, text[i + 1]);
+                text_opt = pushToArray(text_opt, text[i + 2]);
+                text_opt = pushToArray(text_opt, text[i + 4]);
+                text_opt = pushToArray(text_opt, "eor #$8000");
+                text_opt = pushToArray(text_opt, "+");
+                text_opt = pushToArray(text_opt, "bmi +");
+                text_opt = pushToArray(text_opt, text[i + 14]);
+                text_opt = pushToArray(text_opt, "+");
 
                 i += 16;
                 opted += 1;
                 continue;
             }
 
-            if (matchString(text[i], "ldx #1")
+            if (matchStr(text[i], "ldx #1")
                 && startWith(text[i + 1], "lda.b tcc__r")
-                && matchString(text[i + 2], "sec")
+                && matchStr(text[i + 2], "sec")
                 && startWith(text[i + 3], "sbc.b tcc__r")
-                && matchString(text[i + 4], "tay")
-                && matchString(text[i + 5], "bvc +")
-                && matchString(text[i + 6], "eor #$8000")
-                && matchString(text[i + 7], "+")
-                && matchString(text[i + 8], "bmi +++")
-                && matchString(text[i + 9], "++")
-                && matchString(text[i + 10], "dex")
-                && matchString(text[i + 11], "+++")
+                && matchStr(text[i + 4], "tay")
+                && matchStr(text[i + 5], "bvc +")
+                && matchStr(text[i + 6], "eor #$8000")
+                && matchStr(text[i + 7], "+")
+                && matchStr(text[i + 8], "bmi +++")
+                && matchStr(text[i + 9], "++")
+                && matchStr(text[i + 10], "dex")
+                && matchStr(text[i + 11], "+++")
                 && startWith(text[i + 12], "stx.b tcc__r")
-                && matchString(text[i + 13], "txa")
-                && matchString(text[i + 14], "bne +")
+                && matchStr(text[i + 13], "txa")
+                && matchStr(text[i + 14], "bne +")
                 && startWith(text[i + 15], "brl ")
-                && matchString(text[i + 16], "+")
-                && !matchString(text[i + 17], "tya"))
+                && matchStr(text[i + 16], "+")
+                && !matchStr(text[i + 17], "tya"))
             {
                 printf("[USECASE #51] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 3], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 6], text_opt.used);
-                text_opt = pushToArray(arr, "+", text_opt.used);
-                text_opt = pushToArray(arr, "bmi +", text_opt.used);
-                text_opt = pushToArray(arr, text[i + 15], text_opt.used);
-                text_opt = pushToArray(arr, "+", text_opt.used);
+                text_opt = pushToArray(text_opt, text[i + 1]);
+                text_opt = pushToArray(text_opt, text[i + 2]);
+                text_opt = pushToArray(text_opt, text[i + 3]);
+                text_opt = pushToArray(text_opt, text[i + 5]);
+                text_opt = pushToArray(text_opt, text[i + 6]);
+                text_opt = pushToArray(text_opt, "+");
+                text_opt = pushToArray(text_opt, "bmi +");
+                text_opt = pushToArray(text_opt, text[i + 15]);
+                text_opt = pushToArray(text_opt, "+");
 
                 i += 17;
                 opted += 1;
                 continue;
             }
 
-            if (matchString(text[i], "ldx #1")
-                && matchString(text[i + 1], "sec")
+            if (matchStr(text[i], "ldx #1")
+                && matchStr(text[i + 1], "sec")
                 && startWith(text[i + 2], "sbc.b tcc__r")
-                && matchString(text[i + 3], "tay")
-                && matchString(text[i + 4], "bvc +")
-                && matchString(text[i + 5], "eor #$8000")
-                && matchString(text[i + 6], "+")
-                && matchString(text[i + 7], "bmi +++")
-                && matchString(text[i + 8], "++")
-                && matchString(text[i + 9], "dex")
-                && matchString(text[i + 10], "+++")
+                && matchStr(text[i + 3], "tay")
+                && matchStr(text[i + 4], "bvc +")
+                && matchStr(text[i + 5], "eor #$8000")
+                && matchStr(text[i + 6], "+")
+                && matchStr(text[i + 7], "bmi +++")
+                && matchStr(text[i + 8], "++")
+                && matchStr(text[i + 9], "dex")
+                && matchStr(text[i + 10], "+++")
                 && startWith(text[i + 11], "stx.b tcc__r")
-                && matchString(text[i + 12], "txa")
-                && matchString(text[i + 13], "bne +")
+                && matchStr(text[i + 12], "txa")
+                && matchStr(text[i + 13], "bne +")
                 && startWith(text[i + 14], "brl ")
-                && matchString(text[i + 15], "+")
-                && !matchString(text[i + 16], "tya"))
+                && matchStr(text[i + 15], "+")
+                && !matchStr(text[i + 16], "tya"))
             {
                 printf("[USECASE #52] %lu: %s\n", i, text[i]);
 
-                text_opt = pushToArray(arr, text[i + 1], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 2], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 4], text_opt.used);
-                text_opt = pushToArray(arr, text[i + 5], text_opt.used);
-                text_opt = pushToArray(arr, "+", text_opt.used);
-                text_opt = pushToArray(arr, "bmi +", text_opt.used);
-                text_opt = pushToArray(arr, text[i + 14], text_opt.used);
-                text_opt = pushToArray(arr, "+", text_opt.used);
+                text_opt = pushToArray(text_opt, text[i + 1]);
+                text_opt = pushToArray(text_opt, text[i + 2]);
+                text_opt = pushToArray(text_opt, text[i + 4]);
+                text_opt = pushToArray(text_opt, text[i + 5]);
+                text_opt = pushToArray(text_opt, "+");
+                text_opt = pushToArray(text_opt, "bmi +");
+                text_opt = pushToArray(text_opt, text[i + 14]);
+                text_opt = pushToArray(text_opt, "+");
 
                 i += 16;
                 opted += 1;
@@ -1200,8 +1200,8 @@ void optimizeAsm(dynArray file, dynArray bss)
             }
         } // End of startWith(text[i], "ld")
 
-        if (matchString(text[i], "rep #$20")
-            && matchString(text[i + 1], "sep #$20"))
+        if (matchStr(text[i], "rep #$20")
+            && matchStr(text[i + 1], "sep #$20"))
         {
             printf("[USECASE #53] %lu: %s\n", i, text[i]);
 
@@ -1210,19 +1210,19 @@ void optimizeAsm(dynArray file, dynArray bss)
             continue;
         }
 
-        if (matchString(text[i], "sep #$20")
+        if (matchStr(text[i], "sep #$20")
             && startWith(text[i + 1], "lda #")
-            && matchString(text[i + 2], "pha")
+            && matchStr(text[i + 2], "pha")
             && startWith(text[i + 3], "lda #")
-            && matchString(text[i + 4], "pha"))
+            && matchStr(text[i + 4], "pha"))
         {
             printf("[USECASE #54] %lu: %s\n", i, text[i]);
             char *token1, *token2;
             token1 = splitStr(text[i + 1], "#", 1);
             token2 = splitStr(text[i + 3], "#", 1);
             snprintf(snp_buf1, sizeof(snp_buf1), "pea.w (%s * 256 + %s)", token1, token2);
-            text_opt = pushToArray(arr, snp_buf1, text_opt.used);
-            text_opt = pushToArray(arr, text[i], text_opt.used);
+            text_opt = pushToArray(text_opt, snp_buf1);
+            text_opt = pushToArray(text_opt, text[i]);
 
             i += 5;
             opted += 1;
@@ -1241,15 +1241,15 @@ void optimizeAsm(dynArray file, dynArray bss)
 
                 snprintf(snp_buf1, sizeof(snp_buf1), "inc.b %s",
                          r1.arr[1]);
-                if (matchString(text[i + 2], snp_buf1)
-                    && matchString(text[i + 3], snp_buf1))
+                if (matchStr(text[i + 2], snp_buf1)
+                    && matchStr(text[i + 3], snp_buf1))
                 {
                     printf("[USECASE #57] %lu: %s\n", i + 2, text[i + 2]);
 
                     snprintf(snp_buf1, sizeof(snp_buf1), "adc #%s + 2",
                              r.arr[1]);
-                    text_opt = pushToArray(arr, snp_buf1, text_opt.used);
-                    text_opt = pushToArray(arr, text[i + 1], text_opt.used);
+                    text_opt = pushToArray(text_opt, snp_buf1);
+                    text_opt = pushToArray(text_opt, text[i + 1]);
 
                     freedynArray(r1);
                     freedynArray(r);
@@ -1269,8 +1269,8 @@ void optimizeAsm(dynArray file, dynArray bss)
         {
             char *ss_buffer = sliceStr(text[i], 0, 6);
 
-            if (matchString(ss_buffer, "lda.l ")
-                || matchString(ss_buffer, "sta.l "))
+            if (matchStr(ss_buffer, "lda.l ")
+                || matchStr(ss_buffer, "sta.l "))
             {
                 size_t cont      = 0;
                 char *ss_buffer2 = sliceStr(text[i], 2, strlen(text[i]));
@@ -1284,7 +1284,7 @@ void optimizeAsm(dynArray file, dynArray bss)
                         printf("[USECASE #58] %lu: %s\n", i, text[i]);
 
                         char *rs_buffer = replaceStr(text[i], "a.l", "a.w");
-                        text_opt        = pushToArray(arr, rs_buffer, text_opt.used);
+                        text_opt        = pushToArray(text_opt, rs_buffer);
 
                         i += 1;
                         opted += 1;
@@ -1302,22 +1302,72 @@ void optimizeAsm(dynArray file, dynArray bss)
             free(ss_buffer);
         }
 
+        if (startWith(text[i], "jmp.w ")
+            || startWith(text[i], "bra __"))
+        {
+            size_t j    = i + 1;
+            size_t cont = 0;
+            while (j < text_len && endWith(text[j], ":"))
+            {
+                char *ss_buffer = sliceStr(text[j], 0, strlen(text[j]) - 1);
+                if (endWith(text[i], ss_buffer))
+                {
+                    printf("[USECASE #59] %lu: %s\n", i, text[i]);
+
+                    free(ss_buffer);
+                    i += 1; // Redundant branch, discard it.
+                    opted += 1;
+                    cont = 1;
+                    break;
+                }
+                j += 1;
+
+                free(ss_buffer);
+                if (cont)
+                    continue;
+            }
+        }
+
+        if (startWith(text[i], "jmp.w "))
+        {
+            printf("[USECASE #60] %lu: %s\n", i, text[i]);
+
+            /* Worst case is a 4-byte instruction, so if the jump target is closer
+                than 32 instructions, we can safely substitute a branch */
+            char *label = sliceStr(text[i], 6, strlen(text[i]));
+            snprintf(snp_buf1, sizeof(snp_buf1), "%s:", label);
+            size_t cont = 0;
+            for (size_t l = max(0, (i - 32)); l < (size_t)min(text_len, (i + 32)); l++)
+            {
+                if (matchStr(text[l], snp_buf1))
+                {
+                    printf("[USECASE #61] %lu: %s\n", l, text[l]);
+
+                    char *rs_buffer = replaceStr(text[i], "jmp.w", "bra");
+                    text_opt        = pushToArray(text_opt, rs_buffer);
+
+                    i += 1;
+                    opted += 1;
+                    cont = 1;
+                    break;
+                }
+            }
+            free(label);
+            if (cont)
+            {
+                continue;
+            }
+        }
+
+        text_opt = pushToArray(text_opt, text[i]);
         i++;
 
     } // End of while (i < n)
 
-    if (text_opt.used > 0)
+    printf("\n\n______________[ASM CODE]_________________\n");
+    for (size_t i = 0; i < text_opt.used; i++)
     {
-        printf("\n\n______________[ASM CODE]_________________\n");
-        for (size_t i = 0; i < text_opt.used; i++)
-        {
-            printf("%s\n", text_opt.arr[i]);
-        }
-        freedynArray(text_opt);
+        printf("%s\n", text_opt.arr[i]);
     }
-    else
-    {
-        printf("\n\n______________[ASM CODE]_________________\n");
-        free(arr);
-    }
+    freedynArray(text_opt);
 }

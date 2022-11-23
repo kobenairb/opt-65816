@@ -35,7 +35,7 @@ void freedynArray(dynArray s)
  * @param str2 Pattern string.
  * @return 1 (true) or 0 (false).
  */
-int matchString(const char *str1, const char *str2)
+int matchStr(const char *str1, const char *str2)
 {
     if (strcmp(str1, str2) == 0)
         return 1;
@@ -104,14 +104,27 @@ int isInText(const char *source, const char *pattern)
 /**
  * @brief Compare two numbers.
  * @param a First number.
- * @param b Second numbers.
+ * @param b Second number.
  * @return The smallest number.
  */
-int findMin(const int a, const int b)
+int min(const int a, const int b)
 {
-    if (a && b && (a > b))
+    if (a > b)
         return b;
     return a;
+}
+
+/**
+ * @brief Compare two numbers.
+ * @param a First number.
+ * @param b Second number.
+ * @return The bigger number.
+ */
+int max(const int a, const int b)
+{
+    if (a > b)
+        return a;
+    return b;
 }
 
 /**
@@ -261,7 +274,7 @@ char *splitStr(char *str, char *sep, size_t pos)
  * @param source The string.
  * @param regex The POSIX regex.
  * @param maxGroups The maximum number of groups to match.
- * @return A structure (regexdynArray).
+ * @return A structure (dynArray).
  */
 dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
 {
@@ -344,19 +357,20 @@ dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
  * @param used The current last index of the index.
  * @return A structure (dynArray).
  */
-dynArray pushToArray(char **arr, char *str, int used)
+dynArray pushToArray(dynArray text_opt, char *str)
 {
+
     size_t len = strlen(str);
 
-    if ((arr[used] = malloc(len + 1)) == NULL)
+    if ((text_opt.arr[text_opt.used] = malloc(len + 1)) == NULL)
     {
         perror("malloc-lines");
         exit(EXIT_FAILURE);
     }
 
-    memcpy(arr[used], str, len + 1);
-    used += 1;
+    memcpy(text_opt.arr[text_opt.used], str, len + 1);
+    text_opt.used += 1;
 
-    dynArray b = { arr, used };
+    dynArray b = { text_opt.arr, text_opt.used };
     return b;
 }

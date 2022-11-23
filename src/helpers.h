@@ -29,16 +29,17 @@ typedef struct dynArray
 } dynArray;
 
 void freedynArray(dynArray s);
-int matchString(const char *str1, const char *str2);
+int matchStr(const char *str1, const char *str2);
 int startWith(const char *source, const char *prefix);
 int endWith(const char *source, const char *prefix);
 int isInText(const char *source, const char *pattern);
-int findMin(const int a, const int b);
+int min(const int a, const int b);
+int max(const int a, const int b);
 char *trimWhiteSpace(char *str);
 char *sliceStr(char *str, int slice_from, int slice_to);
 char *replaceStr(char *str, char *orig, char *rep);
 char *splitStr(char *str, char *sep, size_t pos);
 dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups);
-dynArray pushToArray(char **arr, char *str, int used);
+dynArray pushToArray(dynArray text_opt, char *str);
 
 #endif
