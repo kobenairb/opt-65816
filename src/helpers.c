@@ -352,10 +352,9 @@ dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
 
 /**
  * @brief Add string to array.
- * @param arr The array of strings.
+ * @param text_opt The dynArray structure.
  * @param str The string to add.
- * @param used The current last index of the index.
- * @return A structure (dynArray).
+ * @return the dynArray structure.
  */
 dynArray pushToArray(dynArray text_opt, char *str)
 {

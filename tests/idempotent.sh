@@ -20,13 +20,13 @@ for file in tests/samples/*.ps; do
     echo -n "$file "
 
     OPT816_QUIET=1 ./tests/816-opt.py "${file}" >"${file}.p.log"
-    ./816-tcc-opt "${file}" >"${file}.c.log"
+    OPT816_QUIET=1 ./816-tcc-opt "${file}" >"${file}.c.log"
 
     if diff "${file}.p.log" "${file}.c.log" >/dev/null 2>&1; then
         echo "[PASS]"
         f_clean
     else
-        echo "[FAILED]"
+        echo "[FAIL]"
         exit 1
     fi
 done

@@ -34,6 +34,6 @@
 int verbosity();
 dynArray tidyFile(const int argc, char **argv);
 dynArray storeBss(dynArray file);
-void optimizeAsm(dynArray file, dynArray bss);
+void optimizeAsm(dynArray file, dynArray bss, size_t verbose);
 
 #endif

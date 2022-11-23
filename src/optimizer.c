@@ -16,23 +16,18 @@
 #include "optimizer.h"
 
 /**
- * @brief Enable verbosity if OPT_65816_VERBOSE is set
- * OPT_65816_VERBOSE can be set with the following value:
- * 0, 1 or 2, or just unset.
- * @return 0 (disable), 1 (normal) or 2 (debug)
+ * @brief Checks if 816TCCOPT_QUIET is set.
+ * This environment variable sets the output in a quiet mode.
+ * Just set it if you don't want extra messages.
+ * @return 0 (verbose), 1 (quiet).
  */
 int verbosity()
 {
-    char *OPT_65816_VERBOSE = getenv("OPT_65816_VERBOSE");
+    char *QUIET_MODE = getenv("OPT816_QUIET");
 
-    if (!OPT_65816_VERBOSE || *OPT_65816_VERBOSE == '0')
-        return 0;
-    else if (*OPT_65816_VERBOSE == '1')
+    if (!QUIET_MODE)
         return 1;
-    else if (*OPT_65816_VERBOSE == '2')
-        return 2;
-    /* Unmanaged case, should we exit? */
-    return 3;
+    return 0;
 }
 
 /**
@@ -208,11 +203,10 @@ dynArray storeBss(dynArray file)
 
 /**
  * @brief Optimize ASM code.
- * @param text
- * @param n
+ * @param file The asm file cleaned
+ * @param bss The bss section (only forst words)
  */
-// void optimizeAsm(char **text, const size_t n)
-void optimizeAsm(dynArray file, dynArray bss)
+void optimizeAsm(dynArray file, dynArray bss, size_t verbose)
 {
     char **text           = file.arr;
     const size_t text_len = file.used;
@@ -220,9 +214,9 @@ void optimizeAsm(dynArray file, dynArray bss)
     char **bsswords           = bss.arr;
     const size_t bsswords_len = bss.used;
 
-    // int totalopt = 0; // Total number of optimizations performed
-    int opted = -1; // Have we Optimized in this pass
-    // int opass = 0;    // Optimization pass counter
+    size_t totalopt = 0;  // Total number of optimizations performed
+    int opted       = -1; // Have we Optimized in this pass
+    size_t opass    = 0;  // Optimization pass counter
 
     dynArray r, r1; // To store regexMatchGroups returns
 
@@ -230,14 +224,20 @@ void optimizeAsm(dynArray file, dynArray bss)
         snp_buf2[MAXLEN_LINE]; // Store snprintf buffers
 
     /* Manage pointers */
-    char **arr;
-    size_t nptrs = text_len;
+    char **arr = NULL;
+    // size_t nptrs = text_len;
 
-    if ((arr = malloc(nptrs * sizeof *arr)) == NULL)
+    if ((arr = malloc(text_len * sizeof *arr)) == NULL)
     {
         perror("malloc-lines");
         exit(EXIT_FAILURE);
     }
+
+    opass += 1;
+    if (verbose)
+        fprintf(stderr, "optimization pass %lu: ", opass);
+
+    opted = 0;
 
     dynArray text_opt = { arr, 0 };
 
@@ -1362,7 +1362,12 @@ void optimizeAsm(dynArray file, dynArray bss)
         text_opt = pushToArray(text_opt, text[i]);
         i++;
 
-    } // End of while (i < n)
+    } // End of while (i < text_len)
+
+    if (verbose)
+        fprintf(stderr, "%u optimizations performed\n", opted);
+
+    totalopt += opted;
 
     printf("\n\n______________[ASM CODE]_________________\n");
     for (size_t i = 0; i < text_opt.used; i++)
@@ -1370,4 +1375,7 @@ void optimizeAsm(dynArray file, dynArray bss)
         printf("%s\n", text_opt.arr[i]);
     }
     freedynArray(text_opt);
+
+    if (verbose)
+        fprintf(stderr, "%lu optimizations performed in total\n", totalopt);
 }
