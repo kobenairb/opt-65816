@@ -28,7 +28,6 @@ void freedynArray(dynArray s)
     }
     free(s.arr);
 }
-
 /**
  * @brief Check if two strings are identical.
  * @param str1 Source string.
@@ -166,7 +165,8 @@ char *trimWhiteSpace(char *str)
 char *sliceStr(char *str, int slice_from, int slice_to)
 {
     /*
-        From Padymko: https://stackoverflow.com/a/42283266
+        Inspired by Padymko:
+        https://stackoverflow.com/a/42283266
     */
 
     // if a string is empty, returns nothing
@@ -210,6 +210,7 @@ char *sliceStr(char *str, int slice_from, int slice_to)
     else
         return NULL;
 
+    // buffer = malloc(buffer_len * sizeof(char));
     buffer = calloc(buffer_len, sizeof(char) + 1);
     strncpy(buffer, str, buffer_len);
     return buffer;
@@ -271,23 +272,23 @@ char *splitStr(char *str, char *sep, size_t pos)
 
 /**
  * @brief Wrapper to match groups with regex.
- * @param source The string.
+ * @param string The string.
  * @param regex The POSIX regex.
  * @param maxGroups The maximum number of groups to match.
  * @return A structure (dynArray).
  */
-dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
+dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
 {
     /*
-        From Ianmackinnon https://gist.github.com/ianmackinnon/3294587
+        Inspired by Ianmackinnon:
+        https://gist.github.com/ianmackinnon/3294587
     */
 
     regex_t regexCompiled;
     regmatch_t groupArray[maxGroups];
-    size_t used   = 0;
-    char *cursor  = source;
-    char **groups = NULL;
-    size_t len;
+
+    dynArray regexgroup;
+    regexgroup.used = 0;
 
     int re = regcomp(&regexCompiled, regex, REG_EXTENDED);
 
@@ -297,14 +298,13 @@ dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
         exit(EXIT_FAILURE);
     };
 
-    re = regexec(&regexCompiled, cursor, maxGroups, groupArray, 0);
+    re = regexec(&regexCompiled, string, maxGroups, groupArray, 0);
 
     if (!re)
     {
-        size_t g;
-        size_t nptrs = maxGroups;
+        size_t len, g;
 
-        if ((groups = malloc(nptrs * sizeof *groups)) == NULL)
+        if ((regexgroup.arr = malloc(maxGroups * sizeof(char *))) == NULL)
         {
             perror("malloc-lines");
             exit(EXIT_FAILURE);
@@ -317,29 +317,29 @@ dynArray regexMatchGroups(char *source, char *regex, const size_t maxGroups)
                 break; // No more groups
             }
 
-            char cursorCopy[strlen(cursor) + 1];
-            strcpy(cursorCopy, cursor);
-            cursorCopy[groupArray[g].rm_eo] = 0;
+            char stringCopy[strlen(string) + 1];
+            strcpy(stringCopy, string);
+            stringCopy[groupArray[g].rm_eo] = 0;
 
-            len = strlen(cursorCopy + groupArray[g].rm_so);
+            len = strlen(stringCopy + groupArray[g].rm_so);
 
             /* allocate storage for line */
-            groups[used] = malloc(len + 1);
-            memcpy(groups[used], cursorCopy + groupArray[g].rm_so, len + 1);
-            used += 1;
+            regexgroup.arr[regexgroup.used] = malloc(len + 1);
+            memcpy(regexgroup.arr[regexgroup.used], stringCopy + groupArray[g].rm_so, len + 1);
+            regexgroup.used += 1;
         }
 
         regfree(&regexCompiled);
 
-        dynArray r = { groups, used };
-        return r;
+        // dynArray r = { groups, used };
+        return regexgroup;
     }
     else if (re == REG_NOMATCH)
     {
         regfree(&regexCompiled);
 
-        dynArray r = { groups, used };
-        return r;
+        regexgroup.arr = NULL;
+        return regexgroup;
     }
     else
     {

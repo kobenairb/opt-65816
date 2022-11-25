@@ -4,6 +4,7 @@ vgcore.*
 *.o
 *.out
 *.txt
+*.bck
 
 # Binary
 816-tcc-opt
