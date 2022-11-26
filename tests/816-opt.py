@@ -61,24 +61,24 @@ while opted:
                 for j in range(i + 1, min(len(text), i + 30)):
                     r1 = re.match("st([axyz]).b tcc__" + r.groups()[1] + "$", text[j])
                     if r1:
-                        print(f"[USECASE #1] {j}: {text[j]}")
+
                         doopt = True  # another store to the same pregister
                         break
                     if text[j].startswith("jsr.l ") and not text[j].startswith(
                         "jsr.l tcc__"
                     ):
-                        print(f"[USECASE #2] {j}: {text[j]}")
+
                         doopt = True  # before function call (will be clobbered anyway)
                         break
                     # cases in which we don't pursue optimization further
                     if is_control(text[j]) or ("tcc__" + r.groups()[1]) in text[j]:
-                        print(f"[USECASE #3] {j}: {text[j]}")
+
                         break  # branch or other use of the preg
                     if (
                         r.groups()[1].endswith("h")
                         and ("[tcc__" + r.groups()[1].rstrip("h")) in text[j]
                     ):
-                        print(f"[USECASE #4] {j}: {text[j]}")
+
                         break  # use as a pointer
                 if doopt:
                     i += 1  # skip redundant store
@@ -92,14 +92,14 @@ while opted:
                 if text[i + 1] == "pei (tcc__" + r.groups()[1] + ")" and text[
                     i + 2
                 ].startswith("jsr.l "):
-                    print(f"[USECASE #5] {i + 1}: {text[i + 1]}")
+
                     text_opt += ["ph" + r.groups()[0]]
                     i += 2
                     opted += 1
                     continue
                 # store hwreg to preg, push preg -> store hwreg to preg, push hwreg (shorter)
                 if text[i + 1] == "pei (tcc__" + r.groups()[1] + ")":
-                    print(f"[USECASE #6] {i+1}: {text[i + 1]}")
+
                     text_opt += [text[i]]
                     text_opt += ["ph" + r.groups()[0]]
                     i += 2
@@ -111,7 +111,7 @@ while opted:
                     or text[i + 1]
                     == "lda.b tcc__" + r.groups()[1] + " ; DON'T OPTIMIZE"
                 ):
-                    print(f"[USECASE #7] {i+1}: {text[i +1]}")
+
                     text_opt += [text[i]]
                     text_opt += [
                         "t" + r.groups()[0] + "a"
@@ -125,7 +125,7 @@ while opted:
             if r:
                 # store preg followed by load preg
                 if text[i + 1] == "lda.b tcc__" + r.groups()[0]:
-                    print(f"[USECASE #8] {i+1}: {text[i +1]}")
+
                     text_opt += [text[i]]  # keep store
                     i += 2  # omit load
                     opted += 1
@@ -134,7 +134,7 @@ while opted:
                 if (
                     text[i + 1].startswith("ldx") or text[i + 1].startswith("ldy")
                 ) and text[i + 2] == "lda.b tcc__" + r.groups()[0]:
-                    print(f"[USECASE #9] {i+1}: {text[i +1]}")
+
                     text_opt += [text[i]]  # keep store
                     text_opt += [text[i + 1]]
                     i += 3  # omit load
@@ -144,14 +144,14 @@ while opted:
                 if text[i + 1] == "pei (tcc__" + r.groups()[0] + ")" and text[
                     i + 2
                 ].startswith("jsr.l "):
-                    print(f"[USECASE #10] {i+1}: {text[i +1]}")
+
                     text_opt += ["pha"]
                     i += 2
                     opted += 1
                     continue
                 # store accu to preg, push preg -> store accu to preg, push accu (shorter)
                 if text[i + 1] == "pei (tcc__" + r.groups()[0] + ")":
-                    print(f"[USECASE #11] {i+1}: {text[i +1]}")
+
                     text_opt += [text[i]]
                     text_opt += ["pha"]
                     i += 2
@@ -162,7 +162,7 @@ while opted:
                     text[i + 1].startswith("pei ")
                     and text[i + 2] == "pei (tcc__" + r.groups()[0] + ")"
                 ):
-                    print(f"[USECASE #12] {i+1}: {text[i +1]}")
+
                     text_opt += [text[i + 1]]
                     text_opt += [text[i]]
                     text_opt += ["pha"]
@@ -175,13 +175,13 @@ while opted:
                 for crem in "inc", "dec":
                     if text[i + 1] == crem + ".b tcc__" + r.groups()[0]:
                         # store to preg followed by crement on preg
-                        print(f"[USECASE #13] {i+1}: {text[i+1]}")
+
                         if text[i + 2] == crem + ".b tcc__" + r.groups()[0] and text[
                             i + 3
                         ].startswith("lda"):
                             # store to preg followed by two crements on preg
                             # increment the accu first, then store it to preg
-                            print(f"[USECASE #14] {i+2}: {text[i+2]}")
+
                             text_opt += [
                                 crem + " a",
                                 crem + " a",
@@ -189,10 +189,10 @@ while opted:
                             ]
                             # a subsequent load can be omitted (the right value is already in the accu)
                             if text[i + 3] == "lda.b tcc__" + r.groups()[0]:
-                                print(f"[USECASE #15] {i+3}: {text[i+3]}")
+
                                 i += 4
                             else:
-                                print(f"[USECASE #16] {i}: {text[i]}")
+
                                 i += 3
                             opted += 1
                             cont = True
@@ -201,13 +201,13 @@ while opted:
                             "lda"
                         ):  # text[i+2] == 'lda.b tcc__' + r.groups()[0]:
                             # same thing with only one crement (FIXME: there should be a more clever way to do this...)
-                            print(f"[USECASE #17] {i+2}: {text[i+2]}")
+
                             text_opt += [crem + " a", "sta.b tcc__" + r.groups()[0]]
                             if text[i + 2] == "lda.b tcc__" + r.groups()[0]:
-                                print(f"[USECASE #18] {i+2}: {text[i+2]}")
+
                                 i += 3
                             else:
-                                print(f"[USECASE #19] {i}: {text[i]}")
+
                                 i += 2
                             opted += 1
                             cont = True
@@ -217,12 +217,12 @@ while opted:
 
                 r1 = re.match("lda.b tcc__([rf][0-9]*)", text[i + 1])
                 if r1:
-                    print(f"[USECASE #20] {i+1}: {text[i+1]}")
+
                     if text[i + 2][:3] in ["and", "ora"]:
-                        print(f"[USECASE #21] {i+2}: {text[i+2]}")
+
                         # store to preg1, load from preg2, and/or preg1 -> store to preg1, and/or preg2
                         if text[i + 2][3:] == ".b tcc__" + r.groups()[0]:
-                            print(f"[USECASE #22] {i+2}: {text[i+2]}")
+
                             text_opt += [text[i]]  # store
                             text_opt += [text[i + 2][:3] + ".b tcc__" + r1.groups()[0]]
                             i += 3
@@ -234,7 +234,7 @@ while opted:
                     text[i + 1] == "sep #$20"
                     and text[i + 2] == "lda.b tcc__" + r.groups()[0]
                 ):
-                    print(f"[USECASE #23] {i+2}: {text[i+2]}")
+
                     text_opt += [text[i]]
                     text_opt += [text[i + 1]]
                     i += 3  # skip load
@@ -246,9 +246,9 @@ while opted:
                     not is_control(text[i + 1])
                     and not ("tcc__" + r.groups()[0]) in text[i + 1]
                 ):
-                    print(f"[USECASE #24] {i+1}: {text[i+1]}")
+
                     if text[i + 2] == text[i]:
-                        print(f"[USECASE #25] {i+2}: {text[i+2]}")
+
                         text_opt += [text[i + 1]]
                         text_opt += [text[i + 2]]
                         i += 3  # skip first store
@@ -258,7 +258,7 @@ while opted:
                 # store hwreg to preg, load hwreg from preg -> store hwreg to preg, transfer hwreg/hwreg (shorter)
                 r1 = re.match("ld([xy]).b tcc__" + r.groups()[0], text[i + 1])
                 if r1:
-                    print(f"[USECASE #26] {i+1}: {text[i+1]}")
+
                     text_opt += [text[i]]
                     text_opt += ["ta" + r1.groups()[0]]
                     i += 2
@@ -276,9 +276,9 @@ while opted:
                     or changes_accu(text[i + 1])
                     or "tcc__" + r.groups()[0] in text[i + 1]
                 ):
-                    print(f"[USECASE #27] {i+1}: {text[i+1]}")
+
                     if text[i + 2] == "lda.b tcc__" + r.groups()[0]:
-                        print(f"[USECASE #28] {i+1}: {text[i+1]}")
+
                         text_opt += [text[i]]
                         text_opt += [text[i + 1]]
                         i += 3  # skip load
@@ -287,10 +287,10 @@ while opted:
 
                 # store preg1, clc, load preg2, add preg1 -> store preg1, clc, add preg2
                 if text[i + 1] == "clc":
-                    print(f"[USECASE #29] {i+1}: {text[i+1]}")
+
                     r1 = re.match("lda.b tcc__(r[0-9]*)", text[i + 2])
                     if r1 and text[i + 3] == "adc.b tcc__" + r.groups()[0]:
-                        print(f"[USECASE #30] {i+3}: {text[i+3]}")
+
                         text_opt += [text[i]]
                         text_opt += [text[i + 1]]
                         text_opt += ["adc.b tcc__" + r1.groups()[0]]
@@ -302,7 +302,7 @@ while opted:
                 # FIXME: is this safe? can we rely on code not making assumptions about the contents of the accu
                 # after the shift?
                 if text[i + 1] == "asl.b tcc__" + r.groups()[0]:
-                    print(f"[USECASE #31] {i+1}: {text[i+1]}")
+
                     text_opt += ["asl a"]
                     text_opt += [text[i]]
                     i += 2
@@ -312,7 +312,7 @@ while opted:
             r = re.match("sta (.*),s$", text[i])
             if r:
                 if text[i + 1] == "lda " + r.groups()[0] + ",s":
-                    print(f"[USECASE #32] {i+1}: {text[i+1]}")
+
                     text_opt += [text[i]]
                     i += 2  # omit load
                     opted += 1
@@ -320,19 +320,19 @@ while opted:
         # end startswith('st')
 
         if text[i].startswith("ld"):
-            print(f"[USECASE #33] {i}: {text[i]}")
+
             r = re.match("ldx #0", text[i])
             if r:
-                print(f"[USECASE #34] {i}: {text[i]}")
+
                 r1 = re.match("lda.l (.*),x$", text[i + 1])
                 if r1 and not text[i + 3].endswith(",x"):
-                    print(f"[USECASE #33] {i+3}: {text[i+3]}")
+
                     text_opt += ["lda.l " + r1.groups()[0]]
                     i += 2
                     opted += 1
                     continue
                 elif r1:
-                    print(f"[USECASE #36] {i}: {text[i]}")
+
                     text_opt += ["lda.l " + r1.groups()[0]]
                     text_opt += [text[i + 2]]
                     text_opt += [text[i + 3].replace(",x", "")]
@@ -350,7 +350,7 @@ while opted:
                 and text[i + 6] == "sta.b [tcc__r9]"
                 and text[i + 7] == "rep #$20"
             ):
-                print(f"[USECASE #37] {i}: {text[i]}")
+
                 text_opt += ["sep #$20"]
                 text_opt += [text[i + 5]]
                 text_opt += [
@@ -362,22 +362,22 @@ while opted:
                 continue
 
             if text[i] == "lda.w #0":
-                print(f"[USECASE #38] {i}: {text[i]}")
+
                 if text[i + 1].startswith("sta.b ") and text[i + 2].startswith("lda"):
-                    print(f"[USECASE #39] {i+1}: {text[i+1]}")
+
                     text_opt += [text[i + 1].replace("sta.", "stz.")]
                     i += 2
                     opted += 1
                     continue
             elif text[i].startswith("lda.w #"):
-                print(f"[USECASE #40] {i}: {text[i]}")
+
                 if (
                     text[i + 1] == "sep #$20"
                     and text[i + 2].startswith("sta ")
                     and text[i + 3] == "rep #$20"
                     and text[i + 4].startswith("lda")
                 ):
-                    print(f"[USECASE #41] {i+1}: {text[i+1]}")
+
                     text_opt += [
                         "sep #$20",
                         text[i].replace("lda.w", "lda.b"),
@@ -394,7 +394,7 @@ while opted:
                 and not "a" in text[i + 1]
                 and text[i + 2].startswith("lda.b")
             ):
-                print(f"[USECASE #42] {i}: {text[i]}")
+
                 text_opt += [text[i + 1], text[i + 2]]
                 i += 3
                 opted += 1
@@ -407,7 +407,7 @@ while opted:
                 and text[i].startswith("lda ")
                 and text[i].endswith(",s")
             ):
-                print(f"[USECASE #43] {i+1}: {text[i+1]}")
+
                 local = text[i][4:]
                 reg = text[i + 1][6:]
                 # lda stack ; store high preg ; ... ; load high preg ; sta stack
@@ -415,7 +415,7 @@ while opted:
                 while (
                     j < len(text) - 2 and not is_control(text[j]) and not reg in text[j]
                 ):
-                    print(f"[USECASE #44] {j}: {text[j]}")
+
                     j += 1
                 if text[j] == "lda.b " + reg and text[j + 1] == "sta " + local:
                     while i < j:
@@ -435,7 +435,7 @@ while opted:
             #   ...tcc_rX...
             if text[i].startswith("lda") and text[i + 1].startswith("sta.b tcc__r"):
                 reg = text[i + 1][6:]
-                print(f"[USECASE #45] {i}: {text[i]}")
+
                 if (
                     not reg.endswith("h")
                     and text[i + 2].startswith("lda")
@@ -444,7 +444,7 @@ while opted:
                     and text[i + 3].endswith("h")
                     and text[i + 4].endswith(reg)
                 ):
-                    print(f"[USECASE #46] {i+2}: {text[i+2]}")
+
                     text_opt += [text[i + 2], text[i + 3]]
                     text_opt += [text[i], text[i + 1]]
                     i += 4
@@ -472,7 +472,7 @@ while opted:
                 and text[i + 12] == "+"
                 and text[i + 13] != "tya"
             ):
-                print(f"[USECASE #47] {i}: {text[i]}")
+
                 text_opt += [text[i + 1]]
                 text_opt += ["cmp #" + text[i + 3][5:]]
                 text_opt += [text[i + 5]]
@@ -497,7 +497,7 @@ while opted:
                 and text[i + 11] == "+"
                 and text[i + 12] != "tya"
             ):
-                print(f"[USECASE #48] {i}: {text[i]}")
+
                 text_opt += ["cmp #" + text[i + 2][5:]]
                 text_opt += [text[i + 4]]
                 text_opt += [text[i + 10]]  # brl
@@ -523,7 +523,7 @@ while opted:
                 and text[i + 13] == "+"
                 and text[i + 14] != "tya"
             ):
-                print(f"[USECASE #49] {i}: {text[i]}")
+
                 text_opt += [text[i + 1]]
                 text_opt += ["cmp.b " + text[i + 3][6:]]
                 text_opt += [text[i + 5]]
@@ -555,7 +555,7 @@ while opted:
                 and text[i + 15] == "+"
                 and text[i + 16] != "tya"
             ):
-                print(f"[USECASE #50] {i}: {text[i]}")
+
                 text_opt += [text[i + 1]]
                 text_opt += [text[i + 2]]
                 text_opt += [text[i + 4]]
@@ -588,7 +588,7 @@ while opted:
                 and text[i + 16] == "+"
                 and text[i + 17] != "tya"
             ):
-                print(f"[USECASE #51] {i}: {text[i]}")
+
                 text_opt += [text[i + 1]]
                 text_opt += [text[i + 2]]
                 text_opt += [text[i + 3]]
@@ -621,7 +621,7 @@ while opted:
                 and text[i + 15] == "+"
                 and text[i + 16] != "tya"
             ):
-                print(f"[USECASE #52] {i}: {text[i]}")
+
                 text_opt += [text[i + 1]]
                 text_opt += [text[i + 2]]
                 text_opt += [text[i + 4]]
@@ -637,7 +637,7 @@ while opted:
         # # end startswith('ld')
 
         if text[i] == "rep #$20" and text[i + 1] == "sep #$20":
-            print(f"[USECASE #53] {i}: {text[i]}")
+
             i += 2
             opted += 1
             continue
@@ -649,7 +649,7 @@ while opted:
             and text[i + 3].startswith("lda #")
             and text[i + 4] == "pha"
         ):
-            print(f"[USECASE #54] {i}: {text[i]}")
+
             text_opt += [
                 "pea.w ("
                 + text[i + 1].split("#")[1]
@@ -664,15 +664,15 @@ while opted:
 
         r = re.match("adc #(.*)$", text[i])
         if r:
-            print(f"[USECASE #55] {i}: {text[i]}")
+
             r1 = re.match("sta.b (tcc__[fr][0-9]*)$", text[i + 1])
             if r1:
-                print(f"[USECASE #56] {i+1}: {text[i+1]}")
+
                 if (
                     text[i + 2] == "inc.b " + r1.groups()[0]
                     and text[i + 3] == "inc.b " + r1.groups()[0]
                 ):
-                    print(f"[USECASE #57] {i+2}: {text[i+2]}")
+
                     text_opt += ["adc #" + r.groups()[0] + " + 2"]
                     text_opt += [text[i + 1]]
                     i += 4
@@ -683,7 +683,7 @@ while opted:
             cont = False
             for b in bss:
                 if text[i][2:].startswith("a.l " + b + " "):
-                    print(f"[USECASE #58] {i}: {text[i]}")
+
                     text_opt += [
                         text[i].replace("lda.l", "lda.w").replace("sta.l", "sta.w")
                     ]
@@ -699,7 +699,7 @@ while opted:
             cont = False
             while j < len(text) and text[j].endswith(":"):
                 if text[i].endswith(text[j][:-1]):
-                    print(f"[USECASE #59] {i}: {text[i]}")
+
                     # redundant branch, discard it
                     i += 1
                     opted += 1
@@ -710,7 +710,7 @@ while opted:
                 continue
 
         if text[i].startswith("jmp.w "):
-            print(f"[USECASE #60] {i}: {text[i]}")
+
             # worst case is a 4-byte instruction, so if the jump target is closer
             # than 32 instructions, we can safely substitute a branch
             label = text[i][6:] + ":"
@@ -718,7 +718,7 @@ while opted:
             for lpos in range(max(0, i - 32), min(len(text), i + 32)):
                 # print(f"debug: {lpos}: {text[lpos]} => {label}")
                 if text[lpos] == label:
-                    print(f"[USECASE #61] {lpos}: {text[lpos]}")
+
                     text_opt += [text[i].replace("jmp.w", "bra")]
                     i += 1
                     opted += 1
