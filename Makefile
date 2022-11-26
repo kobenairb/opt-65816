@@ -12,7 +12,7 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 all: clean $(BIN)
 
 $(BIN): $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $^ -o $@
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@

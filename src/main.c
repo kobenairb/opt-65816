@@ -63,11 +63,16 @@ int main(int argc, char **argv)
     /* -------------------------------- */
     /*       ASM Optimization           */
     /* -------------------------------- */
-    optimizeAsm(file, bss, verbose);
+    dynArray optAsm = optimizeAsm(file, bss, verbose);
+
+    for (size_t i = 0; i < optAsm.used; i++)
+    {
+        printf("%s\n", optAsm.arr[i]);
+    }
 
     /* -------------------------------- */
     /*       Free pointers              */
     /* -------------------------------- */
     freedynArray(bss);
-    freedynArray(file);
+    freedynArray(optAsm);
 }

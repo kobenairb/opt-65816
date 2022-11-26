@@ -36,8 +36,14 @@ void freedynArray(dynArray s)
  */
 int matchStr(const char *str1, const char *str2)
 {
-    if (strcmp(str1, str2) == 0)
-        return 1;
+    if (str1[0] == '\0')
+        return 0;
+
+    if (str1 != NULL)
+    {
+        if (strcmp(str1, str2) == 0)
+            return 1;
+    }
 
     return 0;
 }
@@ -54,8 +60,11 @@ int startWith(const char *source, const char *prefix)
     if (source[0] == '\0')
         return 0;
 
-    if (strncmp(source, prefix, strlen(prefix)) == 0)
-        return 1;
+    if (source != NULL)
+    {
+        if (strncmp(source, prefix, strlen(prefix)) == 0)
+            return 1;
+    }
 
     return 0;
 }
@@ -250,20 +259,23 @@ char *replaceStr(char *str, char *orig, char *rep)
  */
 char *splitStr(char *str, char *sep, size_t pos)
 {
-    if (str && sep && strlen(sep) == 1)
+    if (strlen(sep) == 1)
     {
-        static char tmp[sizeof(str)];
+        char tmp[sizeof(str)];
 
         strcpy(tmp, str);
-
-        char *token = strtok(tmp, sep);
+        char *token;
+        char *saveptr;
+        // token       = strtok(tmp, sep);
+        token = strtok_r(tmp, sep, &saveptr);
 
         // Loop through the string to extract all
         // other tokens until the given position.
         for (size_t i = 0; i < pos; i++)
         {
-            token = strtok(NULL, sep);
+            token = strtok_r(NULL, sep, &saveptr);
         }
+
         return token;
     }
 
@@ -294,7 +306,7 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
 
     if (re)
     {
-        printf("Could not compile regular expression.\n");
+        fprintf(stderr, "Could not compile regular expression.\n");
         exit(EXIT_FAILURE);
     };
 

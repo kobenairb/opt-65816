@@ -2,3 +2,12 @@ adc #10
 sta.b tcc__r0
 inc.b tcc__r0
 inc.b tcc__r0
+sep #$20
+lda #2
+pha
+lda #2
+pha
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+__local_dummybss dsb 1
+.ENDS
