@@ -29,36 +29,16 @@ int main(int argc, char **argv)
     /*       Enable verbosity level     */
     /* -------------------------------- */
     size_t verbose = verbosity();
-    // if (verbose)
-    //     fprintf(stderr, "Verbose mode is activated: %lu\n", verbose);
 
     /* -------------------------------- */
     /*       Store trimmed file         */
     /* -------------------------------- */
     dynArray file = tidyFile(argc, argv);
 
-    // if (verbose == 2)
-    // {
-    //     for (size_t i = 0; i < file.used; i++)
-    //     {
-    //         fprintf(stderr, "line[%6lu] : %s\n", i, file.arr[i]);
-    //     }
-    //     fprintf(stderr, "\n");
-    // }
-
     /* -------------------------------- */
     /*      Store BSS instuctions       */
     /* -------------------------------- */
     dynArray bss = storeBss(file);
-
-    // if (verbose == 2)
-    // {
-    //     for (size_t i = 0; i < bss.used; i++)
-    //     {
-    //         fprintf(stderr, "line[%5lu] : %s\n", i, bss.arr[i]);
-    //     }
-    //     fprintf(stderr, "\n");
-    // }
 
     /* -------------------------------- */
     /*       ASM Optimization           */
@@ -67,7 +47,7 @@ int main(int argc, char **argv)
 
     for (size_t i = 0; i < optAsm.used; i++)
     {
-        printf("%s\n", optAsm.arr[i]);
+        fprintf(stdout, "%s\n", optAsm.arr[i]);
     }
 
     /* -------------------------------- */

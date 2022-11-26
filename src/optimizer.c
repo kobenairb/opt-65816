@@ -37,8 +37,6 @@ int verbosity()
  */
 int changeAccu(const char *a)
 {
-    // sta -14 + __main_locals + 1,s
-    // printf("debug: %s\n", a);
     if (strlen(a) > 2)
     {
         if (a[2] == 'a'
@@ -646,11 +644,7 @@ dynArray optimizeAsm(dynArray file, const dynArray bss, const size_t verbose)
                     /* Store accu to preg then load accu from preg,
                         with something in-between that does not alter */
                     snprintf(snp_buf1, sizeof(snp_buf1), "tcc__%s", r.arr[1]);
-                    // if (!(isControl(file.arr[i + 1])
-                    //       || isInText(file.arr[i + 1], snp_buf1)))
-                    // {
-                    //     printf("debug ca: %d\n", changeAccu(file.arr[i + 1]));
-                    // }
+
                     if (!(isControl(file.arr[i + 1])
                           || changeAccu(file.arr[i + 1])
                           || isInText(file.arr[i + 1], snp_buf1)))
