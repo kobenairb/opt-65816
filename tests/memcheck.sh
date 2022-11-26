@@ -9,7 +9,7 @@ for file in tests/samples/*.ps; do
 
     if valgrind --quiet \
         --leak-check=full \
-        --track-origins=yes \
+        --undef-value-errors=no \
         --exit-on-first-error=yes \
         --error-exitcode=1 \
         ./816-tcc-opt "${file}" >/dev/null; then

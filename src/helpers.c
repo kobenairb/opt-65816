@@ -17,8 +17,7 @@
 
 /**
  * @brief Free pointers.
- * @param p Pointers of pointer.
- * @param n Number of pointers of pointer.
+ * @param s dynArray structure.
  */
 void freedynArray(dynArray s)
 {
@@ -28,6 +27,7 @@ void freedynArray(dynArray s)
     }
     free(s.arr);
 }
+
 /**
  * @brief Check if two strings are identical.
  * @param str1 Source string.
@@ -56,7 +56,6 @@ int matchStr(const char *str1, const char *str2)
  */
 int startWith(const char *source, const char *prefix)
 {
-    // if a string is empty, returns false
     if (source[0] == '\0')
         return 0;
 
@@ -77,18 +76,21 @@ int startWith(const char *source, const char *prefix)
  */
 int endWith(const char *source, const char *prefix)
 {
-    // if a string is empty, returns false
     if (source[0] == '\0')
         return 0;
 
-    size_t slen = strlen(source);
-    size_t plen = strlen(prefix);
+    if (source != NULL)
+    {
+        size_t slen = strlen(source);
+        size_t plen = strlen(prefix);
 
-    if (slen < plen)
-        return 0;
+        if (slen < plen)
+            return 0;
 
-    if (strncmp(source + slen - plen, prefix, plen) == 0)
-        return 1;
+        if (strncmp(source + slen - plen, prefix, plen) == 0)
+            return 1;
+    }
+
     return 0;
 }
 
@@ -100,12 +102,14 @@ int endWith(const char *source, const char *prefix)
  */
 int isInText(const char *source, const char *pattern)
 {
-    // if a string is empty, returns false
     if (source[0] == '\0')
         return 0;
 
-    if (strstr(source, pattern) != NULL)
-        return 1;
+    if (source != NULL)
+    {
+        if (strstr(source, pattern) != NULL)
+            return 1;
+    }
     return 0;
 }
 
@@ -219,7 +223,6 @@ char *sliceStr(char *str, int slice_from, int slice_to)
     else
         return NULL;
 
-    // buffer = malloc(buffer_len * sizeof(char));
     buffer = calloc(buffer_len, sizeof(char) + 1);
     strncpy(buffer, str, buffer_len);
     return buffer;
@@ -363,15 +366,16 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
 }
 
 /**
- * @brief Add string to array.
+ * @brief Add string to array and update the length of the array.
  * @param text_opt The dynArray structure.
  * @param str The string to add.
- * @return the dynArray structure.
+ * @return the dynArray structure updated.
  */
 dynArray pushToArray(dynArray text_opt, char *str)
 {
 
     size_t len = strlen(str);
+    dynArray updatedDynArray;
 
     if ((text_opt.arr[text_opt.used] = malloc(len + 1)) == NULL)
     {
@@ -382,6 +386,8 @@ dynArray pushToArray(dynArray text_opt, char *str)
     memcpy(text_opt.arr[text_opt.used], str, len + 1);
     text_opt.used += 1;
 
-    dynArray b = { text_opt.arr, text_opt.used };
-    return b;
+    updatedDynArray.arr  = text_opt.arr;
+    updatedDynArray.used = text_opt.used;
+
+    return updatedDynArray;
 }

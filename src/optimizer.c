@@ -16,10 +16,10 @@
 #include "optimizer.h"
 
 /**
- * @brief Checks if 816TCCOPT_QUIET is set.
+ * @brief Checks if OPT816_QUIET is set.
  * This environment variable sets the output in a quiet mode.
- * Just set it if you don't want extra messages.
- * @return 0 (verbose), 1 (quiet).
+ * Just set it if you don't want extra messages (export OPT816_QUIET=1).
+ * @return 0 = verbose (by default), 1 = quiet.
  */
 int verbosity()
 {
@@ -148,7 +148,7 @@ dynArray tidyFile(const int argc, char **argv)
 /**
  * @brief Create an array of string to store
     block bss instructions (first word only).
- * @param file The parsed asm file provided as a struct
+ * @param file The parsed asm file provided as a structure.
  * @return A structure (dynArray).
  */
 dynArray storeBss(dynArray file)
@@ -198,8 +198,9 @@ dynArray storeBss(dynArray file)
 
 /**
  * @brief Optimize ASM code.
- * @param file The asm file cleaned
- * @param bss The bss section (only forst words)
+ * @param file The asm file cleaned (see tidyFile function).
+ * @param bss The bss section (only forst words).
+ * @param verbose The level of verbosity (see verbosity function).
  */
 dynArray optimizeAsm(dynArray file, const dynArray bss, const size_t verbose)
 {
@@ -214,7 +215,7 @@ dynArray optimizeAsm(dynArray file, const dynArray bss, const size_t verbose)
 
     while (opted)
     {
-        if ((text_opt.arr = malloc(file.used * sizeof(text_opt.arr))) == NULL)
+        if ((text_opt.arr = malloc(file.used * sizeof(char *))) == NULL)
         {
             perror("malloc-lines");
             exit(EXIT_FAILURE);
@@ -1204,7 +1205,6 @@ dynArray optimizeAsm(dynArray file, const dynArray bss, const size_t verbose)
                 printf("[USECASE #54] %lu: %s\n", i, file.arr[i]);
                 char *token1, *token2;
                 token1 = splitStr(file.arr[i + 1], "#", 1);
-
                 snprintf(snp_buf1, sizeof(snp_buf1), "pea.w (%s * 256", token1);
                 token2 = splitStr(file.arr[i + 3], "#", 1);
                 snprintf(snp_buf2, sizeof(snp_buf2), "%s + %s)", snp_buf1, token2);
@@ -1356,7 +1356,7 @@ dynArray optimizeAsm(dynArray file, const dynArray bss, const size_t verbose)
         freedynArray(file);
         if (opted > 0)
         {
-            if ((file.arr = malloc(text_opt.used * sizeof(text_opt.arr))) == NULL)
+            if ((file.arr = malloc(text_opt.used * sizeof(char *))) == NULL)
             {
                 perror("malloc-lines");
                 exit(EXIT_FAILURE);
