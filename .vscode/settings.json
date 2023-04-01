@@ -34,5 +34,98 @@
     },
     "files.trimTrailingWhitespace": true,
     "makefile.ignoreDirectoryCommands": false,
-    "python.languageServer": "Pylance"
+    "python.languageServer": "Pylance",
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "keyword.mnemonic",
+                "settings": {
+                    //"foreground": "#848484"
+                }
+            },
+            {
+                "scope": "keyword.xkas.command.concatenate",
+                "settings": {
+                    "foreground": "#848484"
+                }
+            },
+            {
+                "scope": "keyword.xkas.snes",
+                "settings": {
+                    "foreground": "#8eda92",
+                    "fontStyle": "italic underline"
+                }
+            },
+            {
+                "scope": "keyword.xkas.asm",
+                "settings": {
+                    "foreground": "#6a6ac5"
+                }
+            },
+            {
+                "scope": "keyword.xkas.define",
+                "settings": {
+                    "foreground": "#6a6ac5"
+                }
+            },
+            {
+                "scope": "constant.xkas.numeric.hexvalue",
+                "settings": {
+                    "foreground": "#6a6ac5"
+                }
+            },
+            {
+                "scope": "constant.xkas.numeric.decvalue",
+                "settings": {
+                    "foreground": "#62ca4d"
+                }
+            },
+            {
+                "scope": "constant.xkas.numeric.binvalue",
+                "settings": {
+                    "foreground": "#945656"
+                }
+            },
+            {
+                "scope": "constant.xkas.numeric.address",
+                "settings": {
+                    "foreground": "#a86bcc"
+                }
+            },
+            {
+                "scope": "label.xkas.sublabel.reference",
+                "settings": {
+                    "foreground": "#FFAC3D",
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "label.xkas.sublabel",
+                "settings": {
+                    "foreground": "#5484ec",
+                    //"fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "label.xkas.label.reference",
+                "settings": {
+                    "foreground": "#bb4d5c",
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "label.xkas.label",
+                "settings": {
+                    "foreground": "#bb4d5c",
+                    //"fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "variable.xkas.storage.register",
+                "settings": {
+                    "foreground": "#3CB3FD"
+                }
+            }
+        ]
+    }
 }

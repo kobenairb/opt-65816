@@ -116,7 +116,7 @@ dynArray tidyFile(const int argc, char **argv)
     {
         buf[(len = strcspn(buf, "\n"))] = 0;
 
-        if (!startWith(buf, COMMENT))
+        if (!startWith(buf, ASM_COMMENT))
         {
             if (file.used == nptrs)
             {

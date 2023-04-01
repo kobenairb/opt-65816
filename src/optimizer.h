@@ -6,7 +6,7 @@
 /*!
  * @brief Define comment for ASM files
  */
-#define COMMENT ";"
+#define ASM_COMMENT ";"
 
 /*!
  * @brief BSS start of a section block

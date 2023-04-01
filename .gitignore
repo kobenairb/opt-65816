@@ -11,3 +11,6 @@ vgcore.*
 
 # Documentation
 doc/**
+
+# Custom tests
+tests/samples/tmp
