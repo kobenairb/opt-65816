@@ -15,7 +15,7 @@ sbc #__main_locals
 tas
 .endif
 ; load 0
-; type 0 reg 0xf0 extra 0x8ef9840
+; type 0 reg 0xf0 extra 0x9e50840
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
@@ -25,7 +25,7 @@ sta.b tcc__r0
 lda.b tcc__r0
 sta -2 + __main_locals + 1,s
 ; load 0
-; type 0 reg 0xf0 extra 0x8ef9840
+; type 0 reg 0xf0 extra 0x9e50840
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
@@ -38,17 +38,17 @@ sta -4 + __main_locals + 1,s
 jsr.l consoleInit
 ; load 0
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #patpvsneslib_end + 0, tcc__r0 (type 0x84)
-lda.w #:patpvsneslib_end
+; ld4 #LandTiles_end + 0, tcc__r0 (type 0x84)
+lda.w #:LandTiles_end
 sta.b tcc__r0h
-lda.w #patpvsneslib_end + 0
+lda.w #LandTiles_end + 0
 sta.b tcc__r0
 ; load 1
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #patpvsneslib + 0, tcc__r1 (type 0x84)
-lda.w #:patpvsneslib
+; ld4 #LandTiles + 0, tcc__r1 (type 0x84)
+lda.w #:LandTiles
 sta.b tcc__r1h
-lda.w #patpvsneslib + 0
+lda.w #LandTiles + 0
 sta.b tcc__r1
 ; gen_opi len 4 op -
 ; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
@@ -57,65 +57,34 @@ sec
 lda.b tcc__r0
 sbc.b tcc__r1
 sta.b tcc__r0
-; push2 imm r 0xf0
-pea.w 20480
-; push2 imm r 0xf0
-pea.w 16
-; push2 imm r 0xf0
-pea.w 32
-; ldpush before load type 0x10 reg 0x0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; push1 imm r 0xf0
-sep #$20
-lda #0
-pha
-rep #$20
-; push4 imm r 0x12f0
-pea.w :palpvsneslib
-pea.w palpvsneslib + 0
-; push4 imm r 0x12f0
-pea.w :patpvsneslib
-pea.w patpvsneslib + 0
-; push1 imm r 0xf0
-sep #$20
-lda #1
-pha
-rep #$20
-; call r 0x2f0
-jsr.l bgInitTileSet
-; add sp, #18
-tsa
-clc
-adc #18
-tas
-; load 0
-; type 132 reg 0x12f0 extra 0x0
-; ld4 #patshader_end + 0, tcc__r0 (type 0x84)
-lda.w #:patshader_end
-sta.b tcc__r0h
-lda.w #patshader_end + 0
-sta.b tcc__r0
 ; load 1
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #patshader + 0, tcc__r1 (type 0x84)
-lda.w #:patshader
+; ld4 #LandPalette_end + 0, tcc__r1 (type 0x84)
+lda.w #:LandPalette_end
 sta.b tcc__r1h
-lda.w #patshader + 0
+lda.w #LandPalette_end + 0
 sta.b tcc__r1
+; load 2
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #LandPalette + 0, tcc__r2 (type 0x84)
+lda.w #:LandPalette
+sta.b tcc__r2h
+lda.w #LandPalette + 0
+sta.b tcc__r2
 ; gen_opi len 4 op -
-; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; sbc tcc__r2 (0x2), tcc__r1 (0x1) (fr type 0x84 c 0 r type 0x10)
 ; length xxy 4 vtop->type 0x84
 sec
-lda.b tcc__r0
-sbc.b tcc__r1
-sta.b tcc__r0
+lda.b tcc__r1
+sbc.b tcc__r2
+sta.b tcc__r1
 ; push2 imm r 0xf0
-pea.w 16384
+pea.w 0
 ; push2 imm r 0xf0
 pea.w 16
-; push2 imm r 0xf0
-pea.w 32
+; ldpush before load type 0x10 reg 0x1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
@@ -125,11 +94,11 @@ lda #1
 pha
 rep #$20
 ; push4 imm r 0x12f0
-pea.w :palshader
-pea.w palshader + 0
+pea.w :LandPalette
+pea.w LandPalette + 0
 ; push4 imm r 0x12f0
-pea.w :patshader
-pea.w patshader + 0
+pea.w :LandTiles
+pea.w LandTiles + 0
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -144,17 +113,92 @@ adc #18
 tas
 ; load 0
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #mappvsneslib_end + 0, tcc__r0 (type 0x84)
-lda.w #:mappvsneslib_end
+; ld4 #CloudTiles_end + 0, tcc__r0 (type 0x84)
+lda.w #:CloudTiles_end
 sta.b tcc__r0h
-lda.w #mappvsneslib_end + 0
+lda.w #CloudTiles_end + 0
 sta.b tcc__r0
 ; load 1
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #mappvsneslib + 0, tcc__r1 (type 0x84)
-lda.w #:mappvsneslib
+; ld4 #CloudTiles + 0, tcc__r1 (type 0x84)
+lda.w #:CloudTiles
 sta.b tcc__r1h
-lda.w #mappvsneslib + 0
+lda.w #CloudTiles + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #CloudPalette_end + 0, tcc__r1 (type 0x84)
+lda.w #:CloudPalette_end
+sta.b tcc__r1h
+lda.w #CloudPalette_end + 0
+sta.b tcc__r1
+; load 2
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #CloudPalette + 0, tcc__r2 (type 0x84)
+lda.w #:CloudPalette
+sta.b tcc__r2h
+lda.w #CloudPalette + 0
+sta.b tcc__r2
+; gen_opi len 4 op -
+; sbc tcc__r2 (0x2), tcc__r1 (0x1) (fr type 0x84 c 0 r type 0x10)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r1
+sbc.b tcc__r2
+sta.b tcc__r1
+; push2 imm r 0xf0
+pea.w 4096
+; push2 imm r 0xf0
+pea.w 4
+; ldpush before load type 0x10 reg 0x1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push4 imm r 0x12f0
+pea.w :CloudPalette
+pea.w CloudPalette + 0
+; push4 imm r 0x12f0
+pea.w :CloudTiles
+pea.w CloudTiles + 0
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #Maps_end + 0, tcc__r0 (type 0x84)
+lda.w #:Maps_end
+sta.b tcc__r0h
+lda.w #Maps_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #Maps + 0, tcc__r1 (type 0x84)
+lda.w #:Maps
+sta.b tcc__r1h
+lda.w #Maps + 0
 sta.b tcc__r1
 ; gen_opi len 4 op -
 ; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
@@ -164,7 +208,7 @@ lda.b tcc__r0
 sbc.b tcc__r1
 sta.b tcc__r0
 ; push2 imm r 0xf0
-pea.w 5120
+pea.w 8192
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -174,11 +218,11 @@ rep #$20
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
 ; push4 imm r 0x12f0
-pea.w :mappvsneslib
-pea.w mappvsneslib + 0
+pea.w :Maps
+pea.w Maps + 0
 ; push1 imm r 0xf0
 sep #$20
-lda #1
+lda #0
 pha
 rep #$20
 ; call r 0x2f0
@@ -190,17 +234,17 @@ adc #10
 tas
 ; load 0
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #mapshader_end + 0, tcc__r0 (type 0x84)
-lda.w #:mapshader_end
+; ld4 #Mapsc_end + 0, tcc__r0 (type 0x84)
+lda.w #:Mapsc_end
 sta.b tcc__r0h
-lda.w #mapshader_end + 0
+lda.w #Mapsc_end + 0
 sta.b tcc__r0
 ; load 1
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #mapshader + 0, tcc__r1 (type 0x84)
-lda.w #:mapshader
+; ld4 #Mapsc + 0, tcc__r1 (type 0x84)
+lda.w #:Mapsc
 sta.b tcc__r1h
-lda.w #mapshader + 0
+lda.w #Mapsc + 0
 sta.b tcc__r1
 ; gen_opi len 4 op -
 ; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
@@ -210,7 +254,7 @@ lda.b tcc__r0
 sbc.b tcc__r1
 sta.b tcc__r0
 ; push2 imm r 0xf0
-pea.w 6144
+pea.w 9216
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -220,11 +264,11 @@ rep #$20
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
 ; push4 imm r 0x12f0
-pea.w :mapshader
-pea.w mapshader + 0
+pea.w :Mapsc
+pea.w Mapsc + 0
 ; push1 imm r 0xf0
 sep #$20
-lda #0
+lda #2
 pha
 rep #$20
 ; call r 0x2f0
@@ -236,7 +280,7 @@ adc #10
 tas
 ; push1 imm r 0xf0
 sep #$20
-lda #0
+lda #8
 pha
 rep #$20
 ; push1 imm r 0xf0
@@ -250,7 +294,7 @@ jsr.l setMode
 pla
 ; push1 imm r 0xf0
 sep #$20
-lda #2
+lda #1
 pha
 rep #$20
 ; call r 0x2f0
@@ -262,8 +306,34 @@ adc #1
 tas
 ; call r 0x2f0
 jsr.l setScreenOn
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetEnableSub
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #33
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setColorEffect
+; add sp, #2
+pla
 __local_0:
-; gtst inv 1 t 0 v 240 r 4465 ind 4465
+; gtst inv 1 t 0 v 240 r 5729 ind 5729
 ; uncond jump: nop
 ; gtst finished; t 0
 ; load 0
@@ -273,7 +343,7 @@ __local_0:
 lda -2 + __main_locals + 1,s
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x80d6ec0
+; type 0 reg 0x0 extra 0x9e62cb0
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
@@ -288,37 +358,8 @@ inc.b tcc__r0
 ; stack adjust: fc + disp - loc 8
 lda.b tcc__r0
 sta -2 + __main_locals + 1,s
-; load 0
-; type 0 reg 0x1f2 extra 0x0
-; ld2 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 6
-lda -4 + __main_locals + 1,s
-sta.b tcc__r0
-; load 1
-; type 0 reg 0x0 extra 0xf7d3611d
-; mov tcc__r0, tcc__r1
-lda.b tcc__r0
-sta.b tcc__r1
-lda.b tcc__r0h
-sta.b tcc__r1h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c -4 r type 0x0)
-; length xxy 2 vtop->type 0x0
-inc.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x0 fc 0xfffffffc
-; st2 tcc__r0, [sp,-4]
-; stack adjust: fc + disp - loc 6
-lda.b tcc__r0
-sta -4 + __main_locals + 1,s
-; ldpush before load type 0x10 reg 0x1f2
-; load 0
-; type 16 reg 0x1f2 extra 0x0
-; ld2 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 6
-lda -4 + __main_locals + 1,s
-sta.b tcc__r0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
+; push2 imm r 0xf0
+pea.w 0
 ; ldpush before load type 0x10 reg 0x1f2
 ; load 0
 ; type 16 reg 0x1f2 extra 0x0
@@ -330,7 +371,7 @@ sta.b tcc__r0
 pei (tcc__r0)
 ; push1 imm r 0xf0
 sep #$20
-lda #0
+lda #2
 pha
 rep #$20
 ; call r 0x2f0
@@ -342,21 +383,21 @@ adc #5
 tas
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 4465 at 6229
+; gjmp_addr 5729 at 6751
 jmp.w __local_0
-; gsym_addr t 6270 a 4465 ind 6270
-; gsym_addr t 0 a 6305 ind 6305
-; gsym_addr t 0 a 4465 ind 6337
+; gsym_addr t 6792 a 5729 ind 6792
+; gsym_addr t 0 a 6827 ind 6827
+; gsym_addr t 0 a 5729 ind 6859
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 6446
+; gjmp_addr 0 at 6968
 jmp.w __local_1
-; gsym_addr t 6484 a 0 ind 6484
+; gsym_addr t 7006 a 0 ind 7006
 __local_1:
-; gsym_addr t 6484 a 6516 ind 6516
+; gsym_addr t 7006 a 7038 ind 7038
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -366,19 +407,19 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ramtmpxfile80H5OY.data" APPENDTO "globram.data"
-__local_dummytmpxfile80H5OY.data dsb 1
+.RAMSECTION "ramtmpxfileecHHfC.data" APPENDTO "globram.data"
+__local_dummytmpxfileecHHfC.data dsb 1
 
 .ENDS
 
-.SECTION "tmpxfile80H5OY.data" APPENDTO "glob.data"
+.SECTION "tmpxfileecHHfC.data" APPENDTO "glob.data"
 
-__local_dummytmpxfile80H5OY.data: .db 0
+__local_dummytmpxfileecHHfC.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummytmpxfile80H5OY.rodata: .db 0
+__local_dummytmpxfileecHHfC.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

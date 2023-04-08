@@ -16,12 +16,33 @@ tas
 .endif
 ; call r 0x2f0
 jsr.l consoleInit
-; push4 imm r 0x52f0
+; push2 imm r 0xf0
+pea.w 26624
+; call r 0x2f0
+jsr.l consoleSetTextVramBGAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 12288
+; call r 0x2f0
+jsr.l consoleSetTextVramAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 256
+; call r 0x2f0
+jsr.l consoleSetTextOffset
+; add sp, #2
+pla
+; push4 imm r 0x12f0
+pea.w :snespal
+pea.w snespal + 0
+; push4 imm r 0x12f0
 pea.w :snesfont
 pea.w snesfont + 0
 ; push1 imm r 0xf0
 sep #$20
-lda #0
+lda #32
 pha
 rep #$20
 ; push1 imm r 0xf0
@@ -31,14 +52,14 @@ pha
 rep #$20
 ; call r 0x2f0
 jsr.l consoleInitText
-; add sp, #6
+; add sp, #10
 tsa
 clc
-adc #6
+adc #10
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.7
-pea.w tccs_L.7 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilefzw8NV8
+pea.w tccs_L.tmpxfilefzw8NV8 + 0
 ; push2 imm r 0xf0
 pea.w 1
 ; push2 imm r 0xf0
@@ -50,9 +71,9 @@ tsa
 clc
 adc #8
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.8
-pea.w tccs_L.8 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilefzw8NV9
+pea.w tccs_L.tmpxfilefzw8NV9 + 0
 ; push2 imm r 0xf0
 pea.w 5
 ; push2 imm r 0xf0
@@ -64,9 +85,9 @@ tsa
 clc
 adc #8
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.9
-pea.w tccs_L.9 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilefzw8NV10
+pea.w tccs_L.tmpxfilefzw8NV10 + 0
 ; push2 imm r 0xf0
 pea.w 7
 ; push2 imm r 0xf0
@@ -77,6 +98,39 @@ jsr.l consoleDrawText
 tsa
 clc
 adc #8
+tas
+; push2 imm r 0xf0
+pea.w 8192
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetGfxPtr
+; add sp, #3
+tsa
+clc
+adc #3
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -119,7 +173,7 @@ tas
 ; call r 0x2f0
 jsr.l setScreenOn
 __local_7:
-; gtst inv 1 t 0 v 240 r 1318 ind 1318
+; gtst inv 1 t 0 v 240 r 2065 ind 2065
 ; uncond jump: nop
 ; gtst finished; t 0
 ; load 0
@@ -138,14 +192,14 @@ sta -2 + __main_locals + 1,s
 ; stack adjust: fc + disp - loc 18
 lda -2 + __main_locals + 1,s
 sta.b tcc__r0
-; gjmp_addr 0 at 1784
+; gjmp_addr 0 at 2531
 jmp.w __local_0
-; gsym_addr t 1822 a 0 ind 1822
-; gjmp_addr 0 at 1854
+; gsym_addr t 2569 a 0 ind 2569
+; gjmp_addr 0 at 2601
 jmp.w __local_1
-; gsym_addr t 1892 a 0 ind 1892
+; gsym_addr t 2639 a 0 ind 2639
 __local_0:
-; gsym_addr t 1822 a 1924 ind 1924
+; gsym_addr t 2569 a 2671 ind 2671
 ; gen_opi len 2 op 0x94
 ; cmpr(n)eq tcc__r0, #128
 ldx #1
@@ -157,23 +211,23 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 2073 ind 2073
-; gsym_addr t 0 a 2110 ind 2110
+; gtst inv 1 t 0 v 5 r 2820 ind 2820
+; gsym_addr t 0 a 2857 ind 2857
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 2198 ind 2198
-; cmp op 0x95 inv 1 v 243 r 2198
+; gtst inv 1 t 0 v 243 r 2945 ind 2945
+; cmp op 0x95 inv 1 v 243 r 2945
 ; cmp ne
 bne +
-; gsym_addr t 0 a 2285 ind 2285
+; gsym_addr t 0 a 3032 ind 3032
 brl __local_2
 +
-; gtst finished; t 2198
+; gtst finished; t 2945
 __local_1:
-; gsym_addr t 1892 a 2357 ind 2357
+; gsym_addr t 2639 a 3104 ind 3104
 ; push2 imm r 0xf0
 pea.w 2
-; push4 imm r 0x52f0
+; push4 imm r 0x2f0
 pea.w :valToSave
 pea.w valToSave + 0
 ; call r 0x2f0
@@ -183,9 +237,9 @@ tsa
 clc
 adc #6
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.10
-pea.w tccs_L.10 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilefzw8NV11
+pea.w tccs_L.tmpxfilefzw8NV11 + 0
 ; push2 imm r 0xf0
 pea.w 10
 ; push2 imm r 0xf0
@@ -197,14 +251,14 @@ tsa
 clc
 adc #8
 tas
-; gjmp_addr 0 at 2728
+; gjmp_addr 0 at 3501
 jmp.w __local_3
-; gsym_addr t 2766 a 0 ind 2766
-; gjmp_addr 0 at 2798
+; gsym_addr t 3539 a 0 ind 3539
+; gjmp_addr 0 at 3571
 jmp.w __local_4
-; gsym_addr t 2836 a 0 ind 2836
+; gsym_addr t 3609 a 0 ind 3609
 __local_2:
-; gsym_addr t 2198 a 2868 ind 2868
+; gsym_addr t 2945 a 3641 ind 3641
 ; gen_opi len 2 op 0x94
 ; cmpr(n)eq tcc__r0, #32768
 ldx #1
@@ -216,20 +270,20 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 3021 ind 3021
-; gsym_addr t 0 a 3058 ind 3058
+; gtst inv 1 t 0 v 5 r 3794 ind 3794
+; gsym_addr t 0 a 3831 ind 3831
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 3146 ind 3146
-; cmp op 0x95 inv 1 v 243 r 3146
+; gtst inv 1 t 0 v 243 r 3919 ind 3919
+; cmp op 0x95 inv 1 v 243 r 3919
 ; cmp ne
 bne +
-; gsym_addr t 0 a 3233 ind 3233
+; gsym_addr t 0 a 4006 ind 4006
 brl __local_5
 +
-; gtst finished; t 3146
+; gtst finished; t 3919
 __local_4:
-; gsym_addr t 2836 a 3305 ind 3305
+; gsym_addr t 3609 a 4078 ind 4078
 ; load 0
 ; type 16 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
@@ -241,7 +295,7 @@ lda.b tcc__r0
 sta.l valToLoad + 0
 ; push2 imm r 0xf0
 pea.w 2
-; push4 imm r 0x52f0
+; push4 imm r 0x2f0
 pea.w :valToLoad
 pea.w valToLoad + 0
 ; call r 0x2f0
@@ -259,13 +313,13 @@ lda.l valToLoad + 0
 sta.b tcc__r0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x12f0
-pea.w :tccs_L.11
-pea.w tccs_L.11 + 0
-; ldpush before load type 0x4 reg 0x10f2
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilefzw8NV12
+pea.w tccs_L.tmpxfilefzw8NV12 + 0
+; ldpush before load type 0x4 reg 0xf2
 ; load 0
-; type 4 reg 0x10f2 extra 0x0
-; ld4 #(sp) + -18,tcc__r0 (fr 0x10f2 ft 0x4 fc 0xffffffee)
+; type 4 reg 0xf2 extra 0x0
+; ld4 #(sp) + -18,tcc__r0 (fr 0xf2 ft 0x4 fc 0xffffffee)
 stz.b tcc__r0h
 tsa
 clc
@@ -281,10 +335,10 @@ tsa
 clc
 adc #10
 tas
-; ldpush before load type 0x4 reg 0x10f2
+; ldpush before load type 0x4 reg 0xf2
 ; load 0
-; type 4 reg 0x10f2 extra 0x0
-; ld4 #(sp) + -18,tcc__r0 (fr 0x10f2 ft 0x4 fc 0xffffffee)
+; type 4 reg 0xf2 extra 0x0
+; ld4 #(sp) + -18,tcc__r0 (fr 0xf2 ft 0x4 fc 0xffffffee)
 stz.b tcc__r0h
 tsa
 clc
@@ -304,31 +358,31 @@ tsa
 clc
 adc #8
 tas
-; gjmp_addr 2766 at 4661
+; gjmp_addr 3539 at 5448
 jmp.w __local_6
-; gsym_addr t 4702 a 2766 ind 4702
+; gsym_addr t 5489 a 3539 ind 5489
 __local_5:
-; gsym_addr t 3146 a 4737 ind 4737
+; gsym_addr t 3919 a 5524 ind 5524
 __local_3:
 __local_6:
-; gsym_addr t 4702 a 4772 ind 4772
+; gsym_addr t 5489 a 5559 ind 5559
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 1318 at 4842
+; gjmp_addr 2065 at 5629
 jmp.w __local_7
-; gsym_addr t 4883 a 1318 ind 4883
-; gsym_addr t 0 a 4918 ind 4918
-; gsym_addr t 0 a 1318 ind 4950
+; gsym_addr t 5670 a 2065 ind 5670
+; gsym_addr t 0 a 5705 ind 5705
+; gsym_addr t 0 a 2065 ind 5737
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 5059
+; gjmp_addr 0 at 5846
 jmp.w __local_8
-; gsym_addr t 5097 a 0 ind 5097
+; gsym_addr t 5884 a 0 ind 5884
 __local_8:
-; gsym_addr t 5097 a 5129 ind 5129
+; gsym_addr t 5884 a 5916 ind 5916
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -338,24 +392,24 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
+.RAMSECTION "ramtmpxfilefzw8NV.data" APPENDTO "globram.data"
 
 valToSave dsb 2
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfilefzw8NV.data" APPENDTO "glob.data"
 
 .db $fe,$ca
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-tccs_L.7: .db $53,$52,$41,$4d,$20,$54,$45,$53,$54,$0
-tccs_L.8: .db $55,$53,$45,$20,$41,$20,$54,$4f,$20,$57,$52,$49,$54,$45,$0
-tccs_L.9: .db $55,$53,$45,$20,$42,$20,$54,$4f,$20,$52,$45,$41,$44,$0
-tccs_L.10: .db $53,$52,$41,$4d,$20,$53,$41,$56,$45,$0
-tccs_L.11: .db $25,$30,$34,$58,$20,$52,$45,$41,$44,$0
+tccs_L.tmpxfilefzw8NV8: .db $53,$52,$41,$4d,$20,$54,$45,$53,$54,$0
+tccs_L.tmpxfilefzw8NV9: .db $55,$53,$45,$20,$41,$20,$54,$4f,$20,$57,$52,$49,$54,$45,$0
+tccs_L.tmpxfilefzw8NV10: .db $55,$53,$45,$20,$42,$20,$54,$4f,$20,$52,$45,$41,$44,$0
+tccs_L.tmpxfilefzw8NV11: .db $53,$52,$41,$4d,$20,$53,$41,$56,$45,$0
+tccs_L.tmpxfilefzw8NV12: .db $25,$30,$34,$58,$20,$52,$45,$41,$44,$0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

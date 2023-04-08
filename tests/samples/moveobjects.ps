@@ -18,7 +18,7 @@ tas
 .endif
 ; ldpush before load type 0x10 reg 0x1f2
 ; load 0
-; type 16 reg 0x1f2 extra 0x2
+; type 16 reg 0x1f2 extra 0x98fdb28
 ; ld2 [sp,5],tcc__r0
 ; stack adjust: fc + disp - loc 7
 lda 5 + __testInit_locals + 1,s
@@ -27,16 +27,16 @@ sta.b tcc__r0
 pei (tcc__r0)
 ; ldpush before load type 0x10 reg 0x1f2
 ; load 0
-; type 16 reg 0x1f2 extra 0x2
+; type 16 reg 0x1f2 extra 0x98fdb28
 ; ld2 [sp,3],tcc__r0
 ; stack adjust: fc + disp - loc 7
 lda 5 + __testInit_locals + 1,s
 sta.b tcc__r0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x12f0
-pea.w :tccs_L.7
-pea.w tccs_L.7 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfiled2Egzz8
+pea.w tccs_L.tmpxfiled2Egzz8 + 0
 ; call r 0x2f0
 jsr.l consoleNocashMessage
 ; add sp, #8
@@ -45,7 +45,7 @@ clc
 adc #8
 tas
 ; load 0
-; type 16 reg 0x1f2 extra 0x1deba970
+; type 16 reg 0x1f2 extra 0xffebe9b0
 ; ld2 [sp,7],tcc__r0
 ; stack adjust: fc + disp - loc 9
 lda 7 + __testInit_locals + 1,s
@@ -99,25 +99,25 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 1797 ind 1797
-; gsym_addr t 0 a 1834 ind 1834
+; gtst inv 1 t 0 v 5 r 1836 ind 1836
+; gsym_addr t 0 a 1873 ind 1873
 ; ERROR no jump found to patch
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 1953 ind 1953
-; cmp op 0x95 inv 1 v 243 r 1953
+; gtst inv 1 t 0 v 243 r 1992 ind 1992
+; cmp op 0x95 inv 1 v 243 r 1992
 ; cmp ne
 bne +
-; gsym_addr t 0 a 2040 ind 2040
+; gsym_addr t 0 a 2079 ind 2079
 ; ERROR no jump found to patch
 brl __local_0
 +
-; gtst finished; t 1953
-; gjmp_addr 0 at 2143
+; gtst finished; t 1992
+; gjmp_addr 0 at 2182
 jmp.w __local_1
-; gsym_addr t 2181 a 0 ind 2181
+; gsym_addr t 2220 a 0 ind 2220
 __local_0:
-; gsym_addr t 1953 a 2213 ind 2213
+; gsym_addr t 1992 a 2252 ind 2252
 ; ldpush before load type 0x10 reg 0x3f0
 ; load 0
 ; type 16 reg 0x3f0 extra 0x0
@@ -131,7 +131,7 @@ jsr.l objGetPointer
 ; add sp, #2
 pla
 ; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
+; type 16 reg 0x3f0 extra 0x0
 ; ld2 [objptr + 0], tcc__r0
 lda.l objptr + 0
 sta.b tcc__r0
@@ -178,14 +178,14 @@ sta.b tcc__r0
 lda.l snesobj + 0 + 2
 sta.b tcc__r0h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x6)
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
 ; length xxy 4 vtop->type 0x4
 clc
 lda.b tcc__r0
 adc.w #6
 sta.b tcc__r0
 ; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
+; type 16 reg 0x3f0 extra 0x0
 ; ld2 [numspr + 0], tcc__r1
 lda.l numspr + 0
 sta.b tcc__r1
@@ -205,202 +205,67 @@ sta.b tcc__r0
 lda.l snesobj + 0 + 2
 sta.b tcc__r0h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x86)
 ; length xxy 4 vtop->type 0x4
 clc
 lda.b tcc__r0
 adc.w #6
 sta.b tcc__r0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #3
+pha
+rep #$20
+; ldpush before load type 0x10 reg 0x1f2
 ; load 1
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r1 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r1h
-lda.w #oamMemory + 0
+; type 16 reg 0x1f2 extra 0x0
+; ld2 [sp,5],tcc__r1
+; stack adjust: fc + disp - loc 13
+lda 11 + __testInit_locals + 1,s
 sta.b tcc__r1
-; load 2
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x1f2
+; load 1
+; type 16 reg 0x1f2 extra 0x0
+; ld2 [sp,3],tcc__r1
+; stack adjust: fc + disp - loc 13
+lda 11 + __testInit_locals + 1,s
+sta.b tcc__r1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x100
+; load 1
 ; type 16 reg 0x100 extra 0x0
-; ld2 [tcc__r0,0],tcc__r2
-lda.b [tcc__r0]
-sta.b tcc__r2
-; gen_opi len 2 op +
-; adc tcc__r2 (0x2), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
-clc
-lda.b tcc__r1
-adc.b tcc__r2
-sta.b tcc__r1
-; load 0
-; type 17 reg 0x1f2 extra 0x0
-; ld1 [sp,3],tcc__r0
-; stack adjust: fc + disp - loc 5
-lda.w #0
-sep #$20
-lda 3 + __testInit_locals + 1,s
-rep #$20
-sta.b tcc__r0
-; store r 0x0 fr 0x5101 ft 0x11 fc 0x0
-; st1 tcc__r0, [tcc__r1,0]
-sep #$20
-lda.b tcc__r0
-sta.b [tcc__r1]
-rep #$20
-; load 0
-; type 4 reg 0x3f0 extra 0x0
-; ld4 [snesobj + 0], tcc__r0
-lda.l snesobj + 0
-sta.b tcc__r0
-lda.l snesobj + 0 + 2
-sta.b tcc__r0h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r0
-adc.w #6
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x100 extra 0xffffffff
 ; ld2 [tcc__r0,0],tcc__r1
 lda.b [tcc__r0]
 sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0xa4)
-; length xxy 2 vtop->type 0x10
-inc.b tcc__r1
-; load 0
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r0 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r0h
-lda.w #oamMemory + 0
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; call r 0x2f0
+jsr.l oamSet
+; add sp, #12
+tsa
 clc
-lda.b tcc__r0
-adc.b tcc__r1
-sta.b tcc__r0
-; load 1
-; type 17 reg 0x1f2 extra 0x0
-; ld1 [sp,5],tcc__r1
-; stack adjust: fc + disp - loc 7
-lda.w #0
-sep #$20
-lda 5 + __testInit_locals + 1,s
-rep #$20
-sta.b tcc__r1
-; store r 0x1 fr 0x5100 ft 0x11 fc 0x0
-; st1 tcc__r1, [tcc__r0,0]
-sep #$20
-lda.b tcc__r1
-sta.b [tcc__r0]
-rep #$20
-; load 0
-; type 4 reg 0x3f0 extra 0x0
-; ld4 [snesobj + 0], tcc__r0
-lda.l snesobj + 0
-sta.b tcc__r0
-lda.l snesobj + 0 + 2
-sta.b tcc__r0h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r0
-adc.w #6
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x100 extra 0xffffffff
-; ld2 [tcc__r0,0],tcc__r1
-lda.b [tcc__r0]
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0xa4)
-; length xxy 2 vtop->type 0x10
-inc.b tcc__r1
-inc.b tcc__r1
-; load 0
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r0 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r0h
-lda.w #oamMemory + 0
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
-clc
-lda.b tcc__r0
-adc.b tcc__r1
-sta.b tcc__r0
-; load 1
-; type 17 reg 0xf0 extra 0x0
-; ld1 #0,tcc__r1
-lda.w #0
-sta.b tcc__r1
-; store r 0x1 fr 0x5100 ft 0x11 fc 0x0
-; st1 tcc__r1, [tcc__r0,0]
-sep #$20
-lda.b tcc__r1
-sta.b [tcc__r0]
-rep #$20
-; load 0
-; type 4 reg 0x3f0 extra 0x0
-; ld4 [snesobj + 0], tcc__r0
-lda.l snesobj + 0
-sta.b tcc__r0
-lda.l snesobj + 0 + 2
-sta.b tcc__r0h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r0
-adc.w #6
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x100 extra 0xffffffff
-; ld2 [tcc__r0,0],tcc__r1
-lda.b [tcc__r0]
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0xa4)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.w #3
-sta.b tcc__r1
-; load 0
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r0 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r0h
-lda.w #oamMemory + 0
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
-clc
-lda.b tcc__r0
-adc.b tcc__r1
-sta.b tcc__r0
-; load 1
-; type 17 reg 0xf0 extra 0xa4
-; ld1 #48,tcc__r1
-lda.w #48
-sta.b tcc__r1
-; store r 0x1 fr 0x5100 ft 0x11 fc 0x0
-; st1 tcc__r1, [tcc__r0,0]
-sep #$20
-lda.b tcc__r1
-sta.b [tcc__r0]
-rep #$20
+adc #12
+tas
 ; load 0
 ; type 4 reg 0x3f0 extra 0x0
 ; ld4 [snesobj + 0], tcc__r0
@@ -446,7 +311,7 @@ tas
 lda.l numspr + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x3
+; type 0 reg 0x0 extra 0xfffffbde
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
@@ -461,7 +326,7 @@ inc.b tcc__r0
 lda.b tcc__r0
 sta.l numspr + 0
 __local_1:
-; gsym_addr t 2181 a 9418 ind 9418
+; gsym_addr t 2220 a 6249 ind 6249
 ; add sp, #__testInit_locals
 .ifgr __testInit_locals 0
 tsa
@@ -578,11 +443,11 @@ sta.b tcc__r0
 lda.l snesox + 0 + 2
 sta.b tcc__r0h
 ; load 1
-; type 16 reg 0x100 extra 0x0
+; type 0 reg 0x100 extra 0x0
 ; ld2 [tcc__r0,0],tcc__r1
 lda.b [tcc__r0]
 sta.b tcc__r1
-; store r 0x1 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x1 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r1, [xp,0]
 lda.b tcc__r1
 sta.l xp + 0
@@ -594,11 +459,11 @@ sta.b tcc__r0
 lda.l snesoy + 0 + 2
 sta.b tcc__r0h
 ; load 1
-; type 16 reg 0x100 extra 0x0
+; type 0 reg 0x100 extra 0x0
 ; ld2 [tcc__r0,0],tcc__r1
 lda.b [tcc__r0]
 sta.b tcc__r1
-; store r 0x1 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x1 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r1, [yp,0]
 lda.b tcc__r1
 sta.l yp + 0
@@ -616,14 +481,14 @@ sta.l pad0 + 0
 ; ld2 [pad0 + 0], tcc__r0
 lda.l pad0 + 0
 sta.b tcc__r0
-; gjmp_addr 0 at 12511
+; gjmp_addr 0 at 9338
 jmp.w __local_2
-; gsym_addr t 12550 a 0 ind 12550
-; gjmp_addr 0 at 12584
+; gsym_addr t 9376 a 0 ind 9376
+; gjmp_addr 0 at 9408
 jmp.w __local_3
-; gsym_addr t 12623 a 0 ind 12623
+; gsym_addr t 9446 a 0 ind 9446
 __local_2:
-; gsym_addr t 12550 a 12657 ind 12657
+; gsym_addr t 9376 a 9478 ind 9478
 ; gen_opi len 2 op 0x94
 ; cmpr(n)eq tcc__r0, #128
 ldx #1
@@ -635,20 +500,20 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 12809 ind 12809
-; gsym_addr t 0 a 12848 ind 12848
+; gtst inv 1 t 0 v 5 r 9627 ind 9627
+; gsym_addr t 0 a 9664 ind 9664
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 12938 ind 12938
-; cmp op 0x95 inv 1 v 243 r 12938
+; gtst inv 1 t 0 v 243 r 9752 ind 9752
+; cmp op 0x95 inv 1 v 243 r 9752
 ; cmp ne
 bne +
-; gsym_addr t 0 a 13028 ind 13028
+; gsym_addr t 0 a 9839 ind 9839
 brl __local_4
 +
-; gtst finished; t 12938
+; gtst finished; t 9752
 __local_3:
-; gsym_addr t 12623 a 13103 ind 13103
+; gsym_addr t 9446 a 9911 ind 9911
 ; load 0
 ; type 17 reg 0xf0 extra 0x0
 ; ld1 #1,tcc__r0
@@ -672,9 +537,9 @@ sta.b tcc__r0
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x12f0
-pea.w :tccs_L.8
-pea.w tccs_L.8 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfiled2Egzz9
+pea.w tccs_L.tmpxfiled2Egzz9 + 0
 ; call r 0x2f0
 jsr.l consoleNocashMessage
 ; add sp, #6
@@ -682,13 +547,13 @@ tsa
 clc
 adc #6
 tas
-; gjmp_addr 0 at 13729
+; gjmp_addr 0 at 10561
 jmp.w __local_5
-; gsym_addr t 13768 a 0 ind 13768
+; gsym_addr t 10600 a 0 ind 10600
 __local_4:
-; gsym_addr t 12938 a 13802 ind 13802
+; gsym_addr t 9752 a 10634 ind 10634
 __local_5:
-; gsym_addr t 13768 a 13840 ind 13840
+; gsym_addr t 10600 a 10671 ind 10671
 ; call r 0x2f0
 jsr.l rand
 ; gen_opi len 2 op &
@@ -718,69 +583,73 @@ bcc ++
 + dex
 ++
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 14355 ind 14355
-; gsym_addr t 0 a 14394 ind 14394
+; gtst inv 1 t 0 v 5 r 11186 ind 11186
+; gsym_addr t 0 a 11225 ind 11225
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 14484 ind 14484
-; cmp op 0x95 inv 1 v 243 r 14484
+; gtst inv 1 t 0 v 243 r 11315 ind 11315
+; cmp op 0x95 inv 1 v 243 r 11315
 ; cmp ne
 bne +
-; gsym_addr t 0 a 14574 ind 14574
+; gsym_addr t 0 a 11405 ind 11405
 brl __local_6
 +
-; gtst finished; t 14484
+; gtst finished; t 11315
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [xp + 0], tcc__r0
 lda.l xp + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0xffff0000
+; type 0 reg 0x0 extra 0xffebea08
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [xp,0]
 lda.b tcc__r0
 sta.l xp + 0
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [xp + 0], tcc__r0
 lda.l xp + 0
 sta.b tcc__r0
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r0, #255
+; gen_opi len 2 op 0x9f
+; cmpcd tcc__r0, #255
 ldx #1
 lda.b tcc__r0
 sec
 sbc.w #255
 tay
-beq +
-bcs ++
-+ dex
+beq ++
+bvc +
+eor #$8000
++
+bpl +++
 ++
+dex
++++
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 15298 ind 15298
-; gsym_addr t 0 a 15337 ind 15337
+; gtst inv 1 t 0 v 5 r 12145 ind 12145
+; gsym_addr t 0 a 12184 ind 12184
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 15427 ind 15427
-; cmp op 0x95 inv 1 v 243 r 15427
+; gtst inv 1 t 0 v 243 r 12274 ind 12274
+; cmp op 0x95 inv 1 v 243 r 12274
 ; cmp ne
 bne +
-; gsym_addr t 0 a 15517 ind 15517
+; gsym_addr t 0 a 12364 ind 12364
 brl __local_7
 +
-; gtst finished; t 15427
+; gtst finished; t 12274
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [xp + 0], tcc__r0
 lda.l xp + 0
 sta.b tcc__r0
@@ -792,70 +661,74 @@ sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 dec.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [xp,0]
 lda.b tcc__r0
 sta.l xp + 0
 __local_7:
-; gsym_addr t 15427 a 16021 ind 16021
-; gjmp_addr 0 at 16059
+; gsym_addr t 12274 a 12863 ind 12863
+; gjmp_addr 0 at 12901
 jmp.w __local_8
-; gsym_addr t 16098 a 0 ind 16098
+; gsym_addr t 12940 a 0 ind 12940
 __local_6:
-; gsym_addr t 14484 a 16132 ind 16132
+; gsym_addr t 11315 a 12974 ind 12974
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [xp + 0], tcc__r0
 lda.l xp + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x1deba910
+; type 0 reg 0x0 extra 0x34363332
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 dec.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [xp,0]
 lda.b tcc__r0
 sta.l xp + 0
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [xp + 0], tcc__r0
 lda.l xp + 0
 sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #1
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #1
 ldx #1
 lda.b tcc__r0
 sec
 sbc.w #1
 tay
-bcc ++
-+ dex
+bvc +
+eor #$8000
++
+bmi +++
 ++
+dex
++++
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 16809 ind 16809
-; gsym_addr t 0 a 16848 ind 16848
+; gtst inv 1 t 0 v 5 r 13666 ind 13666
+; gsym_addr t 0 a 13705 ind 13705
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 16938 ind 16938
-; cmp op 0x95 inv 1 v 243 r 16938
+; gtst inv 1 t 0 v 243 r 13795 ind 13795
+; cmp op 0x95 inv 1 v 243 r 13795
 ; cmp ne
 bne +
-; gsym_addr t 0 a 17028 ind 17028
+; gsym_addr t 0 a 13885 ind 13885
 brl __local_9
 +
-; gtst finished; t 16938
+; gtst finished; t 13795
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [xp + 0], tcc__r0
 lda.l xp + 0
 sta.b tcc__r0
@@ -867,17 +740,17 @@ sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [xp,0]
 lda.b tcc__r0
 sta.l xp + 0
 __local_9:
-; gsym_addr t 16938 a 17532 ind 17532
+; gsym_addr t 13795 a 14384 ind 14384
 __local_8:
-; gsym_addr t 16098 a 17570 ind 17570
+; gsym_addr t 12940 a 14422 ind 14422
 ; call r 0x2f0
 jsr.l rand
 ; gen_opi len 2 op &
@@ -907,69 +780,73 @@ bcc ++
 + dex
 ++
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 18085 ind 18085
-; gsym_addr t 0 a 18124 ind 18124
+; gtst inv 1 t 0 v 5 r 14937 ind 14937
+; gsym_addr t 0 a 14976 ind 14976
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 18214 ind 18214
-; cmp op 0x95 inv 1 v 243 r 18214
+; gtst inv 1 t 0 v 243 r 15066 ind 15066
+; cmp op 0x95 inv 1 v 243 r 15066
 ; cmp ne
 bne +
-; gsym_addr t 0 a 18304 ind 18304
+; gsym_addr t 0 a 15156 ind 15156
 brl __local_10
 +
-; gtst finished; t 18214
+; gtst finished; t 15066
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [yp + 0], tcc__r0
 lda.l yp + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0xffff0000
+; type 0 reg 0x0 extra 0xffebea08
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [yp,0]
 lda.b tcc__r0
 sta.l yp + 0
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [yp + 0], tcc__r0
 lda.l yp + 0
 sta.b tcc__r0
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r0, #223
+; gen_opi len 2 op 0x9f
+; cmpcd tcc__r0, #223
 ldx #1
 lda.b tcc__r0
 sec
 sbc.w #223
 tay
-beq +
-bcs ++
-+ dex
+beq ++
+bvc +
+eor #$8000
++
+bpl +++
 ++
+dex
++++
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 19029 ind 19029
-; gsym_addr t 0 a 19068 ind 19068
+; gtst inv 1 t 0 v 5 r 15897 ind 15897
+; gsym_addr t 0 a 15936 ind 15936
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 19158 ind 19158
-; cmp op 0x95 inv 1 v 243 r 19158
+; gtst inv 1 t 0 v 243 r 16026 ind 16026
+; cmp op 0x95 inv 1 v 243 r 16026
 ; cmp ne
 bne +
-; gsym_addr t 0 a 19248 ind 19248
+; gsym_addr t 0 a 16116 ind 16116
 brl __local_11
 +
-; gtst finished; t 19158
+; gtst finished; t 16026
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [yp + 0], tcc__r0
 lda.l yp + 0
 sta.b tcc__r0
@@ -981,70 +858,74 @@ sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 dec.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [yp,0]
 lda.b tcc__r0
 sta.l yp + 0
 __local_11:
-; gsym_addr t 19158 a 19753 ind 19753
-; gjmp_addr 0 at 19791
+; gsym_addr t 16026 a 16616 ind 16616
+; gjmp_addr 0 at 16654
 jmp.w __local_12
-; gsym_addr t 19831 a 0 ind 19831
+; gsym_addr t 16694 a 0 ind 16694
 __local_10:
-; gsym_addr t 18214 a 19865 ind 19865
+; gsym_addr t 15066 a 16728 ind 16728
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [yp + 0], tcc__r0
 lda.l yp + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x1deba910
+; type 0 reg 0x0 extra 0x36313136
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 dec.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [yp,0]
 lda.b tcc__r0
 sta.l yp + 0
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [yp + 0], tcc__r0
 lda.l yp + 0
 sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #1
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #1
 ldx #1
 lda.b tcc__r0
 sec
 sbc.w #1
 tay
-bcc ++
-+ dex
+bvc +
+eor #$8000
++
+bmi +++
 ++
+dex
++++
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 20542 ind 20542
-; gsym_addr t 0 a 20581 ind 20581
+; gtst inv 1 t 0 v 5 r 17420 ind 17420
+; gsym_addr t 0 a 17459 ind 17459
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 20671 ind 20671
-; cmp op 0x95 inv 1 v 243 r 20671
+; gtst inv 1 t 0 v 243 r 17549 ind 17549
+; cmp op 0x95 inv 1 v 243 r 17549
 ; cmp ne
 bne +
-; gsym_addr t 0 a 20761 ind 20761
+; gsym_addr t 0 a 17639 ind 17639
 brl __local_13
 +
-; gtst finished; t 20671
+; gtst finished; t 17549
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [yp + 0], tcc__r0
 lda.l yp + 0
 sta.b tcc__r0
@@ -1056,17 +937,17 @@ sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
 ; st2 tcc__r0, [yp,0]
 lda.b tcc__r0
 sta.l yp + 0
 __local_13:
-; gsym_addr t 20671 a 21266 ind 21266
+; gsym_addr t 17549 a 18139 ind 18139
 __local_12:
-; gsym_addr t 19831 a 21304 ind 21304
+; gsym_addr t 16694 a 18177 ind 18177
 ; load 0
 ; type 4 reg 0x3f0 extra 0x0
 ; ld4 [snesobj + 0], tcc__r0
@@ -1075,200 +956,65 @@ sta.b tcc__r0
 lda.l snesobj + 0 + 2
 sta.b tcc__r0h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x86)
 ; length xxy 4 vtop->type 0x4
 clc
 lda.b tcc__r0
-adc.w #14
+adc.w #6
 sta.b tcc__r0
-; load 1
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r1 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r1h
-lda.w #oamMemory + 0
-sta.b tcc__r1
-; load 2
-; type 16 reg 0x100 extra 0x0
-; ld2 [tcc__r0,0],tcc__r2
-lda.b [tcc__r0]
-sta.b tcc__r2
-; gen_opi len 2 op +
-; adc tcc__r2 (0x2), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
-clc
-lda.b tcc__r1
-adc.b tcc__r2
-sta.b tcc__r1
-; load 0
-; type 17 reg 0x3f0 extra 0x0
-; ld1 [xp + 0], tcc__r0
-lda.w #0
+; push1 imm r 0xf0
 sep #$20
-lda.l xp + 0
+lda #0
+pha
 rep #$20
-sta.b tcc__r0
-; store r 0x0 fr 0x5101 ft 0x11 fc 0x0
-; st1 tcc__r0, [tcc__r1,0]
+; push2 imm r 0xf0
+pea.w 0
+; push1 imm r 0xf0
 sep #$20
-lda.b tcc__r0
-sta.b [tcc__r1]
+lda #0
+pha
 rep #$20
-; load 0
-; type 4 reg 0x3f0 extra 0x0
-; ld4 [snesobj + 0], tcc__r0
-lda.l snesobj + 0
-sta.b tcc__r0
-lda.l snesobj + 0 + 2
-sta.b tcc__r0h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r0
-adc.w #14
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x100 extra 0xffffffff
-; ld2 [tcc__r0,0],tcc__r1
-lda.b [tcc__r0]
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0xa4)
-; length xxy 2 vtop->type 0x10
-inc.b tcc__r1
-; load 0
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r0 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r0h
-lda.w #oamMemory + 0
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
-clc
-lda.b tcc__r0
-adc.b tcc__r1
-sta.b tcc__r0
-; load 1
-; type 17 reg 0x3f0 extra 0x0
-; ld1 [yp + 0], tcc__r1
-lda.w #0
+; push1 imm r 0xf0
 sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #3
+pha
+rep #$20
+; ldpush before load type 0x10 reg 0x3f0
+; load 1
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [yp + 0], tcc__r1
 lda.l yp + 0
-rep #$20
 sta.b tcc__r1
-; store r 0x1 fr 0x5100 ft 0x11 fc 0x0
-; st1 tcc__r1, [tcc__r0,0]
-sep #$20
-lda.b tcc__r1
-sta.b [tcc__r0]
-rep #$20
-; load 0
-; type 4 reg 0x3f0 extra 0x0
-; ld4 [snesobj + 0], tcc__r0
-lda.l snesobj + 0
-sta.b tcc__r0
-lda.l snesobj + 0 + 2
-sta.b tcc__r0h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r0
-adc.w #14
-sta.b tcc__r0
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x3f0
 ; load 1
-; type 16 reg 0x100 extra 0xffffffff
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [xp + 0], tcc__r1
+lda.l xp + 0
+sta.b tcc__r1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x100
+; load 1
+; type 16 reg 0x100 extra 0x0
 ; ld2 [tcc__r0,0],tcc__r1
 lda.b [tcc__r0]
 sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0xa4)
-; length xxy 2 vtop->type 0x10
-inc.b tcc__r1
-inc.b tcc__r1
-; load 0
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r0 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r0h
-lda.w #oamMemory + 0
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; call r 0x2f0
+jsr.l oamSet
+; add sp, #12
+tsa
 clc
-lda.b tcc__r0
-adc.b tcc__r1
-sta.b tcc__r0
-; load 1
-; type 17 reg 0xf0 extra 0x0
-; ld1 #0,tcc__r1
-lda.w #0
-sta.b tcc__r1
-; store r 0x1 fr 0x5100 ft 0x11 fc 0x0
-; st1 tcc__r1, [tcc__r0,0]
-sep #$20
-lda.b tcc__r1
-sta.b [tcc__r0]
-rep #$20
-; load 0
-; type 4 reg 0x3f0 extra 0x0
-; ld4 [snesobj + 0], tcc__r0
-lda.l snesobj + 0
-sta.b tcc__r0
-lda.l snesobj + 0 + 2
-sta.b tcc__r0h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0xa4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r0
-adc.w #14
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x100 extra 0xffffffff
-; ld2 [tcc__r0,0],tcc__r1
-lda.b [tcc__r0]
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0xa4)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.w #3
-sta.b tcc__r1
-; load 0
-; type 164 reg 0x2f0 extra 0x0
-; ld544 #oamMemory + 0, tcc__r0 (type 0xa4)
-; FISHY! length <> PTR_SIZE! (may be an array)
-lda.w #:oamMemory
-sta.b tcc__r0h
-lda.w #oamMemory + 0
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0xa4 c 0 r type 0x6)
-; length xxy 544 vtop->type 0xa4
-clc
-lda.b tcc__r0
-adc.b tcc__r1
-sta.b tcc__r0
-; load 1
-; type 17 reg 0xf0 extra 0xa4
-; ld1 #48,tcc__r1
-lda.w #48
-sta.b tcc__r1
-; store r 0x1 fr 0x5100 ft 0x11 fc 0x0
-; st1 tcc__r1, [tcc__r0,0]
-sep #$20
-lda.b tcc__r1
-sta.b [tcc__r0]
-rep #$20
+adc #12
+tas
 ; load 0
 ; type 4 reg 0x3f0 extra 0x0
 ; ld4 [snesox + 0], tcc__r0
@@ -1277,11 +1023,11 @@ sta.b tcc__r0
 lda.l snesox + 0 + 2
 sta.b tcc__r0h
 ; load 1
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [xp + 0], tcc__r1
 lda.l xp + 0
 sta.b tcc__r1
-; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
 ; st2 tcc__r1, [tcc__r0,0]
 lda.b tcc__r1
 sta.b [tcc__r0]
@@ -1293,15 +1039,15 @@ sta.b tcc__r0
 lda.l snesoy + 0 + 2
 sta.b tcc__r0h
 ; load 1
-; type 16 reg 0x3f0 extra 0x0
+; type 0 reg 0x3f0 extra 0x0
 ; ld2 [yp + 0], tcc__r1
 lda.l yp + 0
 sta.b tcc__r1
-; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
 ; st2 tcc__r1, [tcc__r0,0]
 lda.b tcc__r1
 sta.b [tcc__r0]
-; gsym_addr t 0 a 26318 ind 26318
+; gsym_addr t 0 a 19978 ind 19978
 ; add sp, #__testUpdate_locals
 .ifgr __testUpdate_locals 0
 tsa
@@ -1381,13 +1127,13 @@ rep #$20
 ; ldpush before load type 0x10 reg 0x1
 ; ldpush2 (type 0x10 reg 0x1) tcc__r1
 pei (tcc__r1)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :palsprite
 pea.w palsprite + 0
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :gfxpsrite
 pea.w gfxpsrite + 0
 ; call r 0x2f0
@@ -1439,6 +1185,9 @@ tas
 jsr.l setScreenOn
 ; call r 0x2f0
 jsr.l objInitEngine
+; push4 imm r 0xf0
+pea.w 0
+pea.w 0
 ; push4 imm r 0x2f0
 pea.w :testUpdate
 pea.w testUpdate + 0
@@ -1452,10 +1201,10 @@ pha
 rep #$20
 ; call r 0x2f0
 jsr.l objInitFunctions
-; add sp, #9
+; add sp, #13
 tsa
 clc
-adc #9
+adc #13
 tas
 ; load 0
 ; type 16 reg 0xf0 extra 0x0
@@ -1466,7 +1215,7 @@ sta.b tcc__r0
 ; st2 tcc__r0, [numspr,0]
 lda.b tcc__r0
 sta.l numspr + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x2f0
 pea.w :tabobjects
 pea.w tabobjects + 0
 ; call r 0x2f0
@@ -1476,29 +1225,47 @@ tsa
 clc
 adc #4
 tas
+; load 0
+; type 144 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x90 fc 0x0
+; st2 tcc__r0, [x_pos,0]
+lda.b tcc__r0
+sta.l x_pos + 0
+; load 0
+; type 144 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x90 fc 0x0
+; st2 tcc__r0, [y_pos,0]
+lda.b tcc__r0
+sta.l y_pos + 0
 __local_14:
-; gtst inv 1 t 0 v 240 r 29038 ind 29038
+; gtst inv 1 t 0 v 240 r 23078 ind 23078
 ; uncond jump: nop
 ; gtst finished; t 0
 ; call r 0x2f0
 jsr.l objUpdateAll
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 29038 at 29188
+; gjmp_addr 23078 at 23228
 jmp.w __local_14
-; gsym_addr t 29232 a 29038 ind 29232
-; gsym_addr t 0 a 29270 ind 29270
-; gsym_addr t 0 a 29038 ind 29304
+; gsym_addr t 23272 a 23078 ind 23272
+; gsym_addr t 0 a 23310 ind 23310
+; gsym_addr t 0 a 23078 ind 23344
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 29415
+; gjmp_addr 0 at 23455
 jmp.w __local_15
-; gsym_addr t 29455 a 0 ind 29455
+; gsym_addr t 23495 a 0 ind 23495
 __local_15:
-; gsym_addr t 29455 a 29489 ind 29489
+; gsym_addr t 23495 a 23529 ind 23529
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -1508,21 +1275,21 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
+.RAMSECTION "ramtmpxfiled2Egzz.data" APPENDTO "globram.data"
 
 tabobjects dsb 72
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfiled2Egzz.data" APPENDTO "glob.data"
 
 .db $f,$0,$5,$0,$0,$0,$0,$0,$0,$0,$64,$0,$5,$0,$0,$0,$0,$0,$0,$0,$5,$0,$f,$0,$0,$0,$0,$0,$0,$0,$96,$0,$96,$0,$0,$0,$0,$0,$0,$0,$c8,$0,$32,$0,$0,$0,$0,$0,$0,$0,$7d,$0,$19,$0,$0,$0,$0,$0,$0,$0,$c8,$0,$19,$0,$0,$0,$0,$0,$0,$0,$ff,$ff
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-tccs_L.7: .db $74,$65,$73,$74,$49,$6e,$69,$74,$20,$25,$64,$20,$25,$64,$a,$0
-tccs_L.8: .db $6b,$69,$6c,$6c,$69,$6e,$67,$20,$6d,$65,$20,$25,$30,$34,$78,$a,$0
+tccs_L.tmpxfiled2Egzz8: .db $74,$65,$73,$74,$49,$6e,$69,$74,$20,$25,$64,$20,$25,$64,$a,$0
+tccs_L.tmpxfiled2Egzz9: .db $6b,$69,$6c,$6c,$69,$6e,$67,$20,$6d,$65,$20,$25,$30,$34,$78,$a,$0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

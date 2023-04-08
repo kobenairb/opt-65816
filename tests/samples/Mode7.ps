@@ -42,13 +42,13 @@ pea.w 0
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :palette
 pea.w palette + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :map
 pea.w map + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :patterns
 pea.w patterns + 0
 ; call r 0x2f0
@@ -162,7 +162,7 @@ lda.l angle + 0
 rep #$20
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0xc519b0d0
+; type 0 reg 0x0 extra 0x8066bc4
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
@@ -199,14 +199,14 @@ tsa
 clc
 adc #1
 tas
-; gjmp_addr 0 at 3521
+; gjmp_addr 0 at 3520
 jmp.w __local_4
-; gsym_addr t 3559 a 0 ind 3559
-; gjmp_addr 0 at 3591
+; gsym_addr t 3558 a 0 ind 3558
+; gjmp_addr 0 at 3590
 jmp.w __local_5
-; gsym_addr t 3629 a 0 ind 3629
+; gsym_addr t 3628 a 0 ind 3628
 __local_3:
-; gsym_addr t 2529 a 3661 ind 3661
+; gsym_addr t 2529 a 3660 ind 3660
 ; gen_opi len 2 op 0x94
 ; cmpr(n)eq tcc__r0, #32768
 ldx #1
@@ -218,20 +218,20 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 3814 ind 3814
-; gsym_addr t 0 a 3851 ind 3851
+; gtst inv 1 t 0 v 5 r 3813 ind 3813
+; gsym_addr t 0 a 3850 ind 3850
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 3939 ind 3939
-; cmp op 0x95 inv 1 v 243 r 3939
+; gtst inv 1 t 0 v 243 r 3938 ind 3938
+; cmp op 0x95 inv 1 v 243 r 3938
 ; cmp ne
 bne +
-; gsym_addr t 0 a 4026 ind 4026
+; gsym_addr t 0 a 4025 ind 4025
 brl __local_6
 +
-; gtst finished; t 3939
+; gtst finished; t 3938
 __local_5:
-; gsym_addr t 3629 a 4098 ind 4098
+; gsym_addr t 3628 a 4097 ind 4097
 ; load 0
 ; type 17 reg 0x53f0 extra 0x0
 ; ld1 [angle + 0], tcc__r0
@@ -241,7 +241,7 @@ lda.l angle + 0
 rep #$20
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0xc519b0d0
+; type 0 reg 0x0 extra 0x1
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
@@ -278,33 +278,33 @@ tsa
 clc
 adc #1
 tas
-; gjmp_addr 3559 at 4931
+; gjmp_addr 3558 at 4923
 jmp.w __local_7
-; gsym_addr t 4972 a 3559 ind 4972
+; gsym_addr t 4964 a 3558 ind 4964
 __local_6:
-; gsym_addr t 3939 a 5007 ind 5007
+; gsym_addr t 3938 a 4999 ind 4999
 __local_4:
 __local_7:
-; gsym_addr t 4972 a 5042 ind 5042
+; gsym_addr t 4964 a 5034 ind 5034
 __local_0:
-; gsym_addr t 1831 a 5077 ind 5077
+; gsym_addr t 1831 a 5069 ind 5069
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 1307 at 5147
+; gjmp_addr 1307 at 5139
 jmp.w __local_8
-; gsym_addr t 5188 a 1307 ind 5188
-; gsym_addr t 0 a 5223 ind 5223
-; gsym_addr t 0 a 1307 ind 5255
+; gsym_addr t 5180 a 1307 ind 5180
+; gsym_addr t 0 a 5215 ind 5215
+; gsym_addr t 0 a 1307 ind 5247
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 5364
+; gjmp_addr 0 at 5356
 jmp.w __local_9
-; gsym_addr t 5402 a 0 ind 5402
+; gsym_addr t 5394 a 0 ind 5394
 __local_9:
-; gsym_addr t 5402 a 5434 ind 5434
+; gsym_addr t 5394 a 5426 ind 5426
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -314,19 +314,19 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
-__local_dummy.data dsb 1
+.RAMSECTION "ramtmpxfilembH1oV.data" APPENDTO "globram.data"
+__local_dummytmpxfilembH1oV.data dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfilembH1oV.data" APPENDTO "glob.data"
 
-__local_dummy.data: .db 0
+__local_dummytmpxfilembH1oV.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummy.rodata: .db 0
+__local_dummytmpxfilembH1oV.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

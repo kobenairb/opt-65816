@@ -51,10 +51,10 @@ sep #$20
 lda #0
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :p0
 pea.w p0 + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :t0
 pea.w t0 + 0
 ; push1 imm r 0xf0
@@ -104,10 +104,10 @@ sep #$20
 lda #0
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :p1
 pea.w p1 + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :t1
 pea.w t1 + 0
 ; push1 imm r 0xf0
@@ -157,10 +157,10 @@ sep #$20
 lda #0
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :p2
 pea.w p2 + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :t2
 pea.w t2 + 0
 ; push1 imm r 0xf0
@@ -210,10 +210,10 @@ sep #$20
 lda #0
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :p3
 pea.w p3 + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :t3
 pea.w t3 + 0
 ; push1 imm r 0xf0
@@ -259,7 +259,7 @@ rep #$20
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :m0
 pea.w m0 + 0
 ; push1 imm r 0xf0
@@ -305,7 +305,7 @@ rep #$20
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :m1
 pea.w m1 + 0
 ; push1 imm r 0xf0
@@ -351,7 +351,7 @@ rep #$20
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :m2
 pea.w m2 + 0
 ; push1 imm r 0xf0
@@ -397,7 +397,7 @@ rep #$20
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :m3
 pea.w m3 + 0
 ; push1 imm r 0xf0
@@ -441,7 +441,7 @@ lda.l flip + 0
 rep #$20
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x0
+; type 0 reg 0x0 extra 0x80d6ec0
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
@@ -476,20 +476,20 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 7641 ind 7641
-; gsym_addr t 0 a 7678 ind 7678
+; gtst inv 1 t 0 v 5 r 7647 ind 7647
+; gsym_addr t 0 a 7684 ind 7684
 ; ERROR no jump found to patch
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 7797 ind 7797
-; cmp op 0x95 inv 1 v 243 r 7797
+; gtst inv 1 t 0 v 243 r 7803 ind 7803
+; cmp op 0x95 inv 1 v 243 r 7803
 ; cmp ne
 bne +
-; gsym_addr t 0 a 7884 ind 7884
+; gsym_addr t 0 a 7890 ind 7890
 ; ERROR no jump found to patch
 brl __local_0
 +
-; gtst finished; t 7797
+; gtst finished; t 7803
 ; load 0
 ; type 17 reg 0xf0 extra 0x0
 ; ld1 #0,tcc__r0
@@ -510,7 +510,7 @@ lda.l sxbg3 + 0
 rep #$20
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x495060
+; type 0 reg 0x0 extra 0x3d
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
@@ -642,24 +642,24 @@ clc
 adc #5
 tas
 __local_0:
-; gsym_addr t 7797 a 10510 ind 10510
+; gsym_addr t 7803 a 10512 ind 10512
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 6848 at 10582
+; gjmp_addr 6848 at 10584
 jmp.w __local_1
-; gsym_addr t 10624 a 6848 ind 10624
-; gsym_addr t 0 a 10661 ind 10661
-; gsym_addr t 0 a 6848 ind 10695
+; gsym_addr t 10626 a 6848 ind 10626
+; gsym_addr t 0 a 10663 ind 10663
+; gsym_addr t 0 a 6848 ind 10697
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 10805
+; gjmp_addr 0 at 10807
 jmp.w __local_2
-; gsym_addr t 10844 a 0 ind 10844
+; gsym_addr t 10846 a 0 ind 10846
 __local_2:
-; gsym_addr t 10844 a 10878 ind 10878
+; gsym_addr t 10846 a 10880 ind 10880
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -669,7 +669,7 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
+.RAMSECTION "ramtmpxfileE86SGn.data" APPENDTO "globram.data"
 
 sxbg1 dsb 1
 sxbg2 dsb 1
@@ -678,7 +678,7 @@ flip dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfileE86SGn.data" APPENDTO "glob.data"
 
 .db $0
 .db $0
@@ -688,7 +688,7 @@ flip dsb 1
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummy.rodata: .db 0
+__local_dummytmpxfileE86SGn.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

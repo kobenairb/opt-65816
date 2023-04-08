@@ -18,6 +18,47 @@ tas
 jsr.l spcBoot
 ; call r 0x2f0
 jsr.l consoleInit
+; push2 imm r 0xf0
+pea.w 26624
+; call r 0x2f0
+jsr.l consoleSetTextVramBGAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 12288
+; call r 0x2f0
+jsr.l consoleSetTextVramAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 256
+; call r 0x2f0
+jsr.l consoleSetTextOffset
+; add sp, #2
+pla
+; push4 imm r 0x12f0
+pea.w :snespal
+pea.w snespal + 0
+; push4 imm r 0x12f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #32
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #10
+tsa
+clc
+adc #10
+tas
 ; push1 imm r 0xf0
 sep #$20
 lda #39
@@ -30,25 +71,38 @@ tsa
 clc
 adc #1
 tas
-; push4 imm r 0x52f0
-pea.w :snesfont
-pea.w snesfont + 0
-; push1 imm r 0xf0
-sep #$20
-lda #0
-pha
-rep #$20
+; push2 imm r 0xf0
+pea.w 8192
 ; push1 imm r 0xf0
 sep #$20
 lda #0
 pha
 rep #$20
 ; call r 0x2f0
-jsr.l consoleInitText
-; add sp, #6
+jsr.l bgSetGfxPtr
+; add sp, #3
 tsa
 clc
-adc #6
+adc #3
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -88,9 +142,9 @@ tsa
 clc
 adc #1
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.7
-pea.w tccs_L.7 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfile4a4YEa8
+pea.w tccs_L.tmpxfile4a4YEa8 + 0
 ; push2 imm r 0xf0
 pea.w 10
 ; push2 imm r 0xf0
@@ -128,7 +182,7 @@ sta.b tcc__r0
 ; push4 imm r 0x2f0
 pea.w :tadasound
 pea.w tadasound + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :soundbrr
 pea.w soundbrr + 0
 ; ldpush before load type 0x10 reg 0x0
@@ -157,7 +211,7 @@ clc
 adc #13
 tas
 __local_3:
-; gtst inv 1 t 0 v 240 r 2005 ind 2005
+; gtst inv 1 t 0 v 240 r 2696 ind 2696
 ; uncond jump: nop
 ; gtst finished; t 0
 ; call r 0x2f0
@@ -168,26 +222,26 @@ jsr.l scanPads
 lda.l pad_keys + 0
 sta.b tcc__r0
 ; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
 ; length xxy 2 vtop->type 0x10
 ; nop
 lda.b tcc__r0
 and.w #128
 sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 2382 ind 2382
-; gsym_addr t 0 a 2419 ind 2419
+; gtst inv 1 t 0 v 0 r 3073 ind 3073
+; gsym_addr t 0 a 3110 ind 3110
 ; ERROR no jump found to patch
 ; tcc__r0 to compare reg
 lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 2538 ind 2538
-; cmp op 0x95 inv 1 v 243 r 2538
+; gtst inv 1 t 0 v 243 r 3229 ind 3229
+; cmp op 0x95 inv 1 v 243 r 3229
 ; cmp ne
 bne +
-; gsym_addr t 0 a 2625 ind 2625
+; gsym_addr t 0 a 3316 ind 3316
 ; ERROR no jump found to patch
 brl __local_0
 +
-; gtst finished; t 2538
+; gtst finished; t 3229
 ; load 0
 ; type 17 reg 0x53f0 extra 0x0
 ; ld1 [keyapressed + 0], tcc__r0
@@ -207,18 +261,18 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 2974 ind 2974
-; gsym_addr t 0 a 3011 ind 3011
+; gtst inv 1 t 0 v 5 r 3665 ind 3665
+; gsym_addr t 0 a 3702 ind 3702
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 3099 ind 3099
-; cmp op 0x95 inv 1 v 243 r 3099
+; gtst inv 1 t 0 v 243 r 3790 ind 3790
+; cmp op 0x95 inv 1 v 243 r 3790
 ; cmp ne
 bne +
-; gsym_addr t 0 a 3186 ind 3186
+; gsym_addr t 0 a 3877 ind 3877
 brl __local_1
 +
-; gtst finished; t 3099
+; gtst finished; t 3790
 ; load 0
 ; type 17 reg 0xf0 extra 0x0
 ; ld1 #1,tcc__r0
@@ -243,7 +297,7 @@ clc
 adc #1
 tas
 ; load 0
-; type 16 reg 0x3f0 extra 0x490b40
+; type 16 reg 0x3f0 extra 0x0
 ; ld2 [bgcolor + 0], tcc__r0
 lda.l bgcolor + 0
 sta.b tcc__r0
@@ -265,7 +319,7 @@ lda.w #0
 sta.b tcc__r0
 ; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x2121
 ; load 9
-; type 4 reg 0x50f0 extra 0x28
+; type 4 reg 0x50f0 extra 0x0
 ; ld4 #8481,tcc__r9
 lda.w #8481
 sta.b tcc__r9
@@ -290,7 +344,7 @@ and.w #255
 sta.b tcc__r0
 ; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
 ; load 9
-; type 4 reg 0x50f0 extra 0x7ebda67c
+; type 4 reg 0x50f0 extra 0x2a
 ; ld4 #8482,tcc__r9
 lda.w #8482
 sta.b tcc__r9
@@ -302,7 +356,7 @@ lda.b tcc__r0
 sta.b [tcc__r9]
 rep #$20
 ; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
+; type 16 reg 0x3f0 extra 0x0
 ; ld2 [bgcolor + 0], tcc__r0
 lda.l bgcolor + 0
 sta.b tcc__r0
@@ -314,7 +368,7 @@ and #$00ff
 sta.b tcc__r0
 ; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
 ; load 9
-; type 4 reg 0x50f0 extra 0x7ebda67c
+; type 4 reg 0x50f0 extra 0x2a
 ; ld4 #8482,tcc__r9
 lda.w #8482
 sta.b tcc__r9
@@ -326,12 +380,12 @@ lda.b tcc__r0
 sta.b [tcc__r9]
 rep #$20
 __local_1:
-; gsym_addr t 3099 a 5173 ind 5173
-; gjmp_addr 0 at 5208
+; gsym_addr t 3790 a 5839 ind 5839
+; gjmp_addr 0 at 5874
 jmp.w __local_2
-; gsym_addr t 5246 a 0 ind 5246
+; gsym_addr t 5912 a 0 ind 5912
 __local_0:
-; gsym_addr t 2538 a 5278 ind 5278
+; gsym_addr t 3229 a 5944 ind 5944
 ; load 0
 ; type 17 reg 0xf0 extra 0x0
 ; ld1 #0,tcc__r0
@@ -344,26 +398,26 @@ lda.b tcc__r0
 sta.l keyapressed + 0
 rep #$20
 __local_2:
-; gsym_addr t 5246 a 5515 ind 5515
+; gsym_addr t 5912 a 6181 ind 6181
 ; call r 0x2f0
 jsr.l spcProcess
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 2005 at 5617
+; gjmp_addr 2696 at 6283
 jmp.w __local_3
-; gsym_addr t 5658 a 2005 ind 5658
-; gsym_addr t 0 a 5693 ind 5693
-; gsym_addr t 0 a 2005 ind 5725
+; gsym_addr t 6324 a 2696 ind 6324
+; gsym_addr t 0 a 6359 ind 6359
+; gsym_addr t 0 a 2696 ind 6391
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 5834
+; gjmp_addr 0 at 6500
 jmp.w __local_4
-; gsym_addr t 5872 a 0 ind 5872
+; gsym_addr t 6538 a 0 ind 6538
 __local_4:
-; gsym_addr t 5872 a 5904 ind 5904
+; gsym_addr t 6538 a 6570 ind 6570
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -373,14 +427,14 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
+.RAMSECTION "ramtmpxfile4a4YEa.data" APPENDTO "globram.data"
 
 bgcolor dsb 2
 keyapressed dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfile4a4YEa.data" APPENDTO "glob.data"
 
 .db $80,$0
 .db $0
@@ -388,7 +442,7 @@ keyapressed dsb 1
 
 .SECTION ".rodata" SUPERFREE
 
-tccs_L.7: .db $50,$72,$65,$73,$73,$20,$41,$20,$74,$6f,$20,$70,$6c,$61,$79,$20,$65,$66,$66,$65,$63,$74,$20,$21,$0
+tccs_L.tmpxfile4a4YEa8: .db $50,$72,$65,$73,$73,$20,$41,$20,$74,$6f,$20,$70,$6c,$61,$79,$20,$65,$66,$66,$65,$63,$74,$20,$21,$0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

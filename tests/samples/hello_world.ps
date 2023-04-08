@@ -16,12 +16,33 @@ tas
 .endif
 ; call r 0x2f0
 jsr.l consoleInit
-; push4 imm r 0x52f0
-pea.w :snesfont
-pea.w snesfont + 0
+; push2 imm r 0xf0
+pea.w 26624
+; call r 0x2f0
+jsr.l consoleSetTextVramBGAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 12288
+; call r 0x2f0
+jsr.l consoleSetTextVramAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 256
+; call r 0x2f0
+jsr.l consoleSetTextOffset
+; add sp, #2
+pla
+; push4 imm r 0x12f0
+pea.w :palfont
+pea.w palfont + 0
+; push4 imm r 0x12f0
+pea.w :tilfont
+pea.w tilfont + 0
 ; push1 imm r 0xf0
 sep #$20
-lda #0
+lda #32
 pha
 rep #$20
 ; push1 imm r 0xf0
@@ -31,10 +52,43 @@ pha
 rep #$20
 ; call r 0x2f0
 jsr.l consoleInitText
-; add sp, #6
+; add sp, #10
 tsa
 clc
-adc #6
+adc #10
+tas
+; push2 imm r 0xf0
+pea.w 8192
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetGfxPtr
+; add sp, #3
+tsa
+clc
+adc #3
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -74,9 +128,9 @@ tsa
 clc
 adc #1
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.7
-pea.w tccs_L.7 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfileacTdQH8
+pea.w tccs_L.tmpxfileacTdQH8 + 0
 ; push2 imm r 0xf0
 pea.w 10
 ; push2 imm r 0xf0
@@ -88,9 +142,9 @@ tsa
 clc
 adc #8
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.8
-pea.w tccs_L.8 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfileacTdQH9
+pea.w tccs_L.tmpxfileacTdQH9 + 0
 ; push2 imm r 0xf0
 pea.w 14
 ; push2 imm r 0xf0
@@ -102,9 +156,9 @@ tsa
 clc
 adc #8
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.9
-pea.w tccs_L.9 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfileacTdQH10
+pea.w tccs_L.tmpxfileacTdQH10 + 0
 ; push2 imm r 0xf0
 pea.w 18
 ; push2 imm r 0xf0
@@ -119,26 +173,26 @@ tas
 ; call r 0x2f0
 jsr.l setScreenOn
 __local_0:
-; gtst inv 1 t 0 v 240 r 1321 ind 1321
+; gtst inv 1 t 0 v 240 r 2066 ind 2066
 ; uncond jump: nop
 ; gtst finished; t 0
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 1321 at 1435
+; gjmp_addr 2066 at 2180
 jmp.w __local_0
-; gsym_addr t 1476 a 1321 ind 1476
-; gsym_addr t 0 a 1511 ind 1511
-; gsym_addr t 0 a 1321 ind 1543
+; gsym_addr t 2221 a 2066 ind 2221
+; gsym_addr t 0 a 2256 ind 2256
+; gsym_addr t 0 a 2066 ind 2288
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 1652
+; gjmp_addr 0 at 2397
 jmp.w __local_1
-; gsym_addr t 1690 a 0 ind 1690
+; gsym_addr t 2435 a 0 ind 2435
 __local_1:
-; gsym_addr t 1690 a 1722 ind 1722
+; gsym_addr t 2435 a 2467 ind 2467
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -148,21 +202,21 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
-__local_dummy.data dsb 1
+.RAMSECTION "ramtmpxfileacTdQH.data" APPENDTO "globram.data"
+__local_dummytmpxfileacTdQH.data dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfileacTdQH.data" APPENDTO "glob.data"
 
-__local_dummy.data: .db 0
+__local_dummytmpxfileacTdQH.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-tccs_L.7: .db $48,$65,$6c,$6c,$6f,$20,$57,$6f,$72,$6c,$64,$20,$21,$0
-tccs_L.8: .db $57,$45,$4c,$43,$4f,$4d,$45,$20,$54,$4f,$20,$50,$56,$53,$4e,$45,$53,$4c,$49,$42,$0
-tccs_L.9: .db $48,$54,$54,$50,$53,$3a,$2f,$2f,$57,$57,$57,$2e,$50,$4f,$52,$54,$41,$42,$4c,$45,$44,$45,$56,$2e,$43,$4f,$4d,$0
+tccs_L.tmpxfileacTdQH8: .db $48,$65,$6c,$6c,$6f,$20,$57,$6f,$72,$6c,$64,$20,$21,$0
+tccs_L.tmpxfileacTdQH9: .db $57,$45,$4c,$43,$4f,$4d,$45,$20,$54,$4f,$20,$50,$56,$53,$4e,$45,$53,$4c,$49,$42,$0
+tccs_L.tmpxfileacTdQH10: .db $48,$54,$54,$50,$53,$3a,$2f,$2f,$57,$57,$57,$2e,$50,$4f,$52,$54,$41,$42,$4c,$45,$44,$45,$56,$2e,$43,$4f,$4d,$0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

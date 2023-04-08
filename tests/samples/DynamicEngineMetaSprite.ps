@@ -113,7 +113,7 @@ lda.b tcc__r0
 sbc.b tcc__r1
 sta.b tcc__r0
 ; push2 imm r 0xf0
-pea.w 0
+pea.w 26624
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -136,6 +136,20 @@ jsr.l bgInitMapSet
 tsa
 clc
 adc #10
+tas
+; push2 imm r 0xf0
+pea.w 32
+; push2 imm r 0xf0
+pea.w 128
+; push4 imm r 0x12f0
+pea.w :spr16p
+pea.w spr16p + 0
+; call r 0x2f0
+jsr.l dmaCopyCGram
+; add sp, #8
+tsa
+clc
+adc #8
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -177,27 +191,78 @@ adc #1
 tas
 ; call r 0x2f0
 jsr.l setScreenOn
+; push1 imm r 0xf0
+sep #$20
+lda #96
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 0
+; push2 imm r 0xf0
+pea.w 0
+; push2 imm r 0xf0
+pea.w 4096
+; push2 imm r 0xf0
+pea.w 0
+; call r 0x2f0
+jsr.l oamInitDynamicSprite
+; add sp, #9
+tsa
+clc
+adc #9
+tas
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x17
+; st1 tcc__r0, [oambuffer,23]
+sep #$20
+lda.b tcc__r0
+sta.l oambuffer + 23
+rep #$20
 __local_0:
-; gtst inv 1 t 0 v 240 r 2782 ind 2782
+; gtst inv 1 t 0 v 240 r 3396 ind 3396
 ; uncond jump: nop
 ; gtst finished; t 0
+; push4 imm r 0x2f0
+pea.w :metasprite
+pea.w metasprite + 0
+; push2 imm r 0xf0
+pea.w 160
+; push2 imm r 0xf0
+pea.w 16
+; push2 imm r 0xf0
+pea.w 1
+; call r 0x2f0
+jsr.l oamDynamicMetaDraw
+; add sp, #10
+tsa
+clc
+adc #10
+tas
+; call r 0x2f0
+jsr.l oamInitDynamicSpriteEndFrame
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 2782 at 2896
+; call r 0x2f0
+jsr.l oamVramQueueUpdate
+; gjmp_addr 3396 at 3817
 jmp.w __local_0
-; gsym_addr t 2937 a 2782 ind 2937
-; gsym_addr t 0 a 2972 ind 2972
-; gsym_addr t 0 a 2782 ind 3004
+; gsym_addr t 3858 a 3396 ind 3858
+; gsym_addr t 0 a 3893 ind 3893
+; gsym_addr t 0 a 3396 ind 3925
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 3113
+; gjmp_addr 0 at 4034
 jmp.w __local_1
-; gsym_addr t 3151 a 0 ind 3151
+; gsym_addr t 4072 a 0 ind 4072
 __local_1:
-; gsym_addr t 3151 a 3183 ind 3183
+; gsym_addr t 4072 a 4104 ind 4104
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -207,19 +272,29 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ramtmpxfilej0m9i7.data" APPENDTO "globram.data"
-__local_dummytmpxfilej0m9i7.data dsb 1
+.RAMSECTION "ramtmpxfileeGf2Us.data" APPENDTO "globram.data"
+
+metasprite dsb 48
 
 .ENDS
 
-.SECTION "tmpxfilej0m9i7.data" APPENDTO "glob.data"
+.SECTION "tmpxfileeGf2Us.data" APPENDTO "glob.data"
 
-__local_dummytmpxfilej0m9i7.data: .db 0
+.db $0,$0,$0,$0,$0,$0,$20,$1
+.dw spr32g + 0
+.dw :spr32g
+.db $0,$0,$0,$0,$0,$0,$18,$0,$0,$0,$21,$2
+.dw spr16g + 0
+.dw :spr16g
+.db $0,$0,$0,$0,$10,$0,$18,$0,$1,$0,$21,$2
+.dw spr16g + 0
+.dw :spr16g
+.db $ff,$ff,$0,$0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummytmpxfilej0m9i7.rodata: .db 0
+__local_dummytmpxfileeGf2Us.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

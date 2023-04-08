@@ -16,12 +16,33 @@ tas
 .endif
 ; call r 0x2f0
 jsr.l consoleInit
-; push4 imm r 0x52f0
+; push2 imm r 0xf0
+pea.w 26624
+; call r 0x2f0
+jsr.l consoleSetTextVramBGAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 12288
+; call r 0x2f0
+jsr.l consoleSetTextVramAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 256
+; call r 0x2f0
+jsr.l consoleSetTextOffset
+; add sp, #2
+pla
+; push4 imm r 0x12f0
+pea.w :snespal
+pea.w snespal + 0
+; push4 imm r 0x12f0
 pea.w :snesfont
 pea.w snesfont + 0
 ; push1 imm r 0xf0
 sep #$20
-lda #0
+lda #32
 pha
 rep #$20
 ; push1 imm r 0xf0
@@ -31,14 +52,14 @@ pha
 rep #$20
 ; call r 0x2f0
 jsr.l consoleInitText
-; add sp, #6
+; add sp, #10
 tsa
 clc
-adc #6
+adc #10
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.7
-pea.w tccs_L.7 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilerRmsma8
+pea.w tccs_L.tmpxfilerRmsma8 + 0
 ; push2 imm r 0xf0
 pea.w 6
 ; push2 imm r 0xf0
@@ -50,9 +71,9 @@ tsa
 clc
 adc #8
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.8
-pea.w tccs_L.8 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilerRmsma9
+pea.w tccs_L.tmpxfilerRmsma9 + 0
 ; push2 imm r 0xf0
 pea.w 10
 ; push2 imm r 0xf0
@@ -63,6 +84,39 @@ jsr.l consoleDrawText
 tsa
 clc
 adc #8
+tas
+; push2 imm r 0xf0
+pea.w 8192
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetGfxPtr
+; add sp, #3
+tsa
+clc
+adc #3
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -117,23 +171,23 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 1289 ind 1289
-; gsym_addr t 0 a 1326 ind 1326
+; gtst inv 1 t 0 v 5 r 2007 ind 2007
+; gsym_addr t 0 a 2044 ind 2044
 ; ERROR no jump found to patch
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 1445 ind 1445
-; cmp op 0x95 inv 1 v 243 r 1445
+; gtst inv 1 t 0 v 243 r 2163 ind 2163
+; cmp op 0x95 inv 1 v 243 r 2163
 ; cmp ne
 bne +
-; gsym_addr t 0 a 1532 ind 1532
+; gsym_addr t 0 a 2250 ind 2250
 ; ERROR no jump found to patch
 brl __local_0
 +
-; gtst finished; t 1445
-; push4 imm r 0x12f0
-pea.w :tccs_L.9
-pea.w tccs_L.9 + 0
+; gtst finished; t 2163
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilerRmsma10
+pea.w tccs_L.tmpxfilerRmsma10 + 0
 ; push2 imm r 0xf0
 pea.w 14
 ; push2 imm r 0xf0
@@ -145,14 +199,14 @@ tsa
 clc
 adc #8
 tas
-; gjmp_addr 0 at 1815
+; gjmp_addr 0 at 2562
 jmp.w __local_1
-; gsym_addr t 1853 a 0 ind 1853
+; gsym_addr t 2600 a 0 ind 2600
 __local_0:
-; gsym_addr t 1445 a 1885 ind 1885
-; push4 imm r 0x12f0
-pea.w :tccs_L.10
-pea.w tccs_L.10 + 0
+; gsym_addr t 2163 a 2632 ind 2632
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfilerRmsma11
+pea.w tccs_L.tmpxfilerRmsma11 + 0
 ; push2 imm r 0xf0
 pea.w 14
 ; push2 imm r 0xf0
@@ -165,28 +219,28 @@ clc
 adc #8
 tas
 __local_1:
-; gsym_addr t 1853 a 2102 ind 2102
+; gsym_addr t 2600 a 2876 ind 2876
 __local_2:
-; gtst inv 1 t 0 v 240 r 2137 ind 2137
+; gtst inv 1 t 0 v 240 r 2911 ind 2911
 ; uncond jump: nop
 ; gtst finished; t 0
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 2137 at 2251
+; gjmp_addr 2911 at 3025
 jmp.w __local_2
-; gsym_addr t 2292 a 2137 ind 2292
-; gsym_addr t 0 a 2327 ind 2327
-; gsym_addr t 0 a 2137 ind 2359
+; gsym_addr t 3066 a 2911 ind 3066
+; gsym_addr t 0 a 3101 ind 3101
+; gsym_addr t 0 a 2911 ind 3133
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 2468
+; gjmp_addr 0 at 3242
 jmp.w __local_3
-; gsym_addr t 2506 a 0 ind 2506
+; gsym_addr t 3280 a 0 ind 3280
 __local_3:
-; gsym_addr t 2506 a 2538 ind 2538
+; gsym_addr t 3280 a 3312 ind 3312
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -196,22 +250,22 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
-__local_dummy.data dsb 1
+.RAMSECTION "ramtmpxfilerRmsma.data" APPENDTO "globram.data"
+__local_dummytmpxfilerRmsma.data dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfilerRmsma.data" APPENDTO "glob.data"
 
-__local_dummy.data: .db 0
+__local_dummytmpxfilerRmsma.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-tccs_L.7: .db $43,$48,$45,$43,$4b,$20,$52,$45,$47,$49,$4f,$4e,$53,$0
-tccs_L.8: .db $42,$45,$54,$57,$45,$45,$4e,$20,$53,$4e,$45,$53,$20,$41,$4e,$44,$20,$43,$41,$52,$54,$52,$49,$44,$47,$45,$0
-tccs_L.9: .db $4f,$4b,$2c,$20,$54,$48,$45,$20,$53,$41,$4d,$45,$20,$52,$45,$47,$49,$4f,$4e,$21,$0
-tccs_L.10: .db $42,$41,$44,$2c,$20,$4e,$4f,$54,$20,$54,$48,$45,$20,$53,$41,$4d,$45,$20,$52,$45,$47,$49,$4f,$4e,$21,$0
+tccs_L.tmpxfilerRmsma8: .db $43,$48,$45,$43,$4b,$20,$52,$45,$47,$49,$4f,$4e,$53,$0
+tccs_L.tmpxfilerRmsma9: .db $42,$45,$54,$57,$45,$45,$4e,$20,$53,$4e,$45,$53,$20,$41,$4e,$44,$20,$43,$41,$52,$54,$52,$49,$44,$47,$45,$0
+tccs_L.tmpxfilerRmsma10: .db $4f,$4b,$2c,$20,$54,$48,$45,$20,$53,$41,$4d,$45,$20,$52,$45,$47,$49,$4f,$4e,$21,$0
+tccs_L.tmpxfilerRmsma11: .db $42,$41,$44,$2c,$20,$4e,$4f,$54,$20,$54,$48,$45,$20,$53,$41,$4d,$45,$20,$52,$45,$47,$49,$4f,$4e,$21,$0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

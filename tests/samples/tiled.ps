@@ -1,0 +1,430 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 0
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #tilesetend + 0, tcc__r0 (type 0x84)
+lda.w #:tilesetend
+sta.b tcc__r0h
+lda.w #tilesetend + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #tileset + 0, tcc__r1 (type 0x84)
+lda.w #:tileset
+sta.b tcc__r1h
+lda.w #tileset + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 8192
+; push2 imm r 0xf0
+pea.w 16
+; push2 imm r 0xf0
+pea.w 96
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push4 imm r 0x12f0
+pea.w :tilesetpal
+pea.w tilesetpal + 0
+; push4 imm r 0x12f0
+pea.w :tileset
+pea.w tileset + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; push4 imm r 0x12f0
+pea.w :tilesetatt
+pea.w tilesetatt + 0
+; push4 imm r 0x12f0
+pea.w :tilesetdef
+pea.w tilesetdef + 0
+; push4 imm r 0x12f0
+pea.w :mapkungfu
+pea.w mapkungfu + 0
+; call r 0x2f0
+jsr.l mapLoad
+; add sp, #12
+tsa
+clc
+adc #12
+tas
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #128,tcc__r0
+lda.w #128
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
+; st2 tcc__r0, [mapscx,0]
+lda.b tcc__r0
+sta.l mapscx + 0
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [keyr,0]
+sep #$20
+lda.b tcc__r0
+sta.l keyr + 0
+rep #$20
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [keyl,0]
+sep #$20
+lda.b tcc__r0
+sta.l keyl + 0
+rep #$20
+__local_4:
+; gtst inv 1 t 0 v 240 r 2712 ind 2712
+; uncond jump: nop
+; gtst finished; t 0
+; call r 0x2f0
+jsr.l mapUpdate
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [pad0,0]
+lda.b tcc__r0
+sta.l pad0 + 0
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #512
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 3275 ind 3275
+; gsym_addr t 0 a 3312 ind 3312
+; ERROR no jump found to patch
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 3431 ind 3431
+; cmp op 0x95 inv 1 v 243 r 3431
+; cmp ne
+bne +
+; gsym_addr t 0 a 3518 ind 3518
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 3431
+; load 0
+; type 0 reg 0x3f0 extra 0x0
+; ld2 [mapscx + 0], tcc__r0
+lda.l mapscx + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0x9f
+; cmpcd tcc__r0, #128
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #128
+tay
+beq ++
+bvc +
+eor #$8000
++
+bpl +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 3863 ind 3863
+; gsym_addr t 0 a 3900 ind 3900
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 3988 ind 3988
+; cmp op 0x95 inv 1 v 243 r 3988
+; cmp ne
+bne +
+; gsym_addr t 0 a 4075 ind 4075
+brl __local_1
++
+; gtst finished; t 3988
+; load 0
+; type 0 reg 0x3f0 extra 0x0
+; ld2 [mapscx + 0], tcc__r0
+lda.l mapscx + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+dec.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
+; st2 tcc__r0, [mapscx,0]
+lda.b tcc__r0
+sta.l mapscx + 0
+__local_1:
+; gsym_addr t 3988 a 4587 ind 4587
+__local_0:
+; gsym_addr t 3431 a 4622 ind 4622
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #256
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 4917 ind 4917
+; gsym_addr t 0 a 4954 ind 4954
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 5042 ind 5042
+; cmp op 0x95 inv 1 v 243 r 5042
+; cmp ne
+bne +
+; gsym_addr t 0 a 5129 ind 5129
+brl __local_2
++
+; gtst finished; t 5042
+; load 0
+; type 0 reg 0x3f0 extra 0x0
+; ld2 [mapscx + 0], tcc__r0
+lda.l mapscx + 0
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #1664
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #1664
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 5438 ind 5438
+; gsym_addr t 0 a 5475 ind 5475
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 5563 ind 5563
+; cmp op 0x95 inv 1 v 243 r 5563
+; cmp ne
+bne +
+; gsym_addr t 0 a 5650 ind 5650
+brl __local_3
++
+; gtst finished; t 5563
+; load 0
+; type 0 reg 0x3f0 extra 0x0
+; ld2 [mapscx + 0], tcc__r0
+lda.l mapscx + 0
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0x0
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+inc.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
+; st2 tcc__r0, [mapscx,0]
+lda.b tcc__r0
+sta.l mapscx + 0
+__local_3:
+; gsym_addr t 5563 a 6162 ind 6162
+__local_2:
+; gsym_addr t 5042 a 6197 ind 6197
+; push2 imm r 0xf0
+pea.w 0
+; ldpush before load type 0x10 reg 0x3f0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [mapscx + 0], tcc__r0
+lda.l mapscx + 0
+sta.b tcc__r0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; call r 0x2f0
+jsr.l mapUpdateCamera
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; call r 0x2f0
+jsr.l WaitForVBlank
+; call r 0x2f0
+jsr.l mapVblank
+; gjmp_addr 2712 at 6585
+jmp.w __local_4
+; gsym_addr t 6626 a 2712 ind 6626
+; gsym_addr t 0 a 6661 ind 6661
+; gsym_addr t 0 a 2712 ind 6693
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 6802
+jmp.w __local_5
+; gsym_addr t 6840 a 0 ind 6840
+__local_5:
+; gsym_addr t 6840 a 6872 ind 6872
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ramtmpxfileZg04QL.data" APPENDTO "globram.data"
+__local_dummytmpxfileZg04QL.data dsb 1
+
+.ENDS
+
+.SECTION "tmpxfileZg04QL.data" APPENDTO "glob.data"
+
+__local_dummytmpxfileZg04QL.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+__local_dummytmpxfileZg04QL.rodata: .db 0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+pad0 dsb 2
+mapscx dsb 2
+keyl dsb 1
+keyr dsb 1
+.ENDS

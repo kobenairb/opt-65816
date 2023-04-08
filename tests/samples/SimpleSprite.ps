@@ -73,13 +73,13 @@ rep #$20
 ; ldpush before load type 0x10 reg 0x1
 ; ldpush2 (type 0x10 reg 0x1) tcc__r1
 pei (tcc__r1)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :palsprite
 pea.w palsprite + 0
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :gfxpsrite
 pea.w gfxpsrite + 0
 ; call r 0x2f0
@@ -89,50 +89,41 @@ tsa
 clc
 adc #16
 tas
-; load 0
-; type 17 reg 0xf0 extra 0x0
-; ld1 #100,tcc__r0
-lda.w #100
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
-; st1 tcc__r0, [oamMemory,0]
+; push1 imm r 0xf0
 sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 0
+lda #0
+pha
 rep #$20
-; load 0
-; type 17 reg 0xf0 extra 0x0
-; ld1 #100,tcc__r0
-lda.w #100
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x1
-; st1 tcc__r0, [oamMemory,1]
+; push2 imm r 0xf0
+pea.w 0
+; push1 imm r 0xf0
 sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 1
+lda #0
+pha
 rep #$20
-; load 0
-; type 17 reg 0xf0 extra 0x0
-; ld1 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x2
-; st1 tcc__r0, [oamMemory,2]
+; push1 imm r 0xf0
 sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 2
+lda #0
+pha
 rep #$20
-; load 0
-; type 17 reg 0xf0 extra 0xa4
-; ld1 #48,tcc__r0
-lda.w #48
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x3
-; st1 tcc__r0, [oamMemory,3]
+; push1 imm r 0xf0
 sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 3
+lda #3
+pha
 rep #$20
+; push2 imm r 0xf0
+pea.w 100
+; push2 imm r 0xf0
+pea.w 100
+; push2 imm r 0xf0
+pea.w 0
+; call r 0x2f0
+jsr.l oamSet
+; add sp, #12
+tsa
+clc
+adc #12
+tas
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -205,26 +196,26 @@ tas
 ; call r 0x2f0
 jsr.l setScreenOn
 __local_0:
-; gtst inv 1 t 0 v 240 r 3107 ind 3107
+; gtst inv 1 t 0 v 240 r 2670 ind 2670
 ; uncond jump: nop
 ; gtst finished; t 0
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 3107 at 3221
+; gjmp_addr 2670 at 2784
 jmp.w __local_0
-; gsym_addr t 3262 a 3107 ind 3262
-; gsym_addr t 0 a 3297 ind 3297
-; gsym_addr t 0 a 3107 ind 3329
+; gsym_addr t 2825 a 2670 ind 2825
+; gsym_addr t 0 a 2860 ind 2860
+; gsym_addr t 0 a 2670 ind 2892
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 3438
+; gjmp_addr 0 at 3001
 jmp.w __local_1
-; gsym_addr t 3476 a 0 ind 3476
+; gsym_addr t 3039 a 0 ind 3039
 __local_1:
-; gsym_addr t 3476 a 3508 ind 3508
+; gsym_addr t 3039 a 3071 ind 3071
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -234,19 +225,19 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
-__local_dummy.data dsb 1
+.RAMSECTION "ramtmpxfile8uE7Bk.data" APPENDTO "globram.data"
+__local_dummytmpxfile8uE7Bk.data dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfile8uE7Bk.data" APPENDTO "glob.data"
 
-__local_dummy.data: .db 0
+__local_dummytmpxfile8uE7Bk.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummy.rodata: .db 0
+__local_dummytmpxfile8uE7Bk.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

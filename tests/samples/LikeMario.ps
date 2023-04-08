@@ -2,128 +2,421 @@
 .accu 16
 .index 16
 .16bit
-.define __getCollisionTile_locals 8
-.define __moveLevel_locals 12
-.define __moveMario_locals 0
-.define __main_locals 6
+.define __marioinit_locals 0
+.define __mariowalk_locals 0
+.define __mariofall_locals 0
+.define __mariojump_locals 0
+.define __marioupdate_locals 0
+.define __main_locals 0
 
 .SECTION ".text_0x0" SUPERFREE
 
-getCollisionTile:
-; sub sp,#__getCollisionTile_locals
-.ifgr __getCollisionTile_locals 0
+marioinit:
+; sub sp,#__marioinit_locals
+.ifgr __marioinit_locals 0
 tsa
 sec
-sbc #__getCollisionTile_locals
+sbc #__marioinit_locals
 tas
 .endif
+; ldpush before load type 0x10 reg 0x1f2
 ; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
+; type 16 reg 0x1f2 extra 0x8579018
 ; ld2 [sp,5],tcc__r0
-; stack adjust: fc + disp - loc 11
-lda 5 + __getCollisionTile_locals + 1,s
+; stack adjust: fc + disp - loc 7
+lda 5 + __marioinit_locals + 1,s
 sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #3
-lda.b tcc__r0
-lsr a
-lsr a
-lsr a
-sta.b tcc__r0
-; gen_opi len 2 op *
-; mul #300, tcc__r0
-lda.w #300
-sta.b tcc__r9
-lda.b tcc__r0
-sta.b tcc__r10
-jsr.l tcc__mul
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #1
-asl.b tcc__r0
-; load 1
-; type 4 reg 0x2f0 extra 0xffffffff
-; ld4 #mapcol + 0, tcc__r1 (type 0x4)
-lda.w #:mapcol
-sta.b tcc__r1h
-lda.w #mapcol + 0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x6)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; ldpush before load type 0x10 reg 0x1f2
 ; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
+; type 16 reg 0x1f2 extra 0x8579018
 ; ld2 [sp,3],tcc__r0
-; stack adjust: fc + disp - loc 9
-lda 3 + __getCollisionTile_locals + 1,s
+; stack adjust: fc + disp - loc 7
+lda 5 + __marioinit_locals + 1,s
 sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #3
-lda.b tcc__r0
-lsr a
-lsr a
-lsr a
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #1
-asl.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x6)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; store r 0x1 fr 0x1f2 ft 0x4 fc 0xfffffffc
-; st4 tcc__r1, [sp,-4]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r1
-sta -4 + __getCollisionTile_locals + 1,s
-lda.b tcc__r1h
-sta -2 + __getCollisionTile_locals + 1,s
-; load 0
-; type 4 reg 0x1f2 extra 0x0
-; ld4 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -4 + __getCollisionTile_locals + 1,s
-sta.b tcc__r0
-lda -2 + __getCollisionTile_locals + 1,s
-sta.b tcc__r0h
-; saveregging
-; store r 0x0 fr 0x1f2 ft 0x4 fc 0xfffffff8
-; st4 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r0
-sta -8 + __getCollisionTile_locals + 1,s
-lda.b tcc__r0h
-sta -6 + __getCollisionTile_locals + 1,s
-; load 0
-; type 16 reg 0x1f1 extra 0x0
-; load 10
-; type 4 reg 0x1f2 extra 0xfffffff8
-; ld4 [sp,-8],tcc__r10
-; stack adjust: fc + disp - loc 2
-lda -8 + __getCollisionTile_locals + 1,s
-sta.b tcc__r10
-lda -6 + __getCollisionTile_locals + 1,s
-sta.b tcc__r10h
-; ld2 [tcc__r10,0],tcc__r0
-lda.b [tcc__r10]
-sta.b tcc__r0
-; gjmp_addr 0 at 2311
-jmp.w __local_0
-; gsym_addr t 2349 a 0 ind 2349
-__local_0:
-; gsym_addr t 2349 a 2381 ind 2381
-; add sp, #__getCollisionTile_locals
-.ifgr __getCollisionTile_locals 0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfileyPyexc9
+pea.w tccs_L.tmpxfileyPyexc9 + 0
+; call r 0x2f0
+jsr.l consoleNocashMessage
+; add sp, #8
 tsa
 clc
-adc #__getCollisionTile_locals
+adc #8
+tas
+; load 0
+; type 16 reg 0x1f2 extra 0xffce05a0
+; ld2 [sp,7],tcc__r0
+; stack adjust: fc + disp - loc 9
+lda 7 + __marioinit_locals + 1,s
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 7 r type 0x86)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #255
+sta.b tcc__r0
+; ldpush before load type 0x10 reg 0x1f2
+; load 1
+; type 16 reg 0x1f2 extra 0x0
+; ld2 [sp,5],tcc__r1
+; stack adjust: fc + disp - loc 7
+lda 5 + __marioinit_locals + 1,s
+sta.b tcc__r1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x1f2
+; load 1
+; type 16 reg 0x1f2 extra 0x0
+; ld2 [sp,3],tcc__r1
+; stack adjust: fc + disp - loc 7
+lda 5 + __marioinit_locals + 1,s
+sta.b tcc__r1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x11 reg 0x0
+; ldpush1 (type 0x11 reg 0x0) tcc__r0
+sep #$20
+lda.b tcc__r0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l objNew
+; add sp, #5
+tsa
+clc
+adc #5
+tas
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #0
+ldx #1
+lda.b tcc__r0
+sec
+sbc #0
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 1845 ind 1845
+; gsym_addr t 0 a 1882 ind 1882
+; ERROR no jump found to patch
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 2001 ind 2001
+; cmp op 0x95 inv 1 v 243 r 2001
+; cmp ne
+bne +
+; gsym_addr t 0 a 2088 ind 2088
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 2001
+; gjmp_addr 0 at 2191
+jmp.w __local_1
+; gsym_addr t 2229 a 0 ind 2229
+__local_0:
+; gsym_addr t 2001 a 2261 ind 2261
+; ldpush before load type 0x10 reg 0x3f0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [objgetid + 0], tcc__r0
+lda.l objgetid + 0
+sta.b tcc__r0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; call r 0x2f0
+jsr.l objGetPointer
+; add sp, #2
+pla
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [objptr + 0], tcc__r0
+lda.l objptr + 0
+sta.b tcc__r0
+; gen_opi len 2 op -
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0xa4)
+; length xxy 2 vtop->type 0x10
+dec.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #6
+lda.b tcc__r0
+ldy.w #6
+-
+asl a
+dey
+bne -
++
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld4096 #objbuffers + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:objbuffers
+sta.b tcc__r1h
+lda.w #objbuffers + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x4)
+; length xxy 4096 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; store r 0x1 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r1, [marioobj,0]
+lda.b tcc__r1
+sta.l marioobj + 0
+lda.b tcc__r1h
+sta.l marioobj + 0 + 2
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #26
+sta.b tcc__r0
+; load 1
+; type 16 reg 0xf0 extra 0x0
+; ld2 #16,tcc__r1
+lda.w #16
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #28
+sta.b tcc__r0
+; load 1
+; type 16 reg 0xf0 extra 0x0
+; ld2 #16,tcc__r1
+lda.w #16
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #16
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x24 c 0 r type 0x4)
+; length xxy 3 vtop->type 0x24
+inc.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [marioox,0]
+lda.b tcc__r0
+sta.l marioox + 0
+lda.b tcc__r0h
+sta.l marioox + 0 + 2
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #19
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x24 c 0 r type 0x4)
+; length xxy 3 vtop->type 0x24
+inc.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [mariooy,0]
+lda.b tcc__r0
+sta.l mariooy + 0
+lda.b tcc__r0h
+sta.l mariooy + 0 + 2
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #34
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [marioxv,0]
+lda.b tcc__r0
+sta.l marioxv + 0
+lda.b tcc__r0h
+sta.l marioxv + 0 + 2
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #36
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x0
+; st4 tcc__r0, [marioyv,0]
+lda.b tcc__r0
+sta.l marioyv + 0
+lda.b tcc__r0h
+sta.l marioyv + 0 + 2
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [mariofidx,0]
+sep #$20
+lda.b tcc__r0
+sta.l mariofidx + 0
+rep #$20
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [marioflp,0]
+sep #$20
+lda.b tcc__r0
+sta.l marioflp + 0
+rep #$20
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #46
+sta.b tcc__r0
+; load 1
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r1
+lda.w #0
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; load 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #6,tcc__r0
+lda.w #6
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x4
+; st2 tcc__r0, [oambuffer,4]
+lda.b tcc__r0
+sta.l oambuffer + 4
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x7
+; st1 tcc__r0, [oambuffer,7]
+sep #$20
+lda.b tcc__r0
+sta.l oambuffer + 7
+rep #$20
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #96,tcc__r0
+lda.w #96
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x6
+; st1 tcc__r0, [oambuffer,6]
+sep #$20
+lda.b tcc__r0
+sta.l oambuffer + 6
+rep #$20
+; load 0
+; type 4 reg 0x12f0 extra 0x0
+; ld4 #mariogfx + 0, tcc__r0 (type 0x4)
+lda.w #:mariogfx
+sta.b tcc__r0h
+lda.w #mariogfx + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x4 fc 0x8
+; st4 tcc__r0, [oambuffer,8]
+lda.b tcc__r0
+sta.l oambuffer + 8
+lda.b tcc__r0h
+sta.l oambuffer + 8 + 2
+; push2 imm r 0xf0
+pea.w 32
+; push2 imm r 0xf0
+pea.w 128
+; push4 imm r 0x12f0
+pea.w :mariopal
+pea.w mariopal + 0
+; call r 0x2f0
+jsr.l dmaCopyCGram
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+__local_1:
+; gsym_addr t 2229 a 8227 ind 8227
+; add sp, #__marioinit_locals
+.ifgr __marioinit_locals 0
+tsa
+clc
+adc #__marioinit_locals
 tas
 .endif
 rtl
@@ -131,602 +424,242 @@ rtl
 
 .SECTION ".text_0x1" SUPERFREE
 
-moveLevel:
-; sub sp,#__moveLevel_locals
-.ifgr __moveLevel_locals 0
+mariowalk:
+; sub sp,#__mariowalk_locals
+.ifgr __mariowalk_locals 0
 tsa
 sec
-sbc #__moveLevel_locals
+sbc #__mariowalk_locals
 tas
 .endif
 ; load 0
-; type 4113 reg 0xf0 extra 0x0
-; ld1 #128,tcc__r0
-lda.w #128
-sta.b tcc__r0
-; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x2115
-; load 9
-; type 4 reg 0x50f0 extra 0x28
-; ld4 #8469,tcc__r9
-lda.w #8469
-sta.b tcc__r9
-lda.w #0
-sta.b tcc__r9h
-; st1 tcc__r0, [tcc__r9,0]
-sep #$20
-lda.b tcc__r0
-sta.b [tcc__r9]
-rep #$20
-; load 0
-; type 4112 reg 0xf0 extra 0x0
-; ld2 #4096,tcc__r0
-lda.w #4096
-sta.b tcc__r0
-; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x2116
-; load 9
-; type 4 reg 0xf0 extra 0x1
-; ld4 #8470,tcc__r9
-lda.w #8470
-sta.b tcc__r9
-lda.w #0
-sta.b tcc__r9h
-; st2 tcc__r0, [tcc__r9,0]
-lda.b tcc__r0
-sta.b [tcc__r9]
-; load 0
-; type 17 reg 0x1f2 extra 0x0
-; ld1 [sp,3],tcc__r0
-; stack adjust: fc + disp - loc 13
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [flip + 0], tcc__r0
 lda.w #0
 sep #$20
-lda 3 + __moveLevel_locals + 1,s
+lda.l flip + 0
 rep #$20
-sta.b tcc__r0
-; gen_opi len 2 op 0x94
-; cmpr(n)eq tcc__r0, #2
-ldx #1
-lda.b tcc__r0
-sec
-sbc #2
-tay
-beq +
-dex
-+
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 3575 ind 3575
-; gsym_addr t 0 a 3612 ind 3612
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 3700 ind 3700
-; cmp op 0x95 inv 1 v 243 r 3700
-; cmp ne
-bne +
-; gsym_addr t 0 a 3787 ind 3787
-brl __local_1
-+
-; gtst finished; t 3700
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x0
+; type 0 reg 0x0 extra 0x8570010
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
 inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [scrX,0]
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [flip,0]
+sep #$20
 lda.b tcc__r0
-sta.l scrX + 0
+sta.l flip + 0
+rep #$20
 ; load 0
-; type 16 reg 0x3f0 extra 0x26
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [flip + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l flip + 0
+rep #$20
 sta.b tcc__r0
 ; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
 ; nop
 lda.b tcc__r0
-and.w #7
+and.w #3
 sta.b tcc__r0
 ; gen_opi len 2 op 0x94
-; cmpr(n)eq tcc__r0, #0
+; cmpr(n)eq tcc__r0, #3
 ldx #1
 lda.b tcc__r0
 sec
-sbc #0
+sbc #3
 tay
 beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 4664 ind 4664
-; gsym_addr t 0 a 4701 ind 4701
+; gtst inv 1 t 0 v 5 r 9396 ind 9396
+; gsym_addr t 0 a 9433 ind 9433
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 4789 ind 4789
-; cmp op 0x95 inv 1 v 243 r 4789
+; gtst inv 1 t 0 v 243 r 9521 ind 9521
+; cmp op 0x95 inv 1 v 243 r 9521
 ; cmp ne
 bne +
-; gsym_addr t 0 a 4876 ind 4876
+; gsym_addr t 0 a 9608 ind 9608
 brl __local_2
 +
-; gtst finished; t 4789
+; gtst finished; t 9521
 ; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #3
-lda.b tcc__r0
-lsr a
-lsr a
-lsr a
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-; nop
-lda.b tcc__r0
-and.w #63
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #32
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-; load 0
-; type 16 reg 0x1f2 extra 0x0
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r0, #63
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #63
-tay
-beq +
-bcs ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 6180 ind 6180
-; gsym_addr t 0 a 6217 ind 6217
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 6305 ind 6305
-; cmp op 0x95 inv 1 v 243 r 6305
-; cmp ne
-bne +
-; gsym_addr t 0 a 6392 ind 6392
-brl __local_3
-+
-; gtst finished; t 6305
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-sec
-lda.b tcc__r0
-sbc.w #64
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-; gjmp_addr 0 at 6928
-jmp.w __local_4
-; gsym_addr t 6966 a 0 ind 6966
-__local_3:
-; gsym_addr t 6305 a 6998 ind 6998
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-sec
-lda.b tcc__r0
-sbc.w #32
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #1024
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-__local_4:
-; gsym_addr t 6966 a 7663 ind 7663
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #4096
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffffa
-; st2 tcc__r0, [sp,-6]
-; stack adjust: fc + disp - loc 4
-lda.b tcc__r0
-sta -6 + __moveLevel_locals + 1,s
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #3
-lda.b tcc__r0
-lsr a
-lsr a
-lsr a
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #1
-asl.b tcc__r0
-; load 1
-; type 4 reg 0x2f0 extra 0xfffffffa
-; ld4 #map + 0, tcc__r1 (type 0x4)
-lda.w #:map
-sta.b tcc__r1h
-lda.w #map + 0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r1
-adc.w #64
-sta.b tcc__r1
-; store r 0x1 fr 0x1f2 ft 0x4 fc 0xfffffffc
-; st4 tcc__r1, [sp,-4]
-; stack adjust: fc + disp - loc 6
-lda.b tcc__r1
-sta -4 + __moveLevel_locals + 1,s
-lda.b tcc__r1h
-sta -2 + __moveLevel_locals + 1,s
-__local_6:
-; load 0
-; type 17 reg 0x51f0 extra 0x0
-; deref constant ptr ld [16914],tcc__r0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [mariofidx + 0], tcc__r0
 lda.w #0
 sep #$20
-lda.l 16914
+lda.l mariofidx + 0
 rep #$20
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 16914 r type 0x6)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-and.w #128
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 9361 ind 9361
-; gsym_addr t 0 a 9398 ind 9398
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 9486 ind 9486
-; cmp op 0x95 inv 1 v 243 r 9486
-; cmp ne
-bne +
-; gsym_addr t 0 a 9573 ind 9573
-brl __local_5
-+
-; gtst finished; t 9486
-; gjmp_addr 9061 at 9645
-jmp.w __local_6
-; gsym_addr t 9686 a 9061 ind 9686
-__local_5:
-; gsym_addr t 9486 a 9721 ind 9721
-; gsym_addr t 0 a 9061 ind 9756
-__local_9:
-; load 0
-; type 17 reg 0x51f0 extra 0x0
-; deref constant ptr ld [16914],tcc__r0
-lda.w #0
-sep #$20
-lda.l 16914
-rep #$20
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 16914 r type 0x6)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-and.w #128
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 10088 ind 10088
-; gsym_addr t 0 a 10127 ind 10127
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 10217 ind 10217
-; cmp op 0x95 inv 1 v 243 r 10217
-; cmp ne
-bne +
-; gsym_addr t 0 a 10307 ind 10307
-brl __local_7
-+
-; gtst finished; t 10217
-; gtst inv 1 t 0 v 244 r 10382 ind 10382
-; VT_jmp r 10382 t 0 ji 0 inv 1 vtop->c.i 10217
-; gjmp_addr 0 at 10471
-jmp.w __local_8
-; gsym_addr t 10510 a 0 ind 10510
-__local_7:
-; gsym_addr t 10217 a 10544 ind 10544
-; gtst finished; t 10510
-; gjmp_addr 9788 at 10607
-jmp.w __local_9
-; gsym_addr t 10649 a 9788 ind 10649
-__local_8:
-; gsym_addr t 10510 a 10686 ind 10686
-; gsym_addr t 0 a 9788 ind 10724
-; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [i,0]
-lda.b tcc__r0
-sta.l i + 0
-__local_12:
-; load 0
-; type 16 reg 0x3f0 extra 0x2aa8
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #16
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #16
-tay
-bcc ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 11126 ind 11126
-; gsym_addr t 0 a 11165 ind 11165
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 11255 ind 11255
-; cmp op 0x95 inv 1 v 243 r 11255
-; cmp ne
-bne +
-; gsym_addr t 0 a 11345 ind 11345
-brl __local_10
-+
-; gtst finished; t 11255
-; gjmp_addr 0 at 11421
-jmp.w __local_11
-; gsym_addr t 11461 a 0 ind 11461
-__local_13:
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x0
+; type 0 reg 0x0 extra 0xffffffff
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
 lda.b tcc__r0h
 sta.b tcc__r1h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
 inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [i,0]
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [mariofidx,0]
+sep #$20
 lda.b tcc__r0
-sta.l i + 0
-; gjmp_addr 10920 at 11920
-jmp.w __local_12
-; gsym_addr t 11964 a 10920 ind 11964
-__local_11:
-; gsym_addr t 11461 a 12002 ind 12002
+sta.l mariofidx + 0
+rep #$20
 ; load 0
-; type 4 reg 0x1f2 extra 0x0
-; ld4 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 8
-lda -4 + __moveLevel_locals + 1,s
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [mariofidx + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l mariofidx + 0
+rep #$20
 sta.b tcc__r0
-lda -2 + __moveLevel_locals + 1,s
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
+; nop
+lda.b tcc__r0
+and.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [mariofidx,0]
+sep #$20
+lda.b tcc__r0
+sta.l mariofidx + 0
+rep #$20
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [marioflp + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l marioflp + 0
+rep #$20
+sta.b tcc__r0
+; load 1
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [mariofidx + 0], tcc__r1
+lda.w #0
+sep #$20
+lda.l mariofidx + 0
+rep #$20
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x0
+clc
+lda.b tcc__r0
+adc.b tcc__r1
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x4
+; st2 tcc__r0, [oambuffer,4]
+lda.b tcc__r0
+sta.l oambuffer + 4
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x7
+; st1 tcc__r0, [oambuffer,7]
+sep #$20
+lda.b tcc__r0
+sta.l oambuffer + 7
+rep #$20
+__local_2:
+; gsym_addr t 9521 a 11326 ind 11326
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioyv + 0], tcc__r0
+lda.l marioyv + 0
+sta.b tcc__r0
+lda.l marioyv + 0 + 2
 sta.b tcc__r0h
 ; load 1
-; type 16 reg 0x100 extra 0x2ee2
+; type 0 reg 0x100 extra 0x95
 ; ld2 [tcc__r0,0],tcc__r1
 lda.b [tcc__r0]
 sta.b tcc__r1
-; store r 0x1 fr 0x1f2 ft 0x10 fc 0xfffffff6
-; st2 tcc__r1, [sp,-10]
-; stack adjust: fc + disp - loc 2
+; gen_opi len 2 op 0x95
+; cmpr(n)eq tcc__r1, #0
+ldx #1
 lda.b tcc__r1
-sta -10 + __moveLevel_locals + 1,s
+sec
+sbc #0
+tay
+bne +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 11704 ind 11704
+; gsym_addr t 0 a 11743 ind 11743
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 11833 ind 11833
+; cmp op 0x95 inv 1 v 243 r 11833
+; cmp ne
+bne +
+; gsym_addr t 0 a 11923 ind 11923
+brl __local_3
++
+; gtst finished; t 11833
 ; load 0
-; type 4112 reg 0x1f2 extra 0x0
-; ld2 [sp,-6],tcc__r0
-; stack adjust: fc + disp - loc 6
-lda -6 + __moveLevel_locals + 1,s
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
 sta.b tcc__r0
-; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x2116
-; load 9
-; type 4 reg 0xf0 extra 0x28
-; ld4 #8470,tcc__r9
-lda.w #8470
-sta.b tcc__r9
-lda.w #0
-sta.b tcc__r9h
-; st2 tcc__r0, [tcc__r9,0]
-lda.b tcc__r0
-sta.b [tcc__r9]
-; load 0
-; type 4112 reg 0x1f2 extra 0x0
-; ld2 [sp,-10],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -10 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x2118
-; load 9
-; type 4 reg 0xf0 extra 0x28
-; ld4 #8472,tcc__r9
-lda.w #8472
-sta.b tcc__r9
-lda.w #0
-sta.b tcc__r9h
-; st2 tcc__r0, [tcc__r9,0]
-lda.b tcc__r0
-sta.b [tcc__r9]
-; load 0
-; type 16 reg 0x1f2 extra 0x220
-; ld2 [sp,-6],tcc__r0
-; stack adjust: fc + disp - loc 6
-lda -6 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -6 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #32
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffffa
-; st2 tcc__r0, [sp,-6]
-; stack adjust: fc + disp - loc 6
-lda.b tcc__r0
-sta -6 + __moveLevel_locals + 1,s
-; load 0
-; type 4 reg 0x1f2 extra 0x0
-; ld4 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 8
-lda -4 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-lda -2 + __moveLevel_locals + 1,s
+lda.l marioobj + 0 + 2
 sta.b tcc__r0h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c -4 r type 0x4)
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
 ; length xxy 4 vtop->type 0x4
 clc
 lda.b tcc__r0
-adc.w #600
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x4 fc 0xfffffffc
-; st4 tcc__r0, [sp,-4]
-; stack adjust: fc + disp - loc 8
-lda.b tcc__r0
-sta -4 + __moveLevel_locals + 1,s
-lda.b tcc__r0h
-sta -2 + __moveLevel_locals + 1,s
-; gjmp_addr 11495 at 14199
-jmp.w __local_13
-; gsym_addr t 14243 a 11495 ind 14243
-__local_10:
-; gsym_addr t 11255 a 14281 ind 14281
-; gsym_addr t 0 a 11495 ind 14319
-__local_2:
-; gsym_addr t 4789 a 14353 ind 14353
-; gjmp_addr 0 at 14390
-jmp.w __local_14
-; gsym_addr t 14430 a 0 ind 14430
-__local_1:
-; gsym_addr t 3700 a 14464 ind 14464
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
+adc.w #46
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x79099f0
-; mov tcc__r0, tcc__r1
-lda.b tcc__r0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #4,tcc__r1
+lda.w #4
 sta.b tcc__r1
-lda.b tcc__r0h
-sta.b tcc__r1h
-; gen_opi len 2 op +
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-dec.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [scrX,0]
-lda.b tcc__r0
-sta.l scrX + 0
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; gjmp_addr 0 at 12470
+jmp.w __local_4
+; gsym_addr t 12509 a 0 ind 12509
+__local_3:
+; gsym_addr t 11833 a 12543 ind 12543
 ; load 0
-; type 16 reg 0x3f0 extra 0x26
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioxv + 0], tcc__r0
+lda.l marioxv + 0
 sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-; nop
-lda.b tcc__r0
-and.w #7
-sta.b tcc__r0
+lda.l marioxv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x94
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
 ; gen_opi len 2 op 0x94
-; cmpr(n)eq tcc__r0, #0
+; cmpr(n)eq tcc__r1, #0
 ldx #1
-lda.b tcc__r0
+lda.b tcc__r1
 sec
 sbc #0
 tay
@@ -734,514 +667,91 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 15312 ind 15312
-; gsym_addr t 0 a 15351 ind 15351
+; gtst inv 1 t 0 v 5 r 12922 ind 12922
+; gsym_addr t 0 a 12961 ind 12961
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 15441 ind 15441
-; cmp op 0x95 inv 1 v 243 r 15441
+; gtst inv 1 t 0 v 243 r 13051 ind 13051
+; cmp op 0x95 inv 1 v 243 r 13051
 ; cmp ne
 bne +
-; gsym_addr t 0 a 15531 ind 15531
-brl __local_15
+; gsym_addr t 0 a 13141 ind 13141
+brl __local_5
 +
-; gtst finished; t 15441
-; gtst inv 1 t 0 v 240 r 15607 ind 15607
+; gtst finished; t 13051
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioyv + 0], tcc__r0
+lda.l marioyv + 0
 sta.b tcc__r0
-; gsym_addr t 0 a 15742 ind 15742
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 15832 ind 15832
-; cmp op 0x95 inv 1 v 243 r 15832
-; cmp ne
-bne +
-; gsym_addr t 0 a 15922 ind 15922
-brl __local_16
-+
-; gtst finished; t 15832
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #3
-lda.b tcc__r0
-lsr a
-lsr a
-lsr a
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-; nop
-lda.b tcc__r0
-and.w #63
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 4
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-dec.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 4
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-; load 0
-; type 16 reg 0x1f2 extra 0x0
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #0
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #0
-tay
-bcc ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 17194 ind 17194
-; gsym_addr t 0 a 17233 ind 17233
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 17323 ind 17323
-; cmp op 0x95 inv 1 v 243 r 17323
-; cmp ne
-bne +
-; gsym_addr t 0 a 17413 ind 17413
-brl __local_17
-+
-; gtst finished; t 17323
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #64
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 4
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-__local_17:
-; gsym_addr t 17323 a 17953 ind 17953
-; load 0
-; type 16 reg 0x1f2 extra 0x0
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r0, #31
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #31
-tay
-beq +
-bcs ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 18255 ind 18255
-; gsym_addr t 0 a 18294 ind 18294
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 18384 ind 18384
-; cmp op 0x95 inv 1 v 243 r 18384
-; cmp ne
-bne +
-; gsym_addr t 0 a 18474 ind 18474
-brl __local_18
-+
-; gtst finished; t 18384
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-sec
-lda.b tcc__r0
-sbc.w #32
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #1024
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffff8
-; st2 tcc__r0, [sp,-8]
-; stack adjust: fc + disp - loc 4
-lda.b tcc__r0
-sta -8 + __moveLevel_locals + 1,s
-__local_18:
-; gsym_addr t 18384 a 19180 ind 19180
-; load 0
-; type 16 reg 0x1f2 extra 0xffffffff
-; ld2 [sp,-8],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -8 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -8 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #4096
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffffa
-; st2 tcc__r0, [sp,-6]
-; stack adjust: fc + disp - loc 6
-lda.b tcc__r0
-sta -6 + __moveLevel_locals + 1,s
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #3
-lda.b tcc__r0
-lsr a
-lsr a
-lsr a
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #1
-asl.b tcc__r0
-; load 1
-; type 4 reg 0x2f0 extra 0xfffffffa
-; ld4 #map + 0, tcc__r1 (type 0x4)
-lda.w #:map
-sta.b tcc__r1h
-lda.w #map + 0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x4)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x4)
-; length xxy 4 vtop->type 0x4
-dec.b tcc__r1
-dec.b tcc__r1
-; store r 0x1 fr 0x1f2 ft 0x4 fc 0xfffffffc
-; st4 tcc__r1, [sp,-4]
-; stack adjust: fc + disp - loc 8
-lda.b tcc__r1
-sta -4 + __moveLevel_locals + 1,s
-lda.b tcc__r1h
-sta -2 + __moveLevel_locals + 1,s
-__local_20:
-; load 0
-; type 17 reg 0x51f0 extra 0x0
-; deref constant ptr ld [16914],tcc__r0
-lda.w #0
-sep #$20
-lda.l 16914
-rep #$20
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 16914 r type 0x6)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-and.w #128
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 20867 ind 20867
-; gsym_addr t 0 a 20906 ind 20906
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 20996 ind 20996
-; cmp op 0x95 inv 1 v 243 r 20996
-; cmp ne
-bne +
-; gsym_addr t 0 a 21086 ind 21086
-brl __local_19
-+
-; gtst finished; t 20996
-; gjmp_addr 20567 at 21162
-jmp.w __local_20
-; gsym_addr t 21206 a 20567 ind 21206
-__local_19:
-; gsym_addr t 20996 a 21244 ind 21244
-; gsym_addr t 0 a 20567 ind 21282
-__local_23:
-; load 0
-; type 17 reg 0x51f0 extra 0x0
-; deref constant ptr ld [16914],tcc__r0
-lda.w #0
-sep #$20
-lda.l 16914
-rep #$20
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 16914 r type 0x6)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-and.w #128
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 21616 ind 21616
-; gsym_addr t 0 a 21655 ind 21655
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 21745 ind 21745
-; cmp op 0x95 inv 1 v 243 r 21745
-; cmp ne
-bne +
-; gsym_addr t 0 a 21835 ind 21835
-brl __local_21
-+
-; gtst finished; t 21745
-; gtst inv 1 t 0 v 244 r 21911 ind 21911
-; VT_jmp r 21911 t 0 ji 0 inv 1 vtop->c.i 21745
-; gjmp_addr 0 at 22000
-jmp.w __local_22
-; gsym_addr t 22040 a 0 ind 22040
-__local_21:
-; gsym_addr t 21745 a 22074 ind 22074
-; gtst finished; t 22040
-; gjmp_addr 21316 at 22137
-jmp.w __local_23
-; gsym_addr t 22181 a 21316 ind 22181
-__local_22:
-; gsym_addr t 22040 a 22219 ind 22219
-; gsym_addr t 0 a 21316 ind 22257
-; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [i,0]
-lda.b tcc__r0
-sta.l i + 0
-__local_26:
-; load 0
-; type 16 reg 0x3f0 extra 0x57b6
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #16
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #16
-tay
-bcc ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 22660 ind 22660
-; gsym_addr t 0 a 22699 ind 22699
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 22789 ind 22789
-; cmp op 0x95 inv 1 v 243 r 22789
-; cmp ne
-bne +
-; gsym_addr t 0 a 22879 ind 22879
-brl __local_24
-+
-; gtst finished; t 22789
-; gjmp_addr 0 at 22955
-jmp.w __local_25
-; gsym_addr t 22995 a 0 ind 22995
-__local_27:
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
-sta.b tcc__r0
-; load 1
-; type 0 reg 0x0 extra 0x0
-; mov tcc__r0, tcc__r1
-lda.b tcc__r0
-sta.b tcc__r1
-lda.b tcc__r0h
-sta.b tcc__r1h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [i,0]
-lda.b tcc__r0
-sta.l i + 0
-; gjmp_addr 22454 at 23454
-jmp.w __local_26
-; gsym_addr t 23498 a 22454 ind 23498
-__local_25:
-; gsym_addr t 22995 a 23536 ind 23536
-; load 0
-; type 4 reg 0x1f2 extra 0x0
-; ld4 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 10
-lda -4 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-lda -2 + __moveLevel_locals + 1,s
+lda.l marioyv + 0 + 2
 sta.b tcc__r0h
 ; load 1
-; type 16 reg 0x100 extra 0x5bf0
+; type 0 reg 0x100 extra 0x94
 ; ld2 [tcc__r0,0],tcc__r1
 lda.b [tcc__r0]
 sta.b tcc__r1
-; store r 0x1 fr 0x1f2 ft 0x10 fc 0xfffffff4
-; st2 tcc__r1, [sp,-12]
-; stack adjust: fc + disp - loc 2
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r1, #0
+ldx #1
 lda.b tcc__r1
-sta -12 + __moveLevel_locals + 1,s
+sec
+sbc #0
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 13051 v 5 r 13557 ind 13557
+; gsym_addr t 13051 a 13600 ind 13600
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 13051 v 243 r 13694 ind 13694
+; cmp op 0x95 inv 1 v 243 r 13694
+; cmp ne
+bne +
+__local_5:
+; gsym_addr t 13051 a 13788 ind 13788
+brl __local_6
++
+; gtst finished; t 13694
+; gtst inv 1 t 0 v 245 r 13867 ind 13867
+; VT_jmp r 13867 t 0 ji 1 inv 1 vtop->c.i 13694
+; gsym_addr t 0 a 13956 ind 13956
+; gtst finished; t 13694
 ; load 0
-; type 4112 reg 0x1f2 extra 0x0
-; ld2 [sp,-6],tcc__r0
-; stack adjust: fc + disp - loc 8
-lda -6 + __moveLevel_locals + 1,s
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
 sta.b tcc__r0
-; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x2116
-; load 9
-; type 4 reg 0xf0 extra 0x28
-; ld4 #8470,tcc__r9
-lda.w #8470
-sta.b tcc__r9
-lda.w #0
-sta.b tcc__r9h
-; st2 tcc__r0, [tcc__r9,0]
-lda.b tcc__r0
-sta.b [tcc__r9]
-; load 0
-; type 4112 reg 0x1f2 extra 0x0
-; ld2 [sp,-12],tcc__r0
-; stack adjust: fc + disp - loc 2
-lda -12 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; store r 0x0 fr 0x1f0 ft 0x1010 fc 0x2118
-; load 9
-; type 4 reg 0xf0 extra 0x28
-; ld4 #8472,tcc__r9
-lda.w #8472
-sta.b tcc__r9
-lda.w #0
-sta.b tcc__r9h
-; st2 tcc__r0, [tcc__r9,0]
-lda.b tcc__r0
-sta.b [tcc__r9]
-; load 0
-; type 16 reg 0x1f2 extra 0x220
-; ld2 [sp,-6],tcc__r0
-; stack adjust: fc + disp - loc 8
-lda -6 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c -6 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #32
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffffa
-; st2 tcc__r0, [sp,-6]
-; stack adjust: fc + disp - loc 8
-lda.b tcc__r0
-sta -6 + __moveLevel_locals + 1,s
-; load 0
-; type 4 reg 0x1f2 extra 0x0
-; ld4 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 10
-lda -4 + __moveLevel_locals + 1,s
-sta.b tcc__r0
-lda -2 + __moveLevel_locals + 1,s
+lda.l marioobj + 0 + 2
 sta.b tcc__r0h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c -4 r type 0x4)
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
 ; length xxy 4 vtop->type 0x4
 clc
 lda.b tcc__r0
-adc.w #600
+adc.w #46
 sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x4 fc 0xfffffffc
-; st4 tcc__r0, [sp,-4]
-; stack adjust: fc + disp - loc 10
-lda.b tcc__r0
-sta -4 + __moveLevel_locals + 1,s
-lda.b tcc__r0h
-sta -2 + __moveLevel_locals + 1,s
-; gjmp_addr 23029 at 25736
-jmp.w __local_27
-; gsym_addr t 25780 a 23029 ind 25780
-__local_24:
-; gsym_addr t 22789 a 25818 ind 25818
-; gsym_addr t 0 a 23029 ind 25856
-__local_16:
-; gsym_addr t 15832 a 25890 ind 25890
-__local_15:
-; gsym_addr t 15441 a 25928 ind 25928
-__local_14:
-; gsym_addr t 14430 a 25966 ind 25966
-; push2 imm r 0xf0
-pea.w 0
-; ldpush before load type 0x10 reg 0x3f0
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
-sta.b tcc__r0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; push1 imm r 0xf0
-sep #$20
-lda #1
-pha
-rep #$20
-; call r 0x2f0
-jsr.l bgSetScroll
-; add sp, #5
+; load 1
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r1
+lda.w #0
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+__local_6:
+; gsym_addr t 13694 a 14487 ind 14487
+__local_4:
+; gsym_addr t 12509 a 14525 ind 14525
+; gsym_addr t 0 a 14563 ind 14563
+; add sp, #__mariowalk_locals
+.ifgr __mariowalk_locals 0
 tsa
 clc
-adc #5
-tas
-; gsym_addr t 0 a 26331 ind 26331
-; add sp, #__moveLevel_locals
-.ifgr __moveLevel_locals 0
-tsa
-clc
-adc #__moveLevel_locals
+adc #__mariowalk_locals
 tas
 .endif
 rtl
@@ -1249,130 +759,30 @@ rtl
 
 .SECTION ".text_0x2" SUPERFREE
 
-moveMario:
-; sub sp,#__moveMario_locals
-.ifgr __moveMario_locals 0
+mariofall:
+; sub sp,#__mariofall_locals
+.ifgr __mariofall_locals 0
 tsa
 sec
-sbc #__moveMario_locals
+sbc #__mariofall_locals
 tas
 .endif
 ; load 0
-; type 16 reg 0x3f0 extra 0x26
-; ld2 [pad0 + 0], tcc__r0
-lda.l pad0 + 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioyv + 0], tcc__r0
+lda.l marioyv + 0
 sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-; nop
-lda.b tcc__r0
-and.w #896
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 26878 ind 26878
-; gsym_addr t 0 a 26917 ind 26917
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 27007 ind 27007
-; cmp op 0x95 inv 1 v 243 r 27007
-; cmp ne
-bne +
-; gsym_addr t 0 a 27097 ind 27097
-brl __local_28
-+
-; gtst finished; t 27007
-; load 0
-; type 16 reg 0x3f0 extra 0x26
-; ld2 [pad0 + 0], tcc__r0
-lda.l pad0 + 0
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-; nop
-lda.b tcc__r0
-and.w #256
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 27433 ind 27433
-; gsym_addr t 0 a 27472 ind 27472
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 27562 ind 27562
-; cmp op 0x95 inv 1 v 243 r 27562
-; cmp ne
-bne +
-; gsym_addr t 0 a 27652 ind 27652
-brl __local_29
-+
-; gtst finished; t 27562
-; push4 imm r 0x12f0
-pea.w :tccs_L.9
-pea.w tccs_L.9 + 0
-; call r 0x2f0
-jsr.l consoleNocashMessage
-; add sp, #4
-tsa
-clc
-adc #4
-tas
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
+lda.l marioyv + 0 + 2
+sta.b tcc__r0h
 ; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r1
-lda.l scrX + 0
+; type 0 reg 0x100 extra 0x94
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
 sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.w #16
-sta.b tcc__r1
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; ldpush before load type 0x10 reg 0x0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
-; call r 0x2f0
-jsr.l getCollisionTile
-; add sp, #4
-tsa
-clc
-adc #4
-tas
 ; gen_opi len 2 op 0x94
-; cmpr(n)eq tcc__r0, #0
+; cmpr(n)eq tcc__r1, #0
 ldx #1
-lda.b tcc__r0
+lda.b tcc__r1
 sec
 sbc #0
 tay
@@ -1380,643 +790,88 @@ beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 29022 ind 29022
-; gsym_addr t 0 a 29061 ind 29061
+; gtst inv 1 t 0 v 5 r 15191 ind 15191
+; gsym_addr t 0 a 15230 ind 15230
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 29151 ind 29151
-; cmp op 0x95 inv 1 v 243 r 29151
+; gtst inv 1 t 0 v 243 r 15320 ind 15320
+; cmp op 0x95 inv 1 v 243 r 15320
 ; cmp ne
 bne +
-; gsym_addr t 0 a 29241 ind 29241
-brl __local_30
+; gsym_addr t 0 a 15410 ind 15410
+brl __local_7
 +
-; gtst finished; t 29151
+; gtst finished; t 15320
 ; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
 sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #32768
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #32768
-tay
-bcc ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 29534 ind 29534
-; gsym_addr t 0 a 29573 ind 29573
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 29663 ind 29663
-; cmp op 0x95 inv 1 v 243 r 29663
-; cmp ne
-bne +
-; gsym_addr t 0 a 29753 ind 29753
-brl __local_31
-+
-; gtst finished; t 29663
-; load 0
-; type 16 reg 0x3f0 extra 0x490b40
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
 ; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
 clc
 lda.b tcc__r0
-adc.w #256
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [mario,0]
-lda.b tcc__r0
-sta.l mario + 0
-; gjmp_addr 0 at 30187
-jmp.w __local_32
-; gsym_addr t 30227 a 0 ind 30227
-__local_31:
-; gsym_addr t 29663 a 30261 ind 30261
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #2144
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #2144
-tay
-bcc ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 30512 ind 30512
-; gsym_addr t 0 a 30551 ind 30551
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 30641 ind 30641
-; cmp op 0x95 inv 1 v 243 r 30641
-; cmp ne
-bne +
-; gsym_addr t 0 a 30731 ind 30731
-brl __local_33
-+
-; gtst finished; t 30641
-; push1 imm r 0xf0
-sep #$20
-lda #2
-pha
-rep #$20
-; call r 0x2f0
-jsr.l moveLevel
-; add sp, #1
-tsa
-clc
-adc #1
-tas
-; gjmp_addr 0 at 30918
-jmp.w __local_34
-; gsym_addr t 30958 a 0 ind 30958
-__local_33:
-; gsym_addr t 30641 a 30992 ind 30992
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #65280
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #65280
-tay
-bcc ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 31247 ind 31247
-; gsym_addr t 0 a 31286 ind 31286
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 31376 ind 31376
-; cmp op 0x95 inv 1 v 243 r 31376
-; cmp ne
-bne +
-; gsym_addr t 0 a 31466 ind 31466
-brl __local_35
-+
-; gtst finished; t 31376
-; load 0
-; type 16 reg 0x3f0 extra 0x490c3e
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #256
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [mario,0]
-lda.b tcc__r0
-sta.l mario + 0
-__local_35:
-; gsym_addr t 31376 a 31900 ind 31900
-__local_34:
-; gsym_addr t 30958 a 31938 ind 31938
-__local_32:
-; gsym_addr t 30227 a 31976 ind 31976
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #1,tcc__r0
-lda.w #1
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x8
-; st2 tcc__r0, [mario,8]
-lda.b tcc__r0
-sta.l mario + 8
-__local_30:
-; gsym_addr t 29151 a 32183 ind 32183
-; gjmp_addr 0 at 32221
-jmp.w __local_36
-; gsym_addr t 32261 a 0 ind 32261
-__local_29:
-; gsym_addr t 27562 a 32295 ind 32295
-; load 0
-; type 16 reg 0x3f0 extra 0x26
-; ld2 [pad0 + 0], tcc__r0
-lda.l pad0 + 0
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-; nop
-lda.b tcc__r0
-and.w #512
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 32593 ind 32593
-; gsym_addr t 0 a 32632 ind 32632
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 32722 ind 32722
-; cmp op 0x95 inv 1 v 243 r 32722
-; cmp ne
-bne +
-; gsym_addr t 0 a 32812 ind 32812
-brl __local_37
-+
-; gtst finished; t 32722
-; push4 imm r 0x12f0
-pea.w :tccs_L.10
-pea.w tccs_L.10 + 0
-; call r 0x2f0
-jsr.l consoleNocashMessage
-; add sp, #4
-tsa
-clc
-adc #4
-tas
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
+adc.w #46
 sta.b tcc__r0
 ; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r1
-lda.l scrX + 0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-dec.b tcc__r1
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r1, #0
-ldx #1
-lda.b tcc__r1
-sec
-sbc.w #0
-tay
-beq +
-bcs ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 33725 ind 33725
-; gsym_addr t 0 a 33764 ind 33764
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 33854 ind 33854
-; cmp op 0x95 inv 1 v 243 r 33854
-; cmp ne
-bne +
-; gsym_addr t 0 a 33944 ind 33944
-brl __local_38
-+
-; gtst finished; t 33854
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r1
-lda.l scrX + 0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-dec.b tcc__r1
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; ldpush before load type 0x10 reg 0x0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
-; call r 0x2f0
-jsr.l getCollisionTile
-; add sp, #4
-tsa
-clc
-adc #4
-tas
-; gen_opi len 2 op 0x94
-; cmpr(n)eq tcc__r0, #0
-ldx #1
-lda.b tcc__r0
-sec
-sbc #0
-tay
-beq +
-dex
-+
-stx.b tcc__r5
-; gtst inv 1 t 33854 v 5 r 35156 ind 35156
-; gsym_addr t 33854 a 35199 ind 35199
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 33854 v 243 r 35293 ind 35293
-; cmp op 0x95 inv 1 v 243 r 35293
-; cmp ne
-bne +
-__local_38:
-; gsym_addr t 33854 a 35387 ind 35387
-brl __local_39
-+
-; gtst finished; t 35293
-; gtst inv 1 t 0 v 245 r 35467 ind 35467
-; VT_jmp r 35467 t 0 ji 1 inv 1 vtop->c.i 35293
-; gsym_addr t 0 a 35556 ind 35556
-; gtst finished; t 35293
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r0, #32768
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #32768
-tay
-beq +
-bcs ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 35838 ind 35838
-; gsym_addr t 0 a 35877 ind 35877
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 35967 ind 35967
-; cmp op 0x95 inv 1 v 243 r 35967
-; cmp ne
-bne +
-; gsym_addr t 0 a 36057 ind 36057
-brl __local_40
-+
-; gtst finished; t 35967
-; load 0
-; type 16 reg 0x3f0 extra 0x490b40
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-sec
-lda.b tcc__r0
-sbc.w #256
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [mario,0]
-lda.b tcc__r0
-sta.l mario + 0
-; gjmp_addr 0 at 36491
-jmp.w __local_41
-; gsym_addr t 36531 a 0 ind 36531
-__local_40:
-; gsym_addr t 35967 a 36565 ind 36565
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [scrX + 0], tcc__r0
-lda.l scrX + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r0, #0
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #0
-tay
-beq +
-bcs ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 36816 ind 36816
-; gsym_addr t 0 a 36855 ind 36855
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 36945 ind 36945
-; cmp op 0x95 inv 1 v 243 r 36945
-; cmp ne
-bne +
-; gsym_addr t 0 a 37035 ind 37035
-brl __local_42
-+
-; gtst finished; t 36945
-; push1 imm r 0xf0
-sep #$20
-lda #3
-pha
-rep #$20
-; call r 0x2f0
-jsr.l moveLevel
-; add sp, #1
-tsa
-clc
-adc #1
-tas
-; gjmp_addr 0 at 37222
-jmp.w __local_43
-; gsym_addr t 37262 a 0 ind 37262
-__local_42:
-; gsym_addr t 36945 a 37296 ind 37296
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x97
-; ucmpcd tcc__r0, #0
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #0
-tay
-beq +
-bcs ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 37549 ind 37549
-; gsym_addr t 0 a 37588 ind 37588
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 37678 ind 37678
-; cmp op 0x95 inv 1 v 243 r 37678
-; cmp ne
-bne +
-; gsym_addr t 0 a 37768 ind 37768
-brl __local_44
-+
-; gtst finished; t 37678
-; load 0
-; type 16 reg 0x3f0 extra 0x490b40
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-sec
-lda.b tcc__r0
-sbc.w #256
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [mario,0]
-lda.b tcc__r0
-sta.l mario + 0
-__local_44:
-; gsym_addr t 37678 a 38202 ind 38202
-__local_43:
-; gsym_addr t 37262 a 38240 ind 38240
-__local_41:
-; gsym_addr t 36531 a 38278 ind 38278
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r1
 lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x8
-; st2 tcc__r0, [mario,8]
-lda.b tcc__r0
-sta.l mario + 8
-__local_39:
-; gsym_addr t 35293 a 38485 ind 38485
-__local_37:
-; gsym_addr t 32722 a 38523 ind 38523
-__local_36:
-; gsym_addr t 32261 a 38561 ind 38561
-; load 0
-; type 16 reg 0x3f0 extra 0x26
-; ld2 [pad0 + 0], tcc__r0
-lda.l pad0 + 0
-sta.b tcc__r0
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-; nop
-lda.b tcc__r0
-and.w #128
-sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 38859 ind 38859
-; gsym_addr t 0 a 38898 ind 38898
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 38988 ind 38988
-; cmp op 0x95 inv 1 v 243 r 38988
-; cmp ne
-bne +
-; gsym_addr t 0 a 39078 ind 39078
-brl __local_45
-+
-; gtst finished; t 38988
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r1
-lda.l scrX + 0
 sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
 lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
+sta.b [tcc__r0]
 ; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
+; type 16 reg 0xf0 extra 0x0
+; ld2 #6,tcc__r0
+lda.w #6
 sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x4
+; st2 tcc__r0, [oambuffer,4]
 lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 2 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #16
-sta.b tcc__r0
-; ldpush before load type 0x10 reg 0x0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
-; call r 0x2f0
-jsr.l getCollisionTile
-; add sp, #4
-tsa
-clc
-adc #4
-tas
-; gen_opi len 2 op 0x95
-; cmpr(n)eq tcc__r0, #0
-ldx #1
-lda.b tcc__r0
-sec
-sbc #0
-tay
-bne +
-dex
-+
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 40319 ind 40319
-; gsym_addr t 0 a 40358 ind 40358
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 40448 ind 40448
-; cmp op 0x95 inv 1 v 243 r 40448
-; cmp ne
-bne +
-; gsym_addr t 0 a 40538 ind 40538
-brl __local_46
-+
-; gtst finished; t 40448
+sta.l oambuffer + 4
 ; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #-960,tcc__r0
-lda.w #64576
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x4
-; st2 tcc__r0, [mario,4]
-lda.b tcc__r0
-sta.l mario + 4
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #1,tcc__r0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
 lda.w #1
 sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
-lda.b tcc__r0
-sta.l mario + 6
-; push1 imm r 0xf0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x7
+; st1 tcc__r0, [oambuffer,7]
 sep #$20
-lda #0
-pha
+lda.b tcc__r0
+sta.l oambuffer + 7
 rep #$20
-; call r 0x2f0
-jsr.l spcPlaySound
-; add sp, #1
+__local_7:
+; gsym_addr t 15320 a 16334 ind 16334
+; gsym_addr t 0 a 16372 ind 16372
+; add sp, #__mariofall_locals
+.ifgr __mariofall_locals 0
 tsa
 clc
-adc #1
+adc #__mariofall_locals
 tas
-__local_46:
-; gsym_addr t 40448 a 41073 ind 41073
-__local_45:
-; gsym_addr t 38988 a 41111 ind 41111
+.endif
+rtl
+.ENDS
+
+.SECTION ".text_0x3" SUPERFREE
+
+mariojump:
+; sub sp,#__mariojump_locals
+.ifgr __mariojump_locals 0
+tsa
+sec
+sbc #__mariojump_locals
+tas
+.endif
 ; load 0
-; type 0 reg 0x3f0 extra 0x95
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
+; type 16 reg 0x3f0 extra 0x95
+; ld2 [oambuffer + 4], tcc__r0
+lda.l oambuffer + 4
 sta.b tcc__r0
 ; gen_opi len 2 op 0x95
 ; cmpr(n)eq tcc__r0, #1
@@ -2029,22 +884,225 @@ bne +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 41355 ind 41355
-; gsym_addr t 0 a 41394 ind 41394
+; gtst inv 1 t 0 v 5 r 16874 ind 16874
+; gsym_addr t 0 a 16913 ind 16913
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 41484 ind 41484
-; cmp op 0x95 inv 1 v 243 r 41484
+; gtst inv 1 t 0 v 243 r 17003 ind 17003
+; cmp op 0x95 inv 1 v 243 r 17003
 ; cmp ne
 bne +
-; gsym_addr t 0 a 41574 ind 41574
-brl __local_47
+; gsym_addr t 0 a 17093 ind 17093
+brl __local_8
 +
-; gtst finished; t 41484
+; gtst finished; t 17003
 ; load 0
-; type 0 reg 0x3f0 extra 0x28
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
+; type 16 reg 0xf0 extra 0x0
+; ld2 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x4
+; st2 tcc__r0, [oambuffer,4]
+lda.b tcc__r0
+sta.l oambuffer + 4
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x7
+; st1 tcc__r0, [oambuffer,7]
+sep #$20
+lda.b tcc__r0
+sta.l oambuffer + 7
+rep #$20
+__local_8:
+; gsym_addr t 17003 a 17545 ind 17545
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioyv + 0], tcc__r0
+lda.l marioyv + 0
+sta.b tcc__r0
+lda.l marioyv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op 0x9d
+; cmpcd tcc__r1, #0
+ldx #1
+lda.b tcc__r1
+sec
+sbc.w #0
+tay
+bvc +
+eor #$8000
++
+bpl +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 17947 ind 17947
+; gsym_addr t 0 a 17986 ind 17986
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 18076 ind 18076
+; cmp op 0x95 inv 1 v 243 r 18076
+; cmp ne
+bne +
+; gsym_addr t 0 a 18166 ind 18166
+brl __local_9
++
+; gtst finished; t 18076
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #46
+sta.b tcc__r0
+; load 1
+; type 16 reg 0xf0 extra 0x0
+; ld2 #4,tcc__r1
+lda.w #4
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+__local_9:
+; gsym_addr t 18076 a 18713 ind 18713
+; gsym_addr t 0 a 18751 ind 18751
+; add sp, #__mariojump_locals
+.ifgr __mariojump_locals 0
+tsa
+clc
+adc #__mariojump_locals
+tas
+.endif
+rtl
+.ENDS
+
+.SECTION ".text_0x4" SUPERFREE
+
+marioupdate:
+; sub sp,#__marioupdate_locals
+.ifgr __marioupdate_locals 0
+tsa
+sec
+sbc #__marioupdate_locals
+tas
+.endif
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [pad_keys + 0], tcc__r0
+lda.l pad_keys + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r0, [pad0,0]
+lda.b tcc__r0
+sta.l pad0 + 0
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #896
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 19499 ind 19499
+; gsym_addr t 0 a 19538 ind 19538
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 19628 ind 19628
+; cmp op 0x95 inv 1 v 243 r 19628
+; cmp ne
+bne +
+; gsym_addr t 0 a 19718 ind 19718
+brl __local_10
++
+; gtst finished; t 19628
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #512
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 20054 ind 20054
+; gsym_addr t 0 a 20093 ind 20093
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 20183 ind 20183
+; cmp op 0x95 inv 1 v 243 r 20183
+; cmp ne
+bne +
+; gsym_addr t 0 a 20273 ind 20273
+brl __local_11
++
+; gtst finished; t 20183
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [marioflp + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l marioflp + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x9f
+; cmpcd tcc__r0, #3
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #3
+tay
+beq ++
+bvc +
+eor #$8000
++
+bpl +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 0 t 0 v 5 r 20620 ind 20620
+; gsym_addr t 0 a 20659 ind 20659
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 0 t 0 v 243 r 20749 ind 20749
+; cmp op 0x95 inv 0 v 243 r 20749
+; cmp ne
+beq +
+; gsym_addr t 0 a 20839 ind 20839
+brl __local_12
++
+; gtst finished; t 20749
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [marioflp + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l marioflp + 0
+rep #$20
 sta.b tcc__r0
 ; gen_opi len 2 op 0x9c
 ; cmpcd tcc__r0, #2
@@ -2061,100 +1119,369 @@ bmi +++
 dex
 +++
 stx.b tcc__r5
-; gtst inv 0 t 0 v 5 r 41880 ind 41880
-; gsym_addr t 0 a 41919 ind 41919
+; gtst inv 0 t 20749 v 5 r 21179 ind 21179
+; gsym_addr t 20749 a 21222 ind 21222
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 0 t 0 v 243 r 42009 ind 42009
-; cmp op 0x95 inv 0 v 243 r 42009
+; gtst inv 0 t 20749 v 243 r 21316 ind 21316
+; cmp op 0x95 inv 0 v 243 r 21316
 ; cmp ne
 beq +
-; gsym_addr t 0 a 42099 ind 42099
-brl __local_48
+__local_12:
+; gsym_addr t 20749 a 21410 ind 21410
+brl __local_13
 +
-; gtst finished; t 42009
+; gtst finished; t 21316
+; gtst inv 1 t 0 v 244 r 21490 ind 21490
+; VT_jmp r 21490 t 0 ji 0 inv 1 vtop->c.i 21316
+; gjmp_addr 0 at 21579
+jmp.w __local_14
+; gsym_addr t 21619 a 0 ind 21619
+__local_13:
+; gsym_addr t 21316 a 21653 ind 21653
+; gtst finished; t 21619
 ; load 0
-; type 0 reg 0x3f0 extra 0x94
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
-sta.b tcc__r0
-; gen_opi len 2 op 0x94
-; cmpr(n)eq tcc__r0, #6
-ldx #1
-lda.b tcc__r0
-sec
-sbc #6
-tay
-beq +
-dex
-+
-stx.b tcc__r5
-; gtst inv 0 t 42009 v 5 r 42381 ind 42381
-; gsym_addr t 42009 a 42424 ind 42424
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 0 t 42009 v 243 r 42518 ind 42518
-; cmp op 0x95 inv 0 v 243 r 42518
-; cmp ne
-beq +
-__local_48:
-; gsym_addr t 42009 a 42612 ind 42612
-brl __local_49
-+
-; gtst finished; t 42518
-; gtst inv 1 t 0 v 244 r 42692 ind 42692
-; VT_jmp r 42692 t 0 ji 0 inv 1 vtop->c.i 42518
-; gjmp_addr 0 at 42781
-jmp.w __local_50
-; gsym_addr t 42821 a 0 ind 42821
-__local_49:
-; gsym_addr t 42518 a 42855 ind 42855
-; gtst finished; t 42821
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #2,tcc__r0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #2,tcc__r0
 lda.w #2
 sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [marioflp,0]
+sep #$20
 lda.b tcc__r0
-sta.l mario + 6
-; gjmp_addr 0 at 43087
-jmp.w __local_51
-; gsym_addr t 43127 a 0 ind 43127
-__local_50:
-; gsym_addr t 42821 a 43161 ind 43161
+sta.l marioflp + 0
+rep #$20
+__local_14:
+; gsym_addr t 21619 a 21912 ind 21912
 ; load 0
-; type 0 reg 0x3f0 extra 0x0
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [oambuffer + 6], tcc__r0
+lda.w #0
+sep #$20
+lda.l oambuffer + 6
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 6 r type 0x11)
+; length xxy 2 vtop->type 0x0
+; nop
+lda.b tcc__r0
+and.w #65471
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x6
+; st1 tcc__r0, [oambuffer,6]
+sep #$20
+lda.b tcc__r0
+sta.l oambuffer + 6
+rep #$20
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #46
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x0
-; mov tcc__r0, tcc__r1
-lda.b tcc__r0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #1,tcc__r1
+lda.w #1
 sta.b tcc__r1
-lda.b tcc__r0h
-sta.b tcc__r1h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 6 r type 0x0)
-; length xxy 2 vtop->type 0x0
-inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
-lda.b tcc__r0
-sta.l mario + 6
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
 ; load 0
-; type 0 reg 0x3f0 extra 0x0
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioxv + 0], tcc__r0
+lda.l marioxv + 0
 sta.b tcc__r0
-; gen_opi len 2 op 0x9d
-; cmpcd tcc__r0, #6
+lda.l marioxv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op -
+; sbc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+sec
+lda.b tcc__r1
+sbc.w #56
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioxv + 0], tcc__r0
+lda.l marioxv + 0
+sta.b tcc__r0
+lda.l marioxv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op 0x9e
+; cmpcd tcc__r1, #-320
+ldx #1
+lda.b tcc__r1
+sec
+sbc.w #-320
+tay
+beq +++
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 23702 ind 23702
+; gsym_addr t 0 a 23741 ind 23741
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 23831 ind 23831
+; cmp op 0x95 inv 1 v 243 r 23831
+; cmp ne
+bne +
+; gsym_addr t 0 a 23921 ind 23921
+brl __local_15
++
+; gtst finished; t 23831
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioxv + 0], tcc__r0
+lda.l marioxv + 0
+sta.b tcc__r0
+lda.l marioxv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0xf0 extra 0x0
+; ld2 #-320,tcc__r1
+lda.w #65216
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+__local_15:
+; gsym_addr t 23831 a 24311 ind 24311
+__local_11:
+; gsym_addr t 20183 a 24349 ind 24349
+; load 0
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
+sta.b tcc__r0
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #256
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 24647 ind 24647
+; gsym_addr t 0 a 24686 ind 24686
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 24776 ind 24776
+; cmp op 0x95 inv 1 v 243 r 24776
+; cmp ne
+bne +
+; gsym_addr t 0 a 24866 ind 24866
+brl __local_16
++
+; gtst finished; t 24776
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [marioflp + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l marioflp + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x9f
+; cmpcd tcc__r0, #3
 ldx #1
 lda.b tcc__r0
 sec
-sbc.w #6
+sbc.w #3
+tay
+beq ++
+bvc +
+eor #$8000
++
+bpl +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 0 t 0 v 5 r 25213 ind 25213
+; gsym_addr t 0 a 25252 ind 25252
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 0 t 0 v 243 r 25342 ind 25342
+; cmp op 0x95 inv 0 v 243 r 25342
+; cmp ne
+beq +
+; gsym_addr t 0 a 25432 ind 25432
+brl __local_17
++
+; gtst finished; t 25342
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [marioflp + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l marioflp + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #2
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #2
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 0 t 25342 v 5 r 25772 ind 25772
+; gsym_addr t 25342 a 25815 ind 25815
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 0 t 25342 v 243 r 25909 ind 25909
+; cmp op 0x95 inv 0 v 243 r 25909
+; cmp ne
+beq +
+__local_17:
+; gsym_addr t 25342 a 26003 ind 26003
+brl __local_18
++
+; gtst finished; t 25909
+; gtst inv 1 t 0 v 244 r 26083 ind 26083
+; VT_jmp r 26083 t 0 ji 0 inv 1 vtop->c.i 25909
+; gjmp_addr 0 at 26172
+jmp.w __local_19
+; gsym_addr t 26212 a 0 ind 26212
+__local_18:
+; gsym_addr t 25909 a 26246 ind 26246
+; gtst finished; t 26212
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #2,tcc__r0
+lda.w #2
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [marioflp,0]
+sep #$20
+lda.b tcc__r0
+sta.l marioflp + 0
+rep #$20
+__local_19:
+; gsym_addr t 26212 a 26505 ind 26505
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [oambuffer + 6], tcc__r0
+lda.w #0
+sep #$20
+lda.l oambuffer + 6
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op |
+; ora tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 6 r type 0x11)
+; length xxy 2 vtop->type 0x0
+; nop
+lda.b tcc__r0
+ora.w #64
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x6
+; st1 tcc__r0, [oambuffer,6]
+sep #$20
+lda.b tcc__r0
+sta.l oambuffer + 6
+rep #$20
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r0
+adc.w #46
+sta.b tcc__r0
+; load 1
+; type 16 reg 0xf0 extra 0x0
+; ld2 #1,tcc__r1
+lda.w #1
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioxv + 0], tcc__r0
+lda.l marioxv + 0
+sta.b tcc__r0
+lda.l marioxv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+clc
+lda.b tcc__r1
+adc.w #56
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioxv + 0], tcc__r0
+lda.l marioxv + 0
+sta.b tcc__r0
+lda.l marioxv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op 0x9d
+; cmpcd tcc__r1, #320
+ldx #1
+lda.b tcc__r1
+sec
+sbc.w #320
 tay
 bvc +
 eor #$8000
@@ -2164,492 +1491,679 @@ bpl +++
 dex
 +++
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 43864 ind 43864
-; gsym_addr t 0 a 43903 ind 43903
+; gtst inv 1 t 0 v 5 r 28282 ind 28282
+; gsym_addr t 0 a 28321 ind 28321
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 43993 ind 43993
-; cmp op 0x95 inv 1 v 243 r 43993
+; gtst inv 1 t 0 v 243 r 28411 ind 28411
+; cmp op 0x95 inv 1 v 243 r 28411
 ; cmp ne
 bne +
-; gsym_addr t 0 a 44083 ind 44083
-brl __local_52
+; gsym_addr t 0 a 28501 ind 28501
+brl __local_20
 +
-; gtst finished; t 43993
+; gtst finished; t 28411
 ; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #2,tcc__r0
-lda.w #2
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioxv + 0], tcc__r0
+lda.l marioxv + 0
 sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
-lda.b tcc__r0
-sta.l mario + 6
-__local_52:
-; gsym_addr t 43993 a 44328 ind 44328
-__local_51:
-; gsym_addr t 43127 a 44366 ind 44366
-__local_47:
-; gsym_addr t 41484 a 44404 ind 44404
-; gjmp_addr 0 at 44442
-jmp.w __local_53
-; gsym_addr t 44482 a 0 ind 44482
-__local_28:
-; gsym_addr t 27007 a 44516 ind 44516
+lda.l marioxv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0xf0 extra 0x0
+; ld2 #320,tcc__r1
+lda.w #320
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+__local_20:
+; gsym_addr t 28411 a 28888 ind 28888
+__local_16:
+; gsym_addr t 24776 a 28926 ind 28926
 ; load 0
 ; type 16 reg 0x3f0 extra 0x26
 ; ld2 [pad0 + 0], tcc__r0
 lda.l pad0 + 0
 sta.b tcc__r0
 ; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
 ; length xxy 2 vtop->type 0x10
 ; nop
 lda.b tcc__r0
-and.w #1024
+and.w #128
 sta.b tcc__r0
-; gtst inv 1 t 0 v 0 r 44815 ind 44815
-; gsym_addr t 0 a 44854 ind 44854
+; gtst inv 1 t 0 v 0 r 29224 ind 29224
+; gsym_addr t 0 a 29263 ind 29263
 ; tcc__r0 to compare reg
 lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 44944 ind 44944
-; cmp op 0x95 inv 1 v 243 r 44944
+; gtst inv 1 t 0 v 243 r 29353 ind 29353
+; cmp op 0x95 inv 1 v 243 r 29353
 ; cmp ne
 bne +
-; gsym_addr t 0 a 45034 ind 45034
-brl __local_54
+; gsym_addr t 0 a 29443 ind 29443
+brl __local_21
 +
-; gtst finished; t 44944
-; push4 imm r 0x12f0
-pea.w :tccs_L.11
-pea.w tccs_L.11 + 0
-; call r 0x2f0
-jsr.l consoleNocashMessage
-; add sp, #4
-tsa
+; gtst finished; t 29353
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
 clc
-adc #4
-tas
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
 lda.b tcc__r0
-sta.l mario + 6
-; gjmp_addr 0 at 45411
-jmp.w __local_55
-; gsym_addr t 45451 a 0 ind 45451
-__local_54:
-; gsym_addr t 44944 a 45485 ind 45485
-; load 0
-; type 0 reg 0x3f0 extra 0x95
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
+adc.w #38
 sta.b tcc__r0
+; load 1
+; type 16 reg 0x100 extra 0x95
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
 ; gen_opi len 2 op 0x95
-; cmpr(n)eq tcc__r0, #1
+; cmpr(n)eq tcc__r1, #0
 ldx #1
-lda.b tcc__r0
+lda.b tcc__r1
 sec
-sbc #1
+sbc #0
 tay
 bne +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 45729 ind 45729
-; gsym_addr t 0 a 45768 ind 45768
+; gtst inv 1 t 0 v 5 r 30024 ind 30024
+; gsym_addr t 0 a 30063 ind 30063
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 45858 ind 45858
-; cmp op 0x95 inv 1 v 243 r 45858
+; gtst inv 1 t 0 v 243 r 30153 ind 30153
+; cmp op 0x95 inv 1 v 243 r 30153
 ; cmp ne
 bne +
-; gsym_addr t 0 a 45948 ind 45948
-brl __local_56
+; gsym_addr t 0 a 30243 ind 30243
+brl __local_22
 +
-; gtst finished; t 45858
+; gtst finished; t 30153
 ; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #6,tcc__r0
-lda.w #6
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
 sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
 lda.b tcc__r0
-sta.l mario + 6
-__local_56:
-; gsym_addr t 45858 a 46193 ind 46193
-__local_55:
-; gsym_addr t 45451 a 46231 ind 46231
-__local_53:
-; gsym_addr t 44482 a 46269 ind 46269
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
+adc.w #46
 sta.b tcc__r0
 ; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r1
-lda.l scrX + 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #2,tcc__r1
+lda.w #2
 sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
+; store r 0x1 fr 0x100 ft 0x10 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
 lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.w #8
-sta.b tcc__r1
+sta.b [tcc__r0]
 ; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
+; type 16 reg 0x3f0 extra 0x26
+; ld2 [pad0 + 0], tcc__r0
+lda.l pad0 + 0
 sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 2 r type 0x10)
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
 ; length xxy 2 vtop->type 0x10
-clc
+; nop
 lda.b tcc__r0
-adc.w #16
+and.w #2048
+sta.b tcc__r0
+; gtst inv 1 t 0 v 0 r 31052 ind 31052
+; gsym_addr t 0 a 31091 ind 31091
+; tcc__r0 to compare reg
+lda.b tcc__r0 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 31181 ind 31181
+; cmp op 0x95 inv 1 v 243 r 31181
+; cmp ne
+bne +
+; gsym_addr t 0 a 31271 ind 31271
+brl __local_23
++
+; gtst finished; t 31181
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioyv + 0], tcc__r0
+lda.l marioyv + 0
+sta.b tcc__r0
+lda.l marioyv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0xf0 extra 0x0
+; ld2 #-1428,tcc__r1
+lda.w #64108
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+; gjmp_addr 0 at 31662
+jmp.w __local_24
+; gsym_addr t 31702 a 0 ind 31702
+__local_23:
+; gsym_addr t 31181 a 31736 ind 31736
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioyv + 0], tcc__r0
+lda.l marioyv + 0
+sta.b tcc__r0
+lda.l marioyv + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0xf0 extra 0x0
+; ld2 #-916,tcc__r1
+lda.w #64620
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+__local_24:
+; gsym_addr t 31702 a 32088 ind 32088
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l spcPlaySound
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+__local_22:
+; gsym_addr t 30153 a 32240 ind 32240
+__local_21:
+; gsym_addr t 29353 a 32278 ind 32278
+__local_10:
+; gsym_addr t 19628 a 32316 ind 32316
+; load 0
+; type 17 reg 0x1f2 extra 0x2020200a
+; ld1 [sp,3],tcc__r0
+; stack adjust: fc + disp - loc 5
+lda.w #0
+sep #$20
+lda 3 + __marioupdate_locals + 1,s
+rep #$20
 sta.b tcc__r0
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
 ; call r 0x2f0
-jsr.l getCollisionTile
-; add sp, #4
-tsa
+jsr.l objCollidMap
+; add sp, #2
+pla
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
 clc
-adc #4
-tas
-; gen_opi len 2 op 0x94
-; cmpr(n)eq tcc__r0, #0
-ldx #1
 lda.b tcc__r0
+adc.w #46
+sta.b tcc__r0
+; load 1
+; type 16 reg 0x100 extra 0x94
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r1, #1
+ldx #1
+lda.b tcc__r1
 sec
-sbc #0
+sbc #1
 tay
 beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 47633 ind 47633
-; gsym_addr t 0 a 47672 ind 47672
+; gtst inv 1 t 0 v 5 r 33178 ind 33178
+; gsym_addr t 0 a 33217 ind 33217
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 47762 ind 47762
-; cmp op 0x95 inv 1 v 243 r 47762
+; gtst inv 1 t 0 v 243 r 33307 ind 33307
+; cmp op 0x95 inv 1 v 243 r 33307
 ; cmp ne
 bne +
-; gsym_addr t 0 a 47852 ind 47852
-brl __local_57
+; gsym_addr t 0 a 33397 ind 33397
+brl __local_25
 +
-; gtst finished; t 47762
+; gtst finished; t 33307
+; ldpush before load type 0x11 reg 0x1f2
 ; load 0
-; type 0 reg 0x3f0 extra 0x0
-; ld2 [mario + 4], tcc__r0
-lda.l mario + 4
+; type 17 reg 0x1f2 extra 0x0
+; ld1 [sp,3],tcc__r0
+; stack adjust: fc + disp - loc 5
+lda.w #0
+sep #$20
+lda 3 + __marioupdate_locals + 1,s
+rep #$20
 sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 4 r type 0x0)
-; length xxy 2 vtop->type 0x0
-clc
+; ldpush1 (type 0x11 reg 0x0) tcc__r0
+sep #$20
 lda.b tcc__r0
-adc.w #48
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x4
-; st2 tcc__r0, [mario,4]
-lda.b tcc__r0
-sta.l mario + 4
-__local_57:
-; gsym_addr t 47762 a 48275 ind 48275
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [mario + 4], tcc__r1
-lda.l mario + 4
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x10 c 2 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.b tcc__r1
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x2
-; st2 tcc__r0, [mario,2]
-lda.b tcc__r0
-sta.l mario + 2
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r1
-lda.l scrX + 0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.w #8
-sta.b tcc__r1
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 2 r type 0x10)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #16
-sta.b tcc__r0
-; ldpush before load type 0x10 reg 0x0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
+pha
+rep #$20
 ; call r 0x2f0
-jsr.l getCollisionTile
-; add sp, #4
+jsr.l mariowalk
+; add sp, #1
 tsa
 clc
-adc #4
+adc #1
 tas
-; gen_opi len 2 op 0x95
-; cmpr(n)eq tcc__r0, #0
-ldx #1
+; gjmp_addr 0 at 33821
+jmp.w __local_26
+; gsym_addr t 33861 a 0 ind 33861
+__local_25:
+; gsym_addr t 33307 a 33895 ind 33895
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
+sta.b tcc__r0
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
 lda.b tcc__r0
+adc.w #46
+sta.b tcc__r0
+; load 1
+; type 16 reg 0x100 extra 0x94
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r1, #4
+ldx #1
+lda.b tcc__r1
 sec
-sbc #0
+sbc #4
 tay
-bne +
+beq +
 dex
 +
 stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 50088 ind 50088
-; gsym_addr t 0 a 50127 ind 50127
+; gtst inv 1 t 0 v 5 r 34438 ind 34438
+; gsym_addr t 0 a 34477 ind 34477
 ; tcc__r5 to compare reg
 lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 50217 ind 50217
-; cmp op 0x95 inv 1 v 243 r 50217
+; gtst inv 1 t 0 v 243 r 34567 ind 34567
+; cmp op 0x95 inv 1 v 243 r 34567
 ; cmp ne
 bne +
-; gsym_addr t 0 a 50307 ind 50307
-brl __local_58
+; gsym_addr t 0 a 34657 ind 34657
+brl __local_27
 +
-; gtst finished; t 50217
-; gtst inv 1 t 0 v 240 r 50383 ind 50383
+; gtst finished; t 34567
+; ldpush before load type 0x11 reg 0x1f2
 ; load 0
-; type 0 reg 0x3f0 extra 0x0
-; ld2 [mario + 4], tcc__r0
-lda.l mario + 4
-sta.b tcc__r0
-; gsym_addr t 0 a 50519 ind 50519
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 50609 ind 50609
-; cmp op 0x95 inv 1 v 243 r 50609
-; cmp ne
-bne +
-; gsym_addr t 0 a 50699 ind 50699
-brl __local_59
-+
-; gtst finished; t 50609
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
+; type 17 reg 0x1f2 extra 0x0
+; ld1 [sp,3],tcc__r0
+; stack adjust: fc + disp - loc 5
 lda.w #0
+sep #$20
+lda 3 + __marioupdate_locals + 1,s
+rep #$20
 sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x4
-; st2 tcc__r0, [mario,4]
+; ldpush1 (type 0x11 reg 0x0) tcc__r0
+sep #$20
 lda.b tcc__r0
-sta.l mario + 4
+pha
+rep #$20
+; call r 0x2f0
+jsr.l mariofall
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; gjmp_addr 0 at 35081
+jmp.w __local_28
+; gsym_addr t 35121 a 0 ind 35121
+__local_27:
+; gsym_addr t 34567 a 35155 ind 35155
 ; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #6,tcc__r0
-lda.w #6
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioobj + 0], tcc__r0
+lda.l marioobj + 0
 sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
+lda.l marioobj + 0 + 2
+sta.b tcc__r0h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
 lda.b tcc__r0
-sta.l mario + 6
-__local_59:
-; gsym_addr t 50609 a 51113 ind 51113
-__local_58:
-; gsym_addr t 50217 a 51151 ind 51151
-__local_61:
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
+adc.w #46
 sta.b tcc__r0
 ; load 1
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [scrX + 0], tcc__r1
-lda.l scrX + 0
+; type 16 reg 0x100 extra 0x94
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
 sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r1, #2
+ldx #1
 lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.w #8
-sta.b tcc__r1
+sec
+sbc #2
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 35698 ind 35698
+; gsym_addr t 0 a 35737 ind 35737
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 35827 ind 35827
+; cmp op 0x95 inv 1 v 243 r 35827
+; cmp ne
+bne +
+; gsym_addr t 0 a 35917 ind 35917
+brl __local_29
++
+; gtst finished; t 35827
+; ldpush before load type 0x11 reg 0x1f2
 ; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
+; type 17 reg 0x1f2 extra 0x2962202c
+; ld1 [sp,3],tcc__r0
+; stack adjust: fc + disp - loc 5
+lda.w #0
+sep #$20
+lda 3 + __marioupdate_locals + 1,s
+rep #$20
 sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
+; ldpush1 (type 0x11 reg 0x0) tcc__r0
+sep #$20
 lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 2 r type 0x10)
-; length xxy 2 vtop->type 0x10
+pha
+rep #$20
+; call r 0x2f0
+jsr.l mariojump
+; add sp, #1
+tsa
 clc
-lda.b tcc__r0
-adc.w #15
+adc #1
+tas
+__local_29:
+; gsym_addr t 35827 a 36348 ind 36348
+__local_28:
+; gsym_addr t 35121 a 36386 ind 36386
+__local_26:
+; gsym_addr t 33861 a 36424 ind 36424
+; load 0
+; type 17 reg 0x1f2 extra 0x2020200a
+; ld1 [sp,3],tcc__r0
+; stack adjust: fc + disp - loc 5
+lda.w #0
+sep #$20
+lda 3 + __marioupdate_locals + 1,s
+rep #$20
 sta.b tcc__r0
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
 ; call r 0x2f0
-jsr.l getCollisionTile
+jsr.l objUpdateXY
+; add sp, #2
+pla
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioox + 0], tcc__r0
+lda.l marioox + 0
+sta.b tcc__r0
+lda.l marioox + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op 0x9e
+; cmpcd tcc__r1, #0
+ldx #1
+lda.b tcc__r1
+sec
+sbc.w #0
+tay
+beq +++
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 37152 ind 37152
+; gsym_addr t 0 a 37191 ind 37191
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 37281 ind 37281
+; cmp op 0x95 inv 1 v 243 r 37281
+; cmp ne
+bne +
+; gsym_addr t 0 a 37371 ind 37371
+brl __local_30
++
+; gtst finished; t 37281
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioox + 0], tcc__r0
+lda.l marioox + 0
+sta.b tcc__r0
+lda.l marioox + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r1
+lda.w #0
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+__local_30:
+; gsym_addr t 37281 a 37754 ind 37754
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [mariooy + 0], tcc__r0
+lda.l mariooy + 0
+sta.b tcc__r0
+lda.l mariooy + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; gen_opi len 2 op 0x9e
+; cmpcd tcc__r1, #0
+ldx #1
+lda.b tcc__r1
+sec
+sbc.w #0
+tay
+beq +++
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 38164 ind 38164
+; gsym_addr t 0 a 38203 ind 38203
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 38293 ind 38293
+; cmp op 0x95 inv 1 v 243 r 38293
+; cmp ne
+bne +
+; gsym_addr t 0 a 38383 ind 38383
+brl __local_31
++
+; gtst finished; t 38293
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [mariooy + 0], tcc__r0
+lda.l mariooy + 0
+sta.b tcc__r0
+lda.l mariooy + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r1
+lda.w #0
+sta.b tcc__r1
+; store r 0x1 fr 0x100 ft 0x0 fc 0x0
+; st2 tcc__r1, [tcc__r0,0]
+lda.b tcc__r1
+sta.b [tcc__r0]
+__local_31:
+; gsym_addr t 38293 a 38766 ind 38766
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [marioox + 0], tcc__r0
+lda.l marioox + 0
+sta.b tcc__r0
+lda.l marioox + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 16 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; store r 0x1 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r1, [mariox,0]
+lda.b tcc__r1
+sta.l mariox + 0
+; load 0
+; type 4 reg 0x3f0 extra 0x0
+; ld4 [mariooy + 0], tcc__r0
+lda.l mariooy + 0
+sta.b tcc__r0
+lda.l mariooy + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 16 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; store r 0x1 fr 0x3f0 ft 0x10 fc 0x0
+; st2 tcc__r1, [marioy,0]
+lda.b tcc__r1
+sta.l marioy + 0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [mariox + 0], tcc__r0
+lda.l mariox + 0
+sta.b tcc__r0
+; load 1
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [x_pos + 0], tcc__r1
+lda.l x_pos + 0
+sta.b tcc__r1
+; gen_opi len 2 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x0
+; st2 tcc__r0, [oambuffer,0]
+lda.b tcc__r0
+sta.l oambuffer + 0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [marioy + 0], tcc__r0
+lda.l marioy + 0
+sta.b tcc__r0
+; load 1
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [y_pos + 0], tcc__r1
+lda.l y_pos + 0
+sta.b tcc__r1
+; gen_opi len 2 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; store r 0x0 fr 0x3f0 ft 0x0 fc 0x2
+; st2 tcc__r0, [oambuffer,2]
+lda.b tcc__r0
+sta.l oambuffer + 2
+; push2 imm r 0xf0
+pea.w 0
+; call r 0x2f0
+jsr.l oamDynamic16Draw
+; add sp, #2
+pla
+; ldpush before load type 0x10 reg 0x3f0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [marioy + 0], tcc__r0
+lda.l marioy + 0
+sta.b tcc__r0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; ldpush before load type 0x10 reg 0x3f0
+; load 0
+; type 16 reg 0x3f0 extra 0x0
+; ld2 [mariox + 0], tcc__r0
+lda.l mariox + 0
+sta.b tcc__r0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; call r 0x2f0
+jsr.l mapUpdateCamera
 ; add sp, #4
 tsa
 clc
 adc #4
 tas
-; gtst inv 1 t 0 v 0 r 52405 ind 52405
-; gsym_addr t 0 a 52444 ind 52444
-; tcc__r0 to compare reg
-lda.b tcc__r0 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 52534 ind 52534
-; cmp op 0x95 inv 1 v 243 r 52534
-; cmp ne
-bne +
-; gsym_addr t 0 a 52624 ind 52624
-brl __local_60
-+
-; gtst finished; t 52534
-; load 0
-; type 16 reg 0x3f0 extra 0x490b40
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
-sta.b tcc__r0
-; gen_opi len 2 op -
-; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 2 r type 0x10)
-; length xxy 2 vtop->type 0x10
-sec
-lda.b tcc__r0
-sbc.w #128
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x2
-; st2 tcc__r0, [mario,2]
-lda.b tcc__r0
-sta.l mario + 2
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x4
-; st2 tcc__r0, [mario,4]
-lda.b tcc__r0
-sta.l mario + 4
-; gjmp_addr 51189 at 53227
-jmp.w __local_61
-; gsym_addr t 53271 a 51189 ind 53271
-__local_60:
-; gsym_addr t 52534 a 53309 ind 53309
-; gsym_addr t 0 a 51189 ind 53347
-; gsym_addr t 0 a 53381 ind 53381
-; add sp, #__moveMario_locals
-.ifgr __moveMario_locals 0
+; gsym_addr t 0 a 40903 ind 40903
+; add sp, #__marioupdate_locals
+.ifgr __marioupdate_locals 0
 tsa
 clc
-adc #__moveMario_locals
+adc #__marioupdate_locals
 tas
 .endif
 rtl
 .ENDS
 
-.SECTION ".text_0x3" SUPERFREE
+.SECTION ".text_0x5" SUPERFREE
 
 main:
 ; sub sp,#__main_locals
@@ -2663,7 +2177,42 @@ tas
 jsr.l spcBoot
 ; call r 0x2f0
 jsr.l consoleInit
-; push4 imm r 0x52f0
+; push2 imm r 0xf0
+pea.w 24576
+; call r 0x2f0
+jsr.l consoleSetTextVramBGAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 12288
+; call r 0x2f0
+jsr.l consoleSetTextVramAdr
+; add sp, #2
+pla
+; push4 imm r 0x12f0
+pea.w :snespal
+pea.w snespal + 0
+; push4 imm r 0x12f0
+pea.w :snesfont
+pea.w snesfont + 0
+; push1 imm r 0xf0
+sep #$20
+lda #32
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l consoleInitText
+; add sp, #10
+tsa
+clc
+adc #10
+tas
+; push4 imm r 0x12f0
 pea.w :SOUNDBANK__
 pea.w SOUNDBANK__ + 0
 ; call r 0x2f0
@@ -2715,7 +2264,7 @@ sta.b tcc__r0
 ; push4 imm r 0x2f0
 pea.w :Jump
 pea.w Jump + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :jumpsnd
 pea.w jumpsnd + 0
 ; ldpush before load type 0x10 reg 0x0
@@ -2743,148 +2292,27 @@ tsa
 clc
 adc #13
 tas
-; push4 imm r 0x52f0
-pea.w :snesfont
-pea.w snesfont + 0
+; push2 imm r 0xf0
+pea.w 12288
 ; push1 imm r 0xf0
 sep #$20
 lda #1
 pha
 rep #$20
+; call r 0x2f0
+jsr.l bgSetGfxPtr
+; add sp, #3
+tsa
+clc
+adc #3
+tas
 ; push1 imm r 0xf0
 sep #$20
 lda #0
 pha
 rep #$20
-; call r 0x2f0
-jsr.l consoleInitText
-; add sp, #6
-tsa
-clc
-adc #6
-tas
-; push2 imm r 0xf0
-pea.w 32767
-; push2 imm r 0xf0
-pea.w 0
-; call r 0x2f0
-jsr.l consoleSetTextCol
-; add sp, #4
-tsa
-clc
-adc #4
-tas
-; load 0
-; type 132 reg 0x12f0 extra 0x0
-; ld4 #mapgfx_end + 0, tcc__r0 (type 0x84)
-lda.w #:mapgfx_end
-sta.b tcc__r0h
-lda.w #mapgfx_end + 0
-sta.b tcc__r0
-; load 1
-; type 132 reg 0x12f0 extra 0x0
-; ld4 #mapgfx + 0, tcc__r1 (type 0x84)
-lda.w #:mapgfx
-sta.b tcc__r1h
-lda.w #mapgfx + 0
-sta.b tcc__r1
-; gen_opi len 4 op -
-; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
-; length xxy 4 vtop->type 0x84
-sec
-lda.b tcc__r0
-sbc.b tcc__r1
-sta.b tcc__r0
 ; push2 imm r 0xf0
 pea.w 24576
-; push2 imm r 0xf0
-pea.w 16
-; push2 imm r 0xf0
-pea.w 32
-; ldpush before load type 0x10 reg 0x0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; push1 imm r 0xf0
-sep #$20
-lda #0
-pha
-rep #$20
-; push4 imm r 0x52f0
-pea.w :mappal
-pea.w mappal + 0
-; push4 imm r 0x52f0
-pea.w :mapgfx
-pea.w mapgfx + 0
-; push1 imm r 0xf0
-sep #$20
-lda #1
-pha
-rep #$20
-; call r 0x2f0
-jsr.l bgInitTileSet
-; add sp, #18
-tsa
-clc
-adc #18
-tas
-; load 0
-; type 132 reg 0x12f0 extra 0x0
-; ld4 #mariogfx_end + 0, tcc__r0 (type 0x84)
-lda.w #:mariogfx_end
-sta.b tcc__r0h
-lda.w #mariogfx_end + 0
-sta.b tcc__r0
-; load 1
-; type 132 reg 0x12f0 extra 0x0
-; ld4 #mariogfx + 0, tcc__r1 (type 0x84)
-lda.w #:mariogfx
-sta.b tcc__r1h
-lda.w #mariogfx + 0
-sta.b tcc__r1
-; gen_opi len 4 op -
-; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
-; length xxy 4 vtop->type 0x84
-sec
-lda.b tcc__r0
-sbc.b tcc__r1
-sta.b tcc__r0
-; push1 imm r 0xf0
-sep #$20
-lda #96
-pha
-rep #$20
-; push2 imm r 0xf0
-pea.w 16384
-; push1 imm r 0xf0
-sep #$20
-lda #0
-pha
-rep #$20
-; push2 imm r 0xf0
-pea.w 32
-; push4 imm r 0x52f0
-pea.w :mariopal
-pea.w mariopal + 0
-; ldpush before load type 0x10 reg 0x0
-; ldpush2 (type 0x10 reg 0x0) tcc__r0
-pei (tcc__r0)
-; push4 imm r 0x52f0
-pea.w :mariogfx
-pea.w mariogfx + 0
-; call r 0x2f0
-jsr.l oamInitGfxSet
-; add sp, #16
-tsa
-clc
-adc #16
-tas
-; push1 imm r 0xf0
-sep #$20
-lda #1
-pha
-rep #$20
-; push2 imm r 0xf0
-pea.w 4096
 ; push1 imm r 0xf0
 sep #$20
 lda #1
@@ -2898,419 +2326,77 @@ clc
 adc #4
 tas
 ; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #tilesetend + 0, tcc__r0 (type 0x84)
+lda.w #:tilesetend
+sta.b tcc__r0h
+lda.w #tilesetend + 0
 sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [i,0]
-lda.b tcc__r0
-sta.l i + 0
-__local_64:
-; load 0
-; type 16 reg 0x3f0 extra 0xe048
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x92
-; ucmpcd tcc__r0, #31
-ldx #1
-lda.b tcc__r0
-sec
-sbc.w #31
-tay
-bcc ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 57622 ind 57622
-; gsym_addr t 0 a 57661 ind 57661
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 57751 ind 57751
-; cmp op 0x95 inv 1 v 243 r 57751
-; cmp ne
-bne +
-; gsym_addr t 0 a 57841 ind 57841
-brl __local_62
-+
-; gtst finished; t 57751
-; gjmp_addr 0 at 57917
-jmp.w __local_63
-; gsym_addr t 57957 a 0 ind 57957
-__local_66:
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
-sta.b tcc__r0
-; load 1
-; type 0 reg 0x0 extra 0x0
-; mov tcc__r0, tcc__r1
-lda.b tcc__r0
-sta.b tcc__r1
-lda.b tcc__r0h
-sta.b tcc__r1h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
-; length xxy 2 vtop->type 0x10
-inc.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [i,0]
-lda.b tcc__r0
-sta.l i + 0
-; gjmp_addr 57416 at 58416
-jmp.w __local_64
-; gsym_addr t 58460 a 57416 ind 58460
-__local_63:
-; gsym_addr t 57957 a 58498 ind 58498
-; load 0
-; type 16 reg 0x3f0 extra 0x2a
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
-sta.b tcc__r0
-; gen_opi len 2 op *
-; mul #300, tcc__r0
-lda.w #300
-sta.b tcc__r9
-lda.b tcc__r0
-sta.b tcc__r10
-jsr.l tcc__mul
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #1
-asl.b tcc__r0
 ; load 1
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #map + 0, tcc__r1 (type 0x84)
-lda.w #:map
+; ld4 #tileset + 0, tcc__r1 (type 0x84)
+lda.w #:tileset
 sta.b tcc__r1h
-lda.w #map + 0
+lda.w #tileset + 0
 sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0x84 c 0 r type 0x6)
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
 ; length xxy 4 vtop->type 0x84
-clc
-lda.b tcc__r1
-adc.b tcc__r0
-sta.b tcc__r1
-; store r 0x1 fr 0x1f2 ft 0x4 fc 0xfffffffc
-; st4 tcc__r1, [sp,-4]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r1
-sta -4 + __main_locals + 1,s
-lda.b tcc__r1h
-sta -2 + __main_locals + 1,s
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0x93
-; ucmpcd tcc__r0, #16
-ldx #1
-lda.b tcc__r0
 sec
-sbc.w #16
-tay
-bcs ++
-+ dex
-++
-stx.b tcc__r5
-; gtst inv 1 t 0 v 5 r 59489 ind 59489
-; gsym_addr t 0 a 59528 ind 59528
-; tcc__r5 to compare reg
-lda.b tcc__r5 ; DON'T OPTIMIZE
-; gtst inv 1 t 0 v 243 r 59618 ind 59618
-; cmp op 0x95 inv 1 v 243 r 59618
-; cmp ne
-bne +
-; gsym_addr t 0 a 59708 ind 59708
-brl __local_65
-+
-; gtst finished; t 59618
-; load 0
-; type 4 reg 0x52f0 extra 0x0
-; ld4 #map + 3000, tcc__r0 (type 0x4)
-lda.w #:map
-sta.b tcc__r0h
-lda.w #map + 3000
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x4 fc 0xfffffffc
-; st4 tcc__r0, [sp,-4]
-; stack adjust: fc + disp - loc 2
 lda.b tcc__r0
-sta -4 + __main_locals + 1,s
-lda.b tcc__r0h
-sta -2 + __main_locals + 1,s
-__local_65:
-; gsym_addr t 59618 a 60108 ind 60108
-; load 0
-; type 16 reg 0x3f0 extra 0x2a
-; ld2 [i + 0], tcc__r0
-lda.l i + 0
+sbc.b tcc__r1
 sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #5
-lda.b tcc__r0
-ldy.w #5
--
-asl a
-dey
-bne -
-+
-sta.b tcc__r0
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x6)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r0
-adc.w #4096
-sta.b tcc__r0
-; store r 0x0 fr 0x1f2 ft 0x10 fc 0xfffffffa
-; st2 tcc__r0, [sp,-6]
-; stack adjust: fc + disp - loc 2
-lda.b tcc__r0
-sta -6 + __main_locals + 1,s
 ; push2 imm r 0xf0
-pea.w 64
-; ldpush before load type 0x10 reg 0x1f2
-; load 0
-; type 16 reg 0x1f2 extra 0x0
-; ld2 [sp,-6],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -4 + __main_locals + 1,s
-sta.b tcc__r0
+pea.w 8192
+; push2 imm r 0xf0
+pea.w 16
+; push2 imm r 0xf0
+pea.w 32
+; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; ldpush before load type 0x4 reg 0x1f2
-; load 0
-; type 4 reg 0x1f2 extra 0x0
-; ld4 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 8
-lda 0 + __main_locals + 1,s
-sta.b tcc__r0
-lda 2 + __main_locals + 1,s
-sta.b tcc__r0h
-; ldpush4 (type 0x4 reg 0x0) tcc__r0
-pei (tcc__r0h)
-pei (tcc__r0)
-; call r 0x2f0
-jsr.l dmaCopyVram
-; add sp, #8
-tsa
-clc
-adc #8
-tas
-; load 0
-; type 4 reg 0x1f2 extra 0x0
-; ld4 [sp,-4],tcc__r0
-; stack adjust: fc + disp - loc 4
-lda -4 + __main_locals + 1,s
-sta.b tcc__r0
-lda -2 + __main_locals + 1,s
-sta.b tcc__r0h
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x4 c -4 r type 0x86)
-; length xxy 4 vtop->type 0x4
-clc
-lda.b tcc__r0
-adc.w #64
-sta.b tcc__r0
-; load 1
-; type 16 reg 0x1f2 extra 0x2a
-; ld2 [sp,-6],tcc__r1
-; stack adjust: fc + disp - loc 2
-lda -6 + __main_locals + 1,s
-sta.b tcc__r1
-; gen_opi len 2 op +
-; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x10 c -6 r type 0x4)
-; length xxy 2 vtop->type 0x10
-clc
-lda.b tcc__r1
-adc.w #1024
-sta.b tcc__r1
-; push2 imm r 0xf0
-pea.w 64
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
-; ldpush before load type 0x4 reg 0x5000
-; ldpush4 (type 0x4 reg 0x0) tcc__r0
-pei (tcc__r0h)
-pei (tcc__r0)
-; call r 0x2f0
-jsr.l dmaCopyVram
-; add sp, #8
-tsa
-clc
-adc #8
-tas
-; gjmp_addr 57991 at 62187
-jmp.w __local_66
-; gsym_addr t 62231 a 57991 ind 62231
-__local_62:
-; gsym_addr t 57751 a 62269 ind 62269
-; gsym_addr t 0 a 57991 ind 62307
-; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #8192,tcc__r0
-lda.w #8192
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [mario,0]
-lda.b tcc__r0
-sta.l mario + 0
-; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #24576,tcc__r0
-lda.w #24576
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x2
-; st2 tcc__r0, [mario,2]
-lda.b tcc__r0
-sta.l mario + 2
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #6,tcc__r0
-lda.w #6
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x6
-; st2 tcc__r0, [mario,6]
-lda.b tcc__r0
-sta.l mario + 6
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #1,tcc__r0
-lda.w #1
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x8
-; st2 tcc__r0, [mario,8]
-lda.b tcc__r0
-sta.l mario + 8
-; load 0
-; type 0 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x0 fc 0x4
-; st2 tcc__r0, [mario,4]
-lda.b tcc__r0
-sta.l mario + 4
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
-; st1 tcc__r0, [oamMemory,0]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 0
-rep #$20
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x1
-; st1 tcc__r0, [oamMemory,1]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 1
-rep #$20
-; load 0
-; type 0 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #1
-asl.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x2
-; st1 tcc__r0, [oamMemory,2]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 2
-rep #$20
-; load 0
-; type 0 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 8], tcc__r0
-lda.l mario + 8
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #6
-lda.b tcc__r0
-ldy.w #6
--
-asl a
-dey
-bne -
-+
-sta.b tcc__r0
-; gen_opi len 2 op |
-; ora tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 8 r type 0x11)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-ora.w #48
-sta.b tcc__r0
-; load 1
-; type 0 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 6], tcc__r1
-lda.l mario + 6
-sta.b tcc__r1
-; gen_opi len 2 op 
-; shl tcc__r1, #1
-asl.b tcc__r1
-; gen_opi len 2 op 
-; sar tcc__r1, #8
-lda.b tcc__r1
-ldy.w #8
--
-cmp #$8000
-ror a
-dey
-bne -
-+
-sta.b tcc__r1
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x0 c 6 r type 0x0)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r1
-and.w #1
-sta.b tcc__r1
-; gen_opi len 2 op |
-; ora tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x0 c 8 r type 0x11)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-ora.b tcc__r1
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x3
-; st1 tcc__r0, [oamMemory,3]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 3
-rep #$20
 ; push1 imm r 0xf0
 sep #$20
 lda #0
 pha
 rep #$20
+; push4 imm r 0x12f0
+pea.w :tilepal
+pea.w tilepal + 0
+; push4 imm r 0x12f0
+pea.w :tileset
+pea.w tileset + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
+tas
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -3318,12 +2404,67 @@ pha
 rep #$20
 ; push2 imm r 0xf0
 pea.w 0
+; push2 imm r 0xf0
+pea.w 0
+; push2 imm r 0xf0
+pea.w 4096
+; push2 imm r 0xf0
+pea.w 0
 ; call r 0x2f0
-jsr.l oamSetEx
+jsr.l oamInitDynamicSprite
+; add sp, #9
+tsa
+clc
+adc #9
+tas
+; call r 0x2f0
+jsr.l objInitEngine
+; push4 imm r 0xf0
+pea.w 0
+pea.w 0
+; push4 imm r 0x2f0
+pea.w :marioupdate
+pea.w marioupdate + 0
+; push4 imm r 0x2f0
+pea.w :marioinit
+pea.w marioinit + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l objInitFunctions
+; add sp, #13
+tsa
+clc
+adc #13
+tas
+; push4 imm r 0x12f0
+pea.w :objmario
+pea.w objmario + 0
+; call r 0x2f0
+jsr.l objLoadObjects
 ; add sp, #4
 tsa
 clc
 adc #4
+tas
+; push4 imm r 0x12f0
+pea.w :tilesetatt
+pea.w tilesetatt + 0
+; push4 imm r 0x12f0
+pea.w :tilesetdef
+pea.w tilesetdef + 0
+; push4 imm r 0x12f0
+pea.w :mapmario
+pea.w mapmario + 0
+; call r 0x2f0
+jsr.l mapLoad
+; add sp, #12
+tsa
+clc
+adc #12
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -3351,9 +2492,9 @@ tsa
 clc
 adc #1
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.12
-pea.w tccs_L.12 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfileyPyexc10
+pea.w tccs_L.tmpxfileyPyexc10 + 0
 ; push2 imm r 0xf0
 pea.w 16
 ; push2 imm r 0xf0
@@ -3365,9 +2506,9 @@ tsa
 clc
 adc #8
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.13
-pea.w tccs_L.13 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfileyPyexc11
+pea.w tccs_L.tmpxfileyPyexc11 + 0
 ; push2 imm r 0xf0
 pea.w 17
 ; push2 imm r 0xf0
@@ -3407,167 +2548,39 @@ adc #1
 tas
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [scrX,0]
-lda.b tcc__r0
-sta.l scrX + 0
-__local_67:
-; gtst inv 1 t 0 v 240 r 66436 ind 66436
+__local_32:
+; gtst inv 1 t 0 v 240 r 46214 ind 46214
 ; uncond jump: nop
 ; gtst finished; t 0
-; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #0,tcc__r0
-lda.w #0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [move,0]
-lda.b tcc__r0
-sta.l move + 0
-; load 0
-; type 16 reg 0x3f0 extra 0x0
-; ld2 [pad_keys + 0], tcc__r0
-lda.l pad_keys + 0
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [pad0,0]
-lda.b tcc__r0
-sta.l pad0 + 0
 ; call r 0x2f0
-jsr.l moveMario
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 0], tcc__r0
-lda.l mario + 0
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
-; st1 tcc__r0, [oamMemory,0]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 0
-rep #$20
-; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 2], tcc__r0
-lda.l mario + 2
-sta.b tcc__r0
-; gen_opi len 2 op 0xcd
-; shr tcc__r0, #8
-lda.b tcc__r0
-xba
-and #$00ff
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x1
-; st1 tcc__r0, [oamMemory,1]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 1
-rep #$20
-; load 0
-; type 0 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 6], tcc__r0
-lda.l mario + 6
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #1
-asl.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x2
-; st1 tcc__r0, [oamMemory,2]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 2
-rep #$20
-; load 0
-; type 0 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 8], tcc__r0
-lda.l mario + 8
-sta.b tcc__r0
-; gen_opi len 2 op 
-; shl tcc__r0, #6
-lda.b tcc__r0
-ldy.w #6
--
-asl a
-dey
-bne -
-+
-sta.b tcc__r0
-; gen_opi len 2 op |
-; ora tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 8 r type 0x11)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-ora.w #48
-sta.b tcc__r0
-; load 1
-; type 0 reg 0x3f0 extra 0xffffffff
-; ld2 [mario + 6], tcc__r1
-lda.l mario + 6
-sta.b tcc__r1
-; gen_opi len 2 op 
-; shl tcc__r1, #1
-asl.b tcc__r1
-; gen_opi len 2 op 
-; sar tcc__r1, #8
-lda.b tcc__r1
-ldy.w #8
--
-cmp #$8000
-ror a
-dey
-bne -
-+
-sta.b tcc__r1
-; gen_opi len 2 op &
-; and tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x0 c 6 r type 0x0)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r1
-and.w #1
-sta.b tcc__r1
-; gen_opi len 2 op |
-; ora tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x0 c 8 r type 0x11)
-; length xxy 2 vtop->type 0x0
-; nop
-lda.b tcc__r0
-ora.b tcc__r1
-sta.b tcc__r0
-; store r 0x0 fr 0x53f0 ft 0x11 fc 0x3
-; st1 tcc__r0, [oamMemory,3]
-sep #$20
-lda.b tcc__r0
-sta.l oamMemory + 3
-rep #$20
+jsr.l mapUpdate
+; call r 0x2f0
+jsr.l objUpdateAll
+; call r 0x2f0
+jsr.l oamInitDynamicSpriteEndFrame
 ; call r 0x2f0
 jsr.l spcProcess
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 66436 at 68936
-jmp.w __local_67
-; gsym_addr t 68980 a 66436 ind 68980
-; gsym_addr t 0 a 69018 ind 69018
-; gsym_addr t 0 a 66436 ind 69052
+; call r 0x2f0
+jsr.l mapVblank
+; call r 0x2f0
+jsr.l oamVramQueueUpdate
+; gjmp_addr 46214 at 46548
+jmp.w __local_32
+; gsym_addr t 46592 a 46214 ind 46592
+; gsym_addr t 0 a 46630 ind 46630
+; gsym_addr t 0 a 46214 ind 46664
 ; load 0
-; type 0 reg 0xf0 extra 0x0
+; type 0 reg 0xf0 extra 0x73726576
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 69163
-jmp.w __local_68
-; gsym_addr t 69203 a 0 ind 69203
-__local_68:
-; gsym_addr t 69203 a 69237 ind 69237
+; gjmp_addr 0 at 46782
+jmp.w __local_33
+; gsym_addr t 46822 a 0 ind 46822
+__local_33:
+; gsym_addr t 46822 a 46856 ind 46856
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -3577,30 +2590,34 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
-__local_dummy.data dsb 1
+.RAMSECTION "ramtmpxfileyPyexc.data" APPENDTO "globram.data"
+__local_dummytmpxfileyPyexc.data dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfileyPyexc.data" APPENDTO "glob.data"
 
-__local_dummy.data: .db 0
+__local_dummytmpxfileyPyexc.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-tccs_L.9: .db $52,$49,$47,$48,$54,$0
-tccs_L.10: .db $4c,$45,$46,$54,$0
-tccs_L.11: .db $44,$4f,$57,$4e,$0
-tccs_L.12: .db $4d,$41,$52,$49,$4f,$78,$30,$30,$20,$20,$57,$4f,$52,$4c,$44,$20,$54,$49,$4d,$45,$0
-tccs_L.13: .db $20,$30,$30,$30,$30,$30,$20,$6f,$78,$30,$30,$20,$31,$2d,$31,$20,$20,$30,$30,$30,$0
+tccs_L.tmpxfileyPyexc9: .db $6d,$61,$72,$69,$6f,$69,$6e,$69,$74,$20,$25,$64,$20,$25,$64,$a,$0
+tccs_L.tmpxfileyPyexc10: .db $4d,$41,$52,$49,$4f,$78,$30,$30,$20,$20,$57,$4f,$52,$4c,$44,$20,$54,$49,$4d,$45,$0
+tccs_L.tmpxfileyPyexc11: .db $20,$30,$30,$30,$30,$30,$20,$6f,$78,$30,$30,$20,$31,$2d,$31,$20,$20,$30,$30,$30,$0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2
-scrX dsb 2
-mario dsb 10
 Jump dsb 8
 pad0 dsb 2
-move dsb 2
-i dsb 2
+marioobj dsb 4
+marioox dsb 4
+mariooy dsb 4
+marioxv dsb 4
+marioyv dsb 4
+mariox dsb 2
+marioy dsb 2
+mariofidx dsb 1
+marioflp dsb 1
+flip dsb 1
 .ENDS

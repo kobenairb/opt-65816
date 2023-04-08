@@ -18,17 +18,17 @@ tas
 jsr.l consoleInit
 ; load 0
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #patterns_end + 0, tcc__r0 (type 0x84)
-lda.w #:patterns_end
+; ld4 #palette_end + 0, tcc__r0 (type 0x84)
+lda.w #:palette_end
 sta.b tcc__r0h
-lda.w #patterns_end + 0
+lda.w #palette_end + 0
 sta.b tcc__r0
 ; load 1
 ; type 132 reg 0x12f0 extra 0x0
-; ld4 #patterns + 0, tcc__r1 (type 0x84)
-lda.w #:patterns
+; ld4 #palette + 0, tcc__r1 (type 0x84)
+lda.w #:palette
 sta.b tcc__r1h
-lda.w #patterns + 0
+lda.w #palette + 0
 sta.b tcc__r1
 ; gen_opi len 4 op -
 ; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
@@ -37,34 +37,10 @@ sec
 lda.b tcc__r0
 sbc.b tcc__r1
 sta.b tcc__r0
-; load 1
-; type 132 reg 0x12f0 extra 0x0
-; ld4 #palette_end + 0, tcc__r1 (type 0x84)
-lda.w #:palette_end
-sta.b tcc__r1h
-lda.w #palette_end + 0
-sta.b tcc__r1
-; load 2
-; type 132 reg 0x12f0 extra 0x0
-; ld4 #palette + 0, tcc__r2 (type 0x84)
-lda.w #:palette
-sta.b tcc__r2h
-lda.w #palette + 0
-sta.b tcc__r2
-; gen_opi len 4 op -
-; sbc tcc__r2 (0x2), tcc__r1 (0x1) (fr type 0x84 c 0 r type 0x10)
-; length xxy 4 vtop->type 0x84
-sec
-lda.b tcc__r1
-sbc.b tcc__r2
-sta.b tcc__r1
 ; push2 imm r 0xf0
 pea.w 16384
 ; push2 imm r 0xf0
 pea.w 16
-; ldpush before load type 0x10 reg 0x1
-; ldpush2 (type 0x10 reg 0x1) tcc__r1
-pei (tcc__r1)
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
@@ -85,11 +61,11 @@ lda #0
 pha
 rep #$20
 ; call r 0x2f0
-jsr.l bgInitTileSet
-; add sp, #18
+jsr.l bgInitTileSetLz
+; add sp, #16
 tsa
 clc
-adc #18
+adc #16
 tas
 ; load 0
 ; type 132 reg 0x12f0 extra 0x0
@@ -178,26 +154,26 @@ tas
 ; call r 0x2f0
 jsr.l setScreenOn
 __local_0:
-; gtst inv 1 t 0 v 240 r 2782 ind 2782
+; gtst inv 1 t 0 v 240 r 2221 ind 2221
 ; uncond jump: nop
 ; gtst finished; t 0
 ; call r 0x2f0
 jsr.l WaitForVBlank
-; gjmp_addr 2782 at 2896
+; gjmp_addr 2221 at 2335
 jmp.w __local_0
-; gsym_addr t 2937 a 2782 ind 2937
-; gsym_addr t 0 a 2972 ind 2972
-; gsym_addr t 0 a 2782 ind 3004
+; gsym_addr t 2376 a 2221 ind 2376
+; gsym_addr t 0 a 2411 ind 2411
+; gsym_addr t 0 a 2221 ind 2443
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 3113
+; gjmp_addr 0 at 2552
 jmp.w __local_1
-; gsym_addr t 3151 a 0 ind 3151
+; gsym_addr t 2590 a 0 ind 2590
 __local_1:
-; gsym_addr t 3151 a 3183 ind 3183
+; gsym_addr t 2590 a 2622 ind 2622
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -207,19 +183,19 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ramtmpxfilej0m9i7.data" APPENDTO "globram.data"
-__local_dummytmpxfilej0m9i7.data dsb 1
+.RAMSECTION "ramtmpxfilexDlfSW.data" APPENDTO "globram.data"
+__local_dummytmpxfilexDlfSW.data dsb 1
 
 .ENDS
 
-.SECTION "tmpxfilej0m9i7.data" APPENDTO "glob.data"
+.SECTION "tmpxfilexDlfSW.data" APPENDTO "glob.data"
 
-__local_dummytmpxfilej0m9i7.data: .db 0
+__local_dummytmpxfilexDlfSW.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummytmpxfilej0m9i7.rodata: .db 0
+__local_dummytmpxfilexDlfSW.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

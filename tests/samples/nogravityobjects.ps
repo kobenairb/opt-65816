@@ -52,8 +52,8 @@ lda #0
 pha
 rep #$20
 ; push4 imm r 0x12f0
-pea.w :tilesetpal
-pea.w tilesetpal + 0
+pea.w :tilepal
+pea.w tilepal + 0
 ; push4 imm r 0x12f0
 pea.w :tileset
 pea.w tileset + 0
@@ -87,6 +87,20 @@ jsr.l bgSetMapPtr
 tsa
 clc
 adc #4
+tas
+; push2 imm r 0xf0
+pea.w 32
+; push2 imm r 0xf0
+pea.w 128
+; push4 imm r 0x12f0
+pea.w :pallink
+pea.w pallink + 0
+; call r 0x2f0
+jsr.l dmaCopyCGram
+; add sp, #8
+tsa
+clc
+adc #8
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -126,20 +140,6 @@ tsa
 clc
 adc #1
 tas
-; push2 imm r 0xf0
-pea.w 32
-; push2 imm r 0xf0
-pea.w 128
-; push4 imm r 0x12f0
-pea.w :palsprite
-pea.w palsprite + 0
-; call r 0x2f0
-jsr.l dmaCopyCGram
-; add sp, #8
-tsa
-clc
-adc #8
-tas
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -162,24 +162,15 @@ adc #9
 tas
 ; call r 0x2f0
 jsr.l objInitEngine
-; load 0
-; type 16 reg 0xf0 extra 0x0
-; ld2 #1,tcc__r0
-lda.w #1
-sta.b tcc__r0
-; store r 0x0 fr 0x3f0 ft 0x10 fc 0x0
-; st2 tcc__r0, [nbobjects,0]
-lda.b tcc__r0
-sta.l nbobjects + 0
 ; push4 imm r 0xf0
 pea.w 0
 pea.w 0
 ; push4 imm r 0x2f0
-pea.w :marioupdate
-pea.w marioupdate + 0
+pea.w :linkupdate
+pea.w linkupdate + 0
 ; push4 imm r 0x2f0
-pea.w :marioinit
-pea.w marioinit + 0
+pea.w :linkinit
+pea.w linkinit + 0
 ; push1 imm r 0xf0
 sep #$20
 lda #0
@@ -192,51 +183,9 @@ tsa
 clc
 adc #13
 tas
-; push4 imm r 0xf0
-pea.w 0
-pea.w 0
-; push4 imm r 0x2f0
-pea.w :goombaupdate
-pea.w goombaupdate + 0
-; push4 imm r 0x2f0
-pea.w :goombainit
-pea.w goombainit + 0
-; push1 imm r 0xf0
-sep #$20
-lda #1
-pha
-rep #$20
-; call r 0x2f0
-jsr.l objInitFunctions
-; add sp, #13
-tsa
-clc
-adc #13
-tas
-; push4 imm r 0xf0
-pea.w 0
-pea.w 0
-; push4 imm r 0x2f0
-pea.w :koopatroopaupdate
-pea.w koopatroopaupdate + 0
-; push4 imm r 0x2f0
-pea.w :koopatroopainit
-pea.w koopatroopainit + 0
-; push1 imm r 0xf0
-sep #$20
-lda #2
-pha
-rep #$20
-; call r 0x2f0
-jsr.l objInitFunctions
-; add sp, #13
-tsa
-clc
-adc #13
-tas
 ; push4 imm r 0x12f0
-pea.w :objmario
-pea.w objmario + 0
+pea.w :objzelda
+pea.w objzelda + 0
 ; call r 0x2f0
 jsr.l objLoadObjects
 ; add sp, #4
@@ -251,8 +200,8 @@ pea.w tilesetatt + 0
 pea.w :tilesetdef
 pea.w tilesetdef + 0
 ; push4 imm r 0x12f0
-pea.w :mapmario
-pea.w mapmario + 0
+pea.w :mapzelda
+pea.w mapzelda + 0
 ; call r 0x2f0
 jsr.l mapLoad
 ; add sp, #12
@@ -263,9 +212,46 @@ tas
 ; call r 0x2f0
 jsr.l setScreenOn
 __local_0:
-; gtst inv 1 t 0 v 240 r 3508 ind 3508
+; gtst inv 1 t 0 v 240 r 2741 ind 2741
 ; uncond jump: nop
 ; gtst finished; t 0
+; load 0
+; type 132 reg 0x3f0 extra 0x0
+; ld4 [linkox + 0], tcc__r0
+lda.l linkox + 0
+sta.b tcc__r0
+lda.l linkox + 0 + 2
+sta.b tcc__r0h
+; load 1
+; type 132 reg 0x3f0 extra 0x0
+; ld4 [linkoy + 0], tcc__r1
+lda.l linkoy + 0
+sta.b tcc__r1
+lda.l linkoy + 0 + 2
+sta.b tcc__r1h
+; ldpush before load type 0x10 reg 0x101
+; load 2
+; type 16 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r2
+lda.b [tcc__r1]
+sta.b tcc__r2
+; ldpush2 (type 0x10 reg 0x2) tcc__r2
+pei (tcc__r2)
+; ldpush before load type 0x10 reg 0x100
+; load 1
+; type 16 reg 0x100 extra 0x0
+; ld2 [tcc__r0,0],tcc__r1
+lda.b [tcc__r0]
+sta.b tcc__r1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; call r 0x2f0
+jsr.l mapUpdateCamera
+; add sp, #4
+tsa
+clc
+adc #4
+tas
 ; call r 0x2f0
 jsr.l mapUpdate
 ; call r 0x2f0
@@ -278,21 +264,21 @@ jsr.l WaitForVBlank
 jsr.l mapVblank
 ; call r 0x2f0
 jsr.l oamVramQueueUpdate
-; gjmp_addr 3508 at 3808
+; gjmp_addr 2741 at 3756
 jmp.w __local_0
-; gsym_addr t 3849 a 3508 ind 3849
-; gsym_addr t 0 a 3884 ind 3884
-; gsym_addr t 0 a 3508 ind 3916
+; gsym_addr t 3797 a 2741 ind 3797
+; gsym_addr t 0 a 3832 ind 3832
+; gsym_addr t 0 a 2741 ind 3864
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 4025
+; gjmp_addr 0 at 3973
 jmp.w __local_1
-; gsym_addr t 4063 a 0 ind 4063
+; gsym_addr t 4011 a 0 ind 4011
 __local_1:
-; gsym_addr t 4063 a 4095 ind 4095
+; gsym_addr t 4011 a 4043 ind 4043
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -302,21 +288,21 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ramtmpxfileEZMQuv.data" APPENDTO "globram.data"
-__local_dummytmpxfileEZMQuv.data dsb 1
+.RAMSECTION "ramtmpxfilelPAIV8.data" APPENDTO "globram.data"
+__local_dummytmpxfilelPAIV8.data dsb 1
 
 .ENDS
 
-.SECTION "tmpxfileEZMQuv.data" APPENDTO "glob.data"
+.SECTION "tmpxfilelPAIV8.data" APPENDTO "glob.data"
 
-__local_dummytmpxfileEZMQuv.data: .db 0
+__local_dummytmpxfilelPAIV8.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummytmpxfileEZMQuv.rodata: .db 0
+__local_dummytmpxfilelPAIV8.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2
-nbobjects dsb 2
+sprnum dsb 2
 .ENDS

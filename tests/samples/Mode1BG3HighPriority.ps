@@ -108,10 +108,10 @@ sep #$20
 lda #2
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG1_pal
 pea.w BG1_pal + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG1_tiles
 pea.w BG1_tiles + 0
 ; push1 imm r 0xf0
@@ -161,10 +161,10 @@ sep #$20
 lda #4
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG2_pal
 pea.w BG2_pal + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG2_tiles
 pea.w BG2_tiles + 0
 ; push1 imm r 0xf0
@@ -214,10 +214,10 @@ sep #$20
 lda #0
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG3_pal
 pea.w BG3_pal + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG3_tiles
 pea.w BG3_tiles + 0
 ; push1 imm r 0xf0
@@ -238,7 +238,7 @@ jsr.l WaitForVBlank
 pea.w 2048
 ; push2 imm r 0xf0
 pea.w 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG1_map
 pea.w BG1_map + 0
 ; call r 0x2f0
@@ -252,7 +252,7 @@ tas
 pea.w 2048
 ; push2 imm r 0xf0
 pea.w 1024
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG2_map
 pea.w BG2_map + 0
 ; call r 0x2f0
@@ -266,7 +266,7 @@ tas
 pea.w 2048
 ; push2 imm r 0xf0
 pea.w 2048
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :BG3_map
 pea.w BG3_map + 0
 ; call r 0x2f0
@@ -334,19 +334,19 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
-__local_dummy.data dsb 1
+.RAMSECTION "ramtmpxfile76937R.data" APPENDTO "globram.data"
+__local_dummytmpxfile76937R.data dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfile76937R.data" APPENDTO "glob.data"
 
-__local_dummy.data: .db 0
+__local_dummytmpxfile76937R.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummy.rodata: .db 0
+__local_dummytmpxfile76937R.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

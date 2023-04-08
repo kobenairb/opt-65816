@@ -29,10 +29,10 @@ sep #$20
 lda #0
 pha
 rep #$20
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :palette
 pea.w palette + 0
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :patterns
 pea.w patterns + 0
 ; push1 imm r 0xf0
@@ -75,7 +75,7 @@ sta.b tcc__r0
 pei (tcc__r0)
 ; push2 imm r 0xf0
 pea.w 16384
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :patterns1
 pea.w patterns1 + 0
 ; call r 0x2f0
@@ -116,7 +116,7 @@ rep #$20
 ; ldpush before load type 0x10 reg 0x0
 ; ldpush2 (type 0x10 reg 0x0) tcc__r0
 pei (tcc__r0)
-; push4 imm r 0x52f0
+; push4 imm r 0x12f0
 pea.w :map
 pea.w map + 0
 ; push1 imm r 0xf0
@@ -189,19 +189,19 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
-__local_dummy.data dsb 1
+.RAMSECTION "ramtmpxfile1On75E.data" APPENDTO "globram.data"
+__local_dummytmpxfile1On75E.data dsb 1
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfile1On75E.data" APPENDTO "glob.data"
 
-__local_dummy.data: .db 0
+__local_dummytmpxfile1On75E.data: .db 0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-__local_dummy.rodata: .db 0
+__local_dummytmpxfile1On75E.rodata: .db 0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2

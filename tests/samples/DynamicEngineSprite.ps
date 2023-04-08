@@ -1,0 +1,1859 @@
+.include "hdr.asm"
+.accu 16
+.index 16
+.16bit
+.define __main_locals 8
+
+.SECTION ".text_0x0" SUPERFREE
+
+main:
+; sub sp,#__main_locals
+.ifgr __main_locals 0
+tsa
+sec
+sbc #__main_locals
+tas
+.endif
+; call r 0x2f0
+jsr.l consoleInit
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns_end + 0, tcc__r0 (type 0x84)
+lda.w #:patterns_end
+sta.b tcc__r0h
+lda.w #patterns_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #patterns + 0, tcc__r1 (type 0x84)
+lda.w #:patterns
+sta.b tcc__r1h
+lda.w #patterns + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x11)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #palette_end + 0, tcc__r1 (type 0x84)
+lda.w #:palette_end
+sta.b tcc__r1h
+lda.w #palette_end + 0
+sta.b tcc__r1
+; load 2
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #palette + 0, tcc__r2 (type 0x84)
+lda.w #:palette
+sta.b tcc__r2h
+lda.w #palette + 0
+sta.b tcc__r2
+; gen_opi len 4 op -
+; sbc tcc__r2 (0x2), tcc__r1 (0x1) (fr type 0x84 c 0 r type 0x10)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r1
+sbc.b tcc__r2
+sta.b tcc__r1
+; push2 imm r 0xf0
+pea.w 16384
+; push2 imm r 0xf0
+pea.w 16
+; ldpush before load type 0x10 reg 0x1
+; ldpush2 (type 0x10 reg 0x1) tcc__r1
+pei (tcc__r1)
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push4 imm r 0x12f0
+pea.w :palette
+pea.w palette + 0
+; push4 imm r 0x12f0
+pea.w :patterns
+pea.w patterns + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitTileSet
+; add sp, #18
+tsa
+clc
+adc #18
+tas
+; load 0
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #map_end + 0, tcc__r0 (type 0x84)
+lda.w #:map_end
+sta.b tcc__r0h
+lda.w #map_end + 0
+sta.b tcc__r0
+; load 1
+; type 132 reg 0x12f0 extra 0x0
+; ld4 #map + 0, tcc__r1 (type 0x84)
+lda.w #:map
+sta.b tcc__r1h
+lda.w #map + 0
+sta.b tcc__r1
+; gen_opi len 4 op -
+; sbc tcc__r1 (0x1), tcc__r0 (0x0) (fr type 0x84 c 0 r type 0x4)
+; length xxy 4 vtop->type 0x84
+sec
+lda.b tcc__r0
+sbc.b tcc__r1
+sta.b tcc__r0
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; push4 imm r 0x12f0
+pea.w :map
+pea.w map + 0
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgInitMapSet
+; add sp, #10
+tsa
+clc
+adc #10
+tas
+; push2 imm r 0xf0
+pea.w 32
+; push2 imm r 0xf0
+pea.w 128
+; push4 imm r 0x12f0
+pea.w :spr16p
+pea.w spr16p + 0
+; call r 0x2f0
+jsr.l dmaCopyCGram
+; add sp, #8
+tsa
+clc
+adc #8
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l setMode
+; add sp, #2
+pla
+; push1 imm r 0xf0
+sep #$20
+lda #1
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #2
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetDisable
+; add sp, #1
+tsa
+clc
+adc #1
+tas
+; call r 0x2f0
+jsr.l setScreenOn
+; push1 imm r 0xf0
+sep #$20
+lda #96
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 0
+; push2 imm r 0xf0
+pea.w 0
+; push2 imm r 0xf0
+pea.w 4096
+; push2 imm r 0xf0
+pea.w 0
+; call r 0x2f0
+jsr.l oamInitDynamicSprite
+; add sp, #9
+tsa
+clc
+adc #9
+tas
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [i,0]
+sep #$20
+lda.b tcc__r0
+sta.l i + 0
+rep #$20
+__local_2:
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #64
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #64
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 3629 ind 3629
+; gsym_addr t 0 a 3666 ind 3666
+; ERROR no jump found to patch
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 3785 ind 3785
+; cmp op 0x95 inv 1 v 243 r 3785
+; cmp ne
+bne +
+; gsym_addr t 0 a 3872 ind 3872
+; ERROR no jump found to patch
+brl __local_0
++
+; gtst finished; t 3785
+; gjmp_addr 0 at 3975
+jmp.w __local_1
+; gsym_addr t 4013 a 0 ind 4013
+__local_5:
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0xffffffff
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
+inc.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [i,0]
+sep #$20
+lda.b tcc__r0
+sta.l i + 0
+rep #$20
+; gjmp_addr 3377 at 4522
+jmp.w __local_2
+; gsym_addr t 4563 a 3377 ind 4563
+__local_1:
+; gsym_addr t 4013 a 4598 ind 4598
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; saveregging
+; store r 0x1 fr 0x1f2 ft 0x4 fc 0xfffffffc
+; st4 tcc__r1, [sp,-4]
+; stack adjust: fc + disp - loc 2
+lda.b tcc__r1
+sta -4 + __main_locals + 1,s
+lda.b tcc__r1h
+sta -2 + __main_locals + 1,s
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op 0xb1
+; div #240, tcc__r0
+ldx.b tcc__r0
+lda.w #240
+jsr.l tcc__udiv
+stx.b tcc__r0
+; load 1
+; type 4 reg 0x1f2 extra 0x0
+; ld4 [sp,-4],tcc__r1
+; stack adjust: fc + disp - loc 2
+lda -4 + __main_locals + 1,s
+sta.b tcc__r1
+lda -2 + __main_locals + 1,s
+sta.b tcc__r1h
+; store r 0x0 fr 0x101 ft 0x0 fc 0xfffffffc
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+inc.b tcc__r1
+inc.b tcc__r1
+; saveregging
+; store r 0x1 fr 0x1f2 ft 0x4 fc 0xfffffff8
+; st4 tcc__r1, [sp,-8]
+; stack adjust: fc + disp - loc 2
+lda.b tcc__r1
+sta -8 + __main_locals + 1,s
+lda.b tcc__r1h
+sta -6 + __main_locals + 1,s
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op 0xb1
+; div #208, tcc__r0
+ldx.b tcc__r0
+lda.w #208
+jsr.l tcc__udiv
+stx.b tcc__r0
+; load 1
+; type 4 reg 0x1f2 extra 0x0
+; ld4 [sp,-8],tcc__r1
+; stack adjust: fc + disp - loc 2
+lda -8 + __main_locals + 1,s
+sta.b tcc__r1
+lda -6 + __main_locals + 1,s
+sta.b tcc__r1h
+; store r 0x0 fr 0x101 ft 0x0 fc 0xfffffff8
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #4
+sta.b tcc__r1
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op %
+; div #24, tcc__r0
+ldx.b tcc__r0
+lda.w #24
+jsr.l tcc__div
+stx.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x10 fc 0x0
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #7
+sta.b tcc__r1
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x5101 ft 0x11 fc 0x0
+; st1 tcc__r0, [tcc__r1,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r1]
+rep #$20
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #8
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #8
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 9353 ind 9353
+; gsym_addr t 0 a 9390 ind 9390
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 9478 ind 9478
+; cmp op 0x95 inv 1 v 243 r 9478
+; cmp ne
+bne +
+; gsym_addr t 0 a 9565 ind 9565
+brl __local_3
++
+; gtst finished; t 9478
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #6
+sta.b tcc__r1
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #32,tcc__r0
+lda.w #32
+sta.b tcc__r0
+; store r 0x0 fr 0x5101 ft 0x11 fc 0x0
+; st1 tcc__r0, [tcc__r1,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r1]
+rep #$20
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #8
+sta.b tcc__r1
+; load 0
+; type 4 reg 0x12f0 extra 0x0
+; ld4 #spr32g + 0, tcc__r0 (type 0x4)
+lda.w #:spr32g
+sta.b tcc__r0h
+lda.w #spr32g + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x4 fc 0x0
+; st4 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+ldy #0
+sta.b [tcc__r1],y
+lda.b tcc__r0h
+iny
+iny
+sta.b [tcc__r1],y
+; gjmp_addr 0 at 11578
+jmp.w __local_4
+; gsym_addr t 11617 a 0 ind 11617
+__local_3:
+; gsym_addr t 9478 a 11651 ind 11651
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #6
+sta.b tcc__r1
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #33,tcc__r0
+lda.w #33
+sta.b tcc__r0
+; store r 0x0 fr 0x5101 ft 0x11 fc 0x0
+; st1 tcc__r0, [tcc__r1,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r1]
+rep #$20
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #8
+sta.b tcc__r1
+; load 0
+; type 4 reg 0x12f0 extra 0x0
+; ld4 #spr16g + 0, tcc__r0 (type 0x4)
+lda.w #:spr16g
+sta.b tcc__r0h
+lda.w #spr16g + 0
+sta.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x4 fc 0x0
+; st4 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+ldy #0
+sta.b [tcc__r1],y
+lda.b tcc__r0h
+iny
+iny
+sta.b [tcc__r1],y
+__local_4:
+; gsym_addr t 11617 a 13629 ind 13629
+; gjmp_addr 4045 at 13667
+jmp.w __local_5
+; gsym_addr t 13709 a 4045 ind 13709
+__local_0:
+; gsym_addr t 3785 a 13746 ind 13746
+; gsym_addr t 0 a 4045 ind 13783
+__local_25:
+; gtst inv 1 t 0 v 240 r 13816 ind 13816
+; uncond jump: nop
+; gtst finished; t 0
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [i,0]
+sep #$20
+lda.b tcc__r0
+sta.l i + 0
+rep #$20
+__local_8:
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #64
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #64
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 14331 ind 14331
+; gsym_addr t 0 a 14370 ind 14370
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 14460 ind 14460
+; cmp op 0x95 inv 1 v 243 r 14460
+; cmp ne
+bne +
+; gsym_addr t 0 a 14550 ind 14550
+brl __local_6
++
+; gtst finished; t 14460
+; gjmp_addr 0 at 14625
+jmp.w __local_7
+; gsym_addr t 14664 a 0 ind 14664
+__local_24:
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; load 1
+; type 0 reg 0x0 extra 0xffffffff
+; mov tcc__r0, tcc__r1
+lda.b tcc__r0
+sta.b tcc__r1
+lda.b tcc__r0h
+sta.b tcc__r1h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x11)
+; length xxy 2 vtop->type 0x0
+inc.b tcc__r0
+; store r 0x0 fr 0x53f0 ft 0x11 fc 0x0
+; st1 tcc__r0, [i,0]
+sep #$20
+lda.b tcc__r0
+sta.l i + 0
+rep #$20
+; gjmp_addr 14079 at 15175
+jmp.w __local_8
+; gsym_addr t 15218 a 14079 ind 15218
+__local_7:
+; gsym_addr t 14664 a 15256 ind 15256
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #7
+sta.b tcc__r0
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #7
+ldx #1
+lda.b tcc__r0
+sec
+sbc #7
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 15593 ind 15593
+; gsym_addr t 0 a 15632 ind 15632
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 15722 ind 15722
+; cmp op 0x95 inv 1 v 243 r 15722
+; cmp ne
+bne +
+; gsym_addr t 0 a 15812 ind 15812
+brl __local_9
++
+; gtst finished; t 15722
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #240
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #240
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 16692 ind 16692
+; gsym_addr t 0 a 16731 ind 16731
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 16821 ind 16821
+; cmp op 0x95 inv 1 v 243 r 16821
+; cmp ne
+bne +
+; gsym_addr t 0 a 16911 ind 16911
+brl __local_10
++
+; gtst finished; t 16821
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+inc.b tcc__r0
+inc.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x0 fc 0x0
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+__local_10:
+; gsym_addr t 16821 a 17894 ind 17894
+; gjmp_addr 0 at 17932
+jmp.w __local_11
+; gsym_addr t 17972 a 0 ind 17972
+__local_9:
+; gsym_addr t 15722 a 18006 ind 18006
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #5
+sta.b tcc__r0
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #5
+ldx #1
+lda.b tcc__r0
+sec
+sbc #5
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 18343 ind 18343
+; gsym_addr t 0 a 18382 ind 18382
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 18472 ind 18472
+; cmp op 0x95 inv 1 v 243 r 18472
+; cmp ne
+bne +
+; gsym_addr t 0 a 18562 ind 18562
+brl __local_12
++
+; gtst finished; t 18472
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op 0x9f
+; cmpcd tcc__r0, #0
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #0
+tay
+beq ++
+bvc +
+eor #$8000
++
+bpl +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 19446 ind 19446
+; gsym_addr t 0 a 19485 ind 19485
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 19575 ind 19575
+; cmp op 0x95 inv 1 v 243 r 19575
+; cmp ne
+bne +
+; gsym_addr t 0 a 19665 ind 19665
+brl __local_13
++
+; gtst finished; t 19575
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op -
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+dec.b tcc__r0
+dec.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x0 fc 0x0
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+__local_13:
+; gsym_addr t 19575 a 20648 ind 20648
+; gjmp_addr 0 at 20686
+jmp.w __local_14
+; gsym_addr t 20726 a 0 ind 20726
+__local_12:
+; gsym_addr t 18472 a 20760 ind 20760
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #8
+sta.b tcc__r0
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #8
+ldx #1
+lda.b tcc__r0
+sec
+sbc #8
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 21097 ind 21097
+; gsym_addr t 0 a 21136 ind 21136
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 21226 ind 21226
+; cmp op 0x95 inv 1 v 243 r 21226
+; cmp ne
+bne +
+; gsym_addr t 0 a 21316 ind 21316
+brl __local_15
++
+; gtst finished; t 21226
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+inc.b tcc__r1
+inc.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #208
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #208
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 22343 ind 22343
+; gsym_addr t 0 a 22382 ind 22382
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 22472 ind 22472
+; cmp op 0x95 inv 1 v 243 r 22472
+; cmp ne
+bne +
+; gsym_addr t 0 a 22562 ind 22562
+brl __local_16
++
+; gtst finished; t 22472
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+inc.b tcc__r1
+inc.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+inc.b tcc__r0
+inc.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x0 fc 0x0
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+__local_16:
+; gsym_addr t 22472 a 23691 ind 23691
+; gjmp_addr 0 at 23729
+jmp.w __local_17
+; gsym_addr t 23769 a 0 ind 23769
+__local_15:
+; gsym_addr t 21226 a 23803 ind 23803
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #3
+sta.b tcc__r0
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #3
+ldx #1
+lda.b tcc__r0
+sec
+sbc #3
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 24140 ind 24140
+; gsym_addr t 0 a 24179 ind 24179
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 24269 ind 24269
+; cmp op 0x95 inv 1 v 243 r 24269
+; cmp ne
+bne +
+; gsym_addr t 0 a 24359 ind 24359
+brl __local_18
++
+; gtst finished; t 24269
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+inc.b tcc__r1
+inc.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op 0x9f
+; cmpcd tcc__r0, #0
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #0
+tay
+beq ++
+bvc +
+eor #$8000
++
+bpl +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 25389 ind 25389
+; gsym_addr t 0 a 25428 ind 25428
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 25518 ind 25518
+; cmp op 0x95 inv 1 v 243 r 25518
+; cmp ne
+bne +
+; gsym_addr t 0 a 25608 ind 25608
+brl __local_19
++
+; gtst finished; t 25518
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+inc.b tcc__r1
+inc.b tcc__r1
+; load 0
+; type 0 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op -
+; sbc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x0 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x0
+dec.b tcc__r0
+dec.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x0 fc 0x0
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+__local_19:
+; gsym_addr t 25518 a 26737 ind 26737
+__local_18:
+; gsym_addr t 24269 a 26775 ind 26775
+__local_17:
+; gsym_addr t 23769 a 26813 ind 26813
+__local_14:
+; gsym_addr t 20726 a 26851 ind 26851
+__local_11:
+; gsym_addr t 17972 a 26889 ind 26889
+; call r 0x2f0
+jsr.l rand
+; gen_opi len 2 op &
+; and tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x0)
+; length xxy 2 vtop->type 0x10
+; nop
+lda.b tcc__r0
+and.w #15
+sta.b tcc__r0
+; gen_opi len 2 op 0x94
+; cmpr(n)eq tcc__r0, #15
+ldx #1
+lda.b tcc__r0
+sec
+sbc #15
+tay
+beq +
+dex
++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 27229 ind 27229
+; gsym_addr t 0 a 27268 ind 27268
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 27358 ind 27358
+; cmp op 0x95 inv 1 v 243 r 27358
+; cmp ne
+bne +
+; gsym_addr t 0 a 27448 ind 27448
+brl __local_20
++
+; gtst finished; t 27358
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #4
+sta.b tcc__r1
+; load 0
+; type 16 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; load 2
+; type 0 reg 0x0 extra 0xffffffff
+; mov tcc__r0, tcc__r2
+lda.b tcc__r0
+sta.b tcc__r2
+lda.b tcc__r0h
+sta.b tcc__r2h
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r0 (0x0) (fr type 0x10 c 0 r type 0x10)
+; length xxy 2 vtop->type 0x10
+inc.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x10 fc 0x0
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #4
+sta.b tcc__r1
+; load 0
+; type 16 reg 0x101 extra 0x0
+; ld2 [tcc__r1,0],tcc__r0
+lda.b [tcc__r1]
+sta.b tcc__r0
+; gen_opi len 2 op 0x97
+; ucmpcd tcc__r0, #2
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #2
+tay
+beq +
+bcs ++
++ dex
+++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 29651 ind 29651
+; gsym_addr t 0 a 29690 ind 29690
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 29780 ind 29780
+; cmp op 0x95 inv 1 v 243 r 29780
+; cmp ne
+bne +
+; gsym_addr t 0 a 29870 ind 29870
+brl __local_21
++
+; gtst finished; t 29780
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #4
+sta.b tcc__r1
+; load 0
+; type 16 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; store r 0x0 fr 0x101 ft 0x10 fc 0x0
+; st2 tcc__r0, [tcc__r1,0]
+lda.b tcc__r0
+sta.b [tcc__r1]
+__local_21:
+; gsym_addr t 29780 a 30851 ind 30851
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 
+; shl tcc__r0, #4
+lda.b tcc__r0
+asl a
+asl a
+asl a
+asl a
+sta.b tcc__r0
+; load 1
+; type 164 reg 0x2f0 extra 0x0
+; ld2048 #oambuffer + 0, tcc__r1 (type 0xa4)
+; FISHY! length <> PTR_SIZE! (may be an array)
+lda.w #:oambuffer
+sta.b tcc__r1h
+lda.w #oambuffer + 0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r0 (0x0), tcc__r1 (0x1) (fr type 0xa4 c 0 r type 0x0)
+; length xxy 2048 vtop->type 0xa4
+clc
+lda.b tcc__r1
+adc.b tcc__r0
+sta.b tcc__r1
+; gen_opi len 2 op +
+; adc tcc__r240 (0xf0), tcc__r1 (0x1) (fr type 0x4 c 0 r type 0x0)
+; length xxy 4 vtop->type 0x4
+clc
+lda.b tcc__r1
+adc.w #7
+sta.b tcc__r1
+; load 0
+; type 17 reg 0xf0 extra 0x0
+; ld1 #1,tcc__r0
+lda.w #1
+sta.b tcc__r0
+; store r 0x0 fr 0x5101 ft 0x11 fc 0x0
+; st1 tcc__r0, [tcc__r1,0]
+sep #$20
+lda.b tcc__r0
+sta.b [tcc__r1]
+rep #$20
+__local_20:
+; gsym_addr t 27358 a 31813 ind 31813
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; gen_opi len 2 op 0x9c
+; cmpcd tcc__r0, #8
+ldx #1
+lda.b tcc__r0
+sec
+sbc.w #8
+tay
+bvc +
+eor #$8000
++
+bmi +++
+++
+dex
++++
+stx.b tcc__r5
+; gtst inv 1 t 0 v 5 r 32101 ind 32101
+; gsym_addr t 0 a 32140 ind 32140
+; tcc__r5 to compare reg
+lda.b tcc__r5 ; DON'T OPTIMIZE
+; gtst inv 1 t 0 v 243 r 32230 ind 32230
+; cmp op 0x95 inv 1 v 243 r 32230
+; cmp ne
+bne +
+; gsym_addr t 0 a 32320 ind 32320
+brl __local_22
++
+; gtst finished; t 32230
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; call r 0x2f0
+jsr.l oamDynamic32Draw
+; add sp, #2
+pla
+; gjmp_addr 0 at 32658
+jmp.w __local_23
+; gsym_addr t 32698 a 0 ind 32698
+__local_22:
+; gsym_addr t 32230 a 32732 ind 32732
+; load 0
+; type 17 reg 0x53f0 extra 0x0
+; ld1 [i + 0], tcc__r0
+lda.w #0
+sep #$20
+lda.l i + 0
+rep #$20
+sta.b tcc__r0
+; ldpush before load type 0x10 reg 0x0
+; ldpush2 (type 0x10 reg 0x0) tcc__r0
+pei (tcc__r0)
+; call r 0x2f0
+jsr.l oamDynamic16Draw
+; add sp, #2
+pla
+__local_23:
+; gsym_addr t 32698 a 33032 ind 33032
+; gjmp_addr 14698 at 33070
+jmp.w __local_24
+; gsym_addr t 33114 a 14698 ind 33114
+__local_6:
+; gsym_addr t 14460 a 33152 ind 33152
+; gsym_addr t 0 a 14698 ind 33190
+; call r 0x2f0
+jsr.l oamInitDynamicSpriteEndFrame
+; call r 0x2f0
+jsr.l WaitForVBlank
+; call r 0x2f0
+jsr.l oamVramQueueUpdate
+; gjmp_addr 13816 at 33349
+jmp.w __local_25
+; gsym_addr t 33393 a 13816 ind 33393
+; gsym_addr t 0 a 33431 ind 33431
+; gsym_addr t 0 a 13816 ind 33465
+; load 0
+; type 0 reg 0xf0 extra 0x0
+; ld2 #0,tcc__r0
+lda.w #0
+sta.b tcc__r0
+; gjmp_addr 0 at 33576
+jmp.w __local_26
+; gsym_addr t 33616 a 0 ind 33616
+__local_26:
+; gsym_addr t 33616 a 33650 ind 33650
+; add sp, #__main_locals
+.ifgr __main_locals 0
+tsa
+clc
+adc #__main_locals
+tas
+.endif
+rtl
+.ENDS
+.RAMSECTION "ramtmpxfileGx0nfh.data" APPENDTO "globram.data"
+__local_dummytmpxfileGx0nfh.data dsb 1
+
+.ENDS
+
+.SECTION "tmpxfileGx0nfh.data" APPENDTO "glob.data"
+
+__local_dummytmpxfileGx0nfh.data: .db 0
+.ENDS
+
+.SECTION ".rodata" SUPERFREE
+
+__local_dummytmpxfileGx0nfh.rodata: .db 0
+.ENDS
+
+.RAMSECTION ".bss" BANK $7e SLOT 2
+i dsb 1
+.ENDS

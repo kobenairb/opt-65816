@@ -18,50 +18,33 @@ tas
 jsr.l spcBoot
 ; call r 0x2f0
 jsr.l consoleInit
-; push4 imm r 0x52f0
-pea.w :SOUNDBANK__1
-pea.w SOUNDBANK__1 + 0
-; call r 0x2f0
-jsr.l spcSetBank
-; add sp, #4
-tsa
-clc
-adc #4
-tas
-; push4 imm r 0x52f0
-pea.w :SOUNDBANK__0
-pea.w SOUNDBANK__0 + 0
-; call r 0x2f0
-jsr.l spcSetBank
-; add sp, #4
-tsa
-clc
-adc #4
-tas
-; push1 imm r 0xf0
-sep #$20
-lda #39
-pha
-rep #$20
-; call r 0x2f0
-jsr.l spcAllocateSoundRegion
-; add sp, #1
-tsa
-clc
-adc #1
-tas
 ; push2 imm r 0xf0
-pea.w 0
+pea.w 26624
 ; call r 0x2f0
-jsr.l spcLoad
+jsr.l consoleSetTextVramBGAdr
 ; add sp, #2
 pla
-; push4 imm r 0x52f0
+; push2 imm r 0xf0
+pea.w 12288
+; call r 0x2f0
+jsr.l consoleSetTextVramAdr
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 256
+; call r 0x2f0
+jsr.l consoleSetTextOffset
+; add sp, #2
+pla
+; push4 imm r 0x12f0
+pea.w :snespal
+pea.w snespal + 0
+; push4 imm r 0x12f0
 pea.w :snesfont
 pea.w snesfont + 0
 ; push1 imm r 0xf0
 sep #$20
-lda #0
+lda #32
 pha
 rep #$20
 ; push1 imm r 0xf0
@@ -71,10 +54,69 @@ pha
 rep #$20
 ; call r 0x2f0
 jsr.l consoleInitText
-; add sp, #6
+; add sp, #10
 tsa
 clc
-adc #6
+adc #10
+tas
+; push4 imm r 0x12f0
+pea.w :SOUNDBANK__1
+pea.w SOUNDBANK__1 + 0
+; call r 0x2f0
+jsr.l spcSetBank
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push4 imm r 0x12f0
+pea.w :SOUNDBANK__0
+pea.w SOUNDBANK__0 + 0
+; call r 0x2f0
+jsr.l spcSetBank
+; add sp, #4
+tsa
+clc
+adc #4
+tas
+; push2 imm r 0xf0
+pea.w 0
+; call r 0x2f0
+jsr.l spcLoad
+; add sp, #2
+pla
+; push2 imm r 0xf0
+pea.w 8192
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetGfxPtr
+; add sp, #3
+tsa
+clc
+adc #3
+tas
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; push2 imm r 0xf0
+pea.w 26624
+; push1 imm r 0xf0
+sep #$20
+lda #0
+pha
+rep #$20
+; call r 0x2f0
+jsr.l bgSetMapPtr
+; add sp, #4
+tsa
+clc
+adc #4
 tas
 ; push1 imm r 0xf0
 sep #$20
@@ -114,9 +156,9 @@ tsa
 clc
 adc #1
 tas
-; push4 imm r 0x12f0
-pea.w :tccs_L.7
-pea.w tccs_L.7 + 0
+; push4 imm r 0x2f0
+pea.w :tccs_L.tmpxfile7wWtZS8
+pea.w tccs_L.tmpxfile7wWtZS8 + 0
 ; push2 imm r 0xf0
 pea.w 10
 ; push2 imm r 0xf0
@@ -143,7 +185,7 @@ clc
 adc #1
 tas
 __local_0:
-; gtst inv 1 t 0 v 240 r 1552 ind 1552
+; gtst inv 1 t 0 v 240 r 2118 ind 2118
 ; uncond jump: nop
 ; gtst finished; t 0
 ; call r 0x2f0
@@ -156,7 +198,7 @@ jsr.l WaitForVBlank
 lda.l bgcolor + 0
 sta.b tcc__r0
 ; load 1
-; type 0 reg 0x0 extra 0x14622d0
+; type 0 reg 0x0 extra 0x63
 ; mov tcc__r0, tcc__r1
 lda.b tcc__r0
 sta.b tcc__r1
@@ -177,7 +219,7 @@ lda.w #0
 sta.b tcc__r0
 ; store r 0x0 fr 0x51f0 ft 0x1011 fc 0x2121
 ; load 9
-; type 4 reg 0x50f0 extra 0x28
+; type 4 reg 0x50f0 extra 0x0
 ; ld4 #8481,tcc__r9
 lda.w #8481
 sta.b tcc__r9
@@ -202,7 +244,7 @@ and.w #255
 sta.b tcc__r0
 ; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
 ; load 9
-; type 4 reg 0x50f0 extra 0x3ab85b7c
+; type 4 reg 0x50f0 extra 0x2a
 ; ld4 #8482,tcc__r9
 lda.w #8482
 sta.b tcc__r9
@@ -214,7 +256,7 @@ lda.b tcc__r0
 sta.b [tcc__r9]
 rep #$20
 ; load 0
-; type 16 reg 0x3f0 extra 0xffffffff
+; type 16 reg 0x3f0 extra 0x0
 ; ld2 [bgcolor + 0], tcc__r0
 lda.l bgcolor + 0
 sta.b tcc__r0
@@ -226,7 +268,7 @@ and #$00ff
 sta.b tcc__r0
 ; store r 0x0 fr 0x51f0 ft 0x11 fc 0x2122
 ; load 9
-; type 4 reg 0x50f0 extra 0x3ab85b7c
+; type 4 reg 0x50f0 extra 0x2a
 ; ld4 #8482,tcc__r9
 lda.w #8482
 sta.b tcc__r9
@@ -237,21 +279,21 @@ sep #$20
 lda.b tcc__r0
 sta.b [tcc__r9]
 rep #$20
-; gjmp_addr 1552 at 3387
+; gjmp_addr 2118 at 3928
 jmp.w __local_0
-; gsym_addr t 3428 a 1552 ind 3428
-; gsym_addr t 0 a 3463 ind 3463
-; gsym_addr t 0 a 1552 ind 3495
+; gsym_addr t 3969 a 2118 ind 3969
+; gsym_addr t 0 a 4004 ind 4004
+; gsym_addr t 0 a 2118 ind 4036
 ; load 0
 ; type 0 reg 0xf0 extra 0x0
 ; ld2 #0,tcc__r0
 lda.w #0
 sta.b tcc__r0
-; gjmp_addr 0 at 3604
+; gjmp_addr 0 at 4145
 jmp.w __local_1
-; gsym_addr t 3642 a 0 ind 3642
+; gsym_addr t 4183 a 0 ind 4183
 __local_1:
-; gsym_addr t 3642 a 3674 ind 3674
+; gsym_addr t 4183 a 4215 ind 4215
 ; add sp, #__main_locals
 .ifgr __main_locals 0
 tsa
@@ -261,20 +303,20 @@ tas
 .endif
 rtl
 .ENDS
-.RAMSECTION "ram.data" APPENDTO "globram.data"
+.RAMSECTION "ramtmpxfile7wWtZS.data" APPENDTO "globram.data"
 
 bgcolor dsb 2
 
 .ENDS
 
-.SECTION ".data" APPENDTO "glob.data"
+.SECTION "tmpxfile7wWtZS.data" APPENDTO "glob.data"
 
 .db $0,$0
 .ENDS
 
 .SECTION ".rodata" SUPERFREE
 
-tccs_L.7: .db $4c,$65,$74,$27,$73,$20,$74,$68,$65,$20,$6d,$75,$73,$69,$63,$20,$70,$6c,$61,$79,$20,$21,$0
+tccs_L.tmpxfile7wWtZS8: .db $4c,$65,$74,$27,$73,$20,$74,$68,$65,$20,$6d,$75,$73,$69,$63,$20,$70,$6c,$61,$79,$20,$21,$0
 .ENDS
 
 .RAMSECTION ".bss" BANK $7e SLOT 2
