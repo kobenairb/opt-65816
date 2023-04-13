@@ -1,5 +1,14 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -g
+CFLAGS := -Wall -Wextra -O2 -g -pedantic
+LDFLAGS :=
+
+ifeq ($(OS),Windows_NT)
+	LDFLAGS += -L./lib -static -lpcreposix -lpcre
+else ifeq ($(shell uname),Linux)
+	LDFLAGS += -lpcreposix -lpcre
+else ifeq ($(shell uname),Darwin)
+	LDFLAGS += -lpcre
+endif
 
 BIN = 816-tcc-opt
 
@@ -12,7 +21,7 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 all: clean $(BIN)
 
 $(BIN): $(OBJECTS)
-	$(CC) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@
