@@ -29,12 +29,24 @@ jobs:
             python
       - name: Print development tools versions
         run: |
+          echo "* gcc version:"
           gcc -v
+          echo
+          echo "* cmake version:"
           cmake --version
+          echo
+          echo "* git version:"
           git -v
+          echo
+          echo "* python version:"
           python --version
+          echo
+          echo "* msys2 version:"
           uname -a
+          echo
+          echo "* msys2 package versions:"
           pacman -Qe
+          echo
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
