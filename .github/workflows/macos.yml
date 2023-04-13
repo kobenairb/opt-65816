@@ -27,10 +27,8 @@ jobs:
           submodules: true
       - name: Compilation of opt-65816 & tests
         run: |
-          find / -type f -name "pcre.*"
+          brew ls --verbose pcre
           cd opt-65816
-          shopt -s expand_aliases
-          alias python='python3'
           python --version
           make clean
           CC="gcc-12" make -n
