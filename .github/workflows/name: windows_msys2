@@ -20,6 +20,5 @@ jobs:
             update: true
             install: >-
               base-devel
-              git
               pcre
       - run: gcc -v
