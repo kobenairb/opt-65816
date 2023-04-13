@@ -2,15 +2,13 @@ CC = gcc
 CFLAGS := -Wall -Wextra -O2 -g -pedantic
 LDFLAGS :=
 
-ifeq ($(OS),Windows_NT)
-	LDFLAGS += -L./lib -static -lpcreposix -lpcre
-else ifeq ($(shell uname),Linux)
-	LDFLAGS += -lpcreposix -lpcre
-else ifeq ($(shell uname),Darwin)
+ifeq  ifeq ($(shell uname),Darwin)
 	LDFLAGS += -lpcre
+else
+	LDFLAGS += -lpcreposix -lpcre
 endif
 
-BIN = 816-tcc-opt
+EXE = 816-tcc-opt
 
 SRC = src
 OBJ = build
@@ -18,22 +16,30 @@ OBJ = build
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
-all: clean $(BIN)
+ifeq ($(OS),Windows_NT)
+	EXT=.exe
+else
+	EXT=
+endif
 
-$(BIN): $(OBJECTS)
+all: $(EXE)$(EXT)
+
+$(EXE)$(EXT): $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@
 
+ifneq ($(OS),Windows_NT)
 valgrind: all
 	@./tests/memcheck.sh
 
-tests: all
-	@./tests/idempotent.sh
-
 cppcheck:
 	cppcheck $(SOURCES)
+endif
+
+tests: all
+	@./tests/idempotent.sh
 
 doc:
 	@rm -rf doc/html

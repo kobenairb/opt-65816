@@ -26,7 +26,7 @@ jobs:
             pcre
             git
       - run: gcc -v
-      - run: cmake -v
+      - run: cmake --version
       - run: git -v
       - run: make clean
       - run: make -n
