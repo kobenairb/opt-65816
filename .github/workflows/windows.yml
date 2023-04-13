@@ -26,16 +26,19 @@ jobs:
             cmake
             pcre
             git
-      - run: |
+      - name: Print development tools version
+        run: |
           gcc -v
           cmake --version
           git -v
-      - name: Check out PVSNESLIB
+      - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
           ref: pcre
           path: opt-65816
           fetch-depth: 0
-      - run: |
-          pwd
-          ls -rtl
+      - name: Compilation of opt-65816
+        run: |
+          cd opt-65816
+          make clean
+          make -n
