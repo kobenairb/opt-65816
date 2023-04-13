@@ -27,7 +27,6 @@ jobs:
           submodules: true
       - name: Compilation of opt-65816 & tests
         run: |
-          brew ls --verbose pcre
           cd opt-65816
           python --version
           make clean

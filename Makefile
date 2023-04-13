@@ -6,7 +6,7 @@ CFLAGS := -Wall -Wextra -O2 -g -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__
 LDFLAGS :=
 
 ifeq ($(shell uname),Darwin)
-	LDFLAGS += -lpcre
+	LDFLAGS += -lpcre -I/usr/local/Cellar/pcre/8.45/include
 else
 	LDFLAGS += -lpcreposix -lpcre
 endif
