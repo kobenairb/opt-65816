@@ -15,7 +15,8 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: msys2/setup-msys2@v2
+      - name: Windows Depends MSYS2
+        uses: msys2/setup-msys2@v2
         with:
           update: true
           install: >-
@@ -29,3 +30,4 @@ jobs:
       - run: cmake --version
       - run: git -v
       - run: pwd
+      - run: ls -rtl
