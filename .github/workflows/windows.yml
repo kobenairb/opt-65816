@@ -24,7 +24,7 @@ jobs:
             gcc
             make
             cmake
-            pcre
+            pcre-devel
             git
       - name: Print development tools version
         run: |
