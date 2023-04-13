@@ -31,7 +31,7 @@ $(EXE)$(EXT): $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(OBJ)/%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@ $(LDFLAGS)
 
 ifneq ($(OS),Windows_NT)
 valgrind: all
