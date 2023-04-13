@@ -30,6 +30,6 @@ jobs:
           cd opt-65816
           python --version
           make clean
-          CC="gcc-12" make -n
+          CC="gcc-12" make -n CFLAGS+=-I/usr/local/Cellar/pcre/8.45/include
           CC="gcc-12" make
           CC="gcc-12" make tests
