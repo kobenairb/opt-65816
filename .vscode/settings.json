@@ -14,6 +14,9 @@
     "[asm]": {
         "editor.formatOnSave": false
     },
+    "[yaml]": {
+        "editor.tabSize": 2
+    },
     "C_Cpp.clang_format_style": "{BasedOnStyle: WebKit, UseTab: Never, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Allman, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 0, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false, BreakBeforeBinaryOperators: NonAssignment, AlignAfterOpenBracket: Align, AlignOperands: true, AlignConsecutiveAssignments: true, AlignConsecutiveDeclarations: false, PointerAlignment: Right, AlignTrailingComments: true}",
     "C_Cpp.dimInactiveRegions": true,
     "C_Cpp.vcFormat.indent.preserveWithinParentheses": false,

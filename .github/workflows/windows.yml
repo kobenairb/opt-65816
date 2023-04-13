@@ -26,8 +26,16 @@ jobs:
             cmake
             pcre
             git
-      - run: gcc -v
-      - run: cmake --version
-      - run: git -v
-      - run: pwd
-      - run: ls -rtl
+      - run: |
+          gcc -v
+          cmake --version
+          git -v
+      - name: Check out PVSNESLIB
+        uses: actions/checkout@v3
+        with:
+          ref: pcre
+          path: opt-65816
+          fetch-depth: 0
+      - run: |
+          pwd
+          ls -rtl
