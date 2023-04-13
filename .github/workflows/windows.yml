@@ -6,7 +6,6 @@ on:
       - "main"
       - "develop"
       - "pcre"
-      - "tests"
 
 jobs:
   amd64_windows_gcc:
@@ -50,7 +49,7 @@ jobs:
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
-          ref: pcre
+          ref: ${{ github.head_ref }}
           path: opt-65816
           fetch-depth: 0
       - name: Compilation of opt-65816 & tests
