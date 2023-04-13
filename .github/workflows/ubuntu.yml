@@ -1,31 +1,17 @@
-name: ubuntu_latest
+name: ubuntu-latest
 
 on:
   push:
     branches:
-      - "main"
       - "develop"
 
 jobs:
-  ubuntu_latest:
+  ubuntu-latest:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
         run: |
           sudo apt-get install -y build-essential gcc-multilib git cmake wget valgrind doxygen
-      - name: Print development tools versions
-        run: |
-          echo "* gcc version:"
-          gcc -v
-          echo
-          echo "* cmake version:"
-          cmake --version
-          echo
-          echo "* git version:"
-          git -v
-          echo
-          echo "* python version:"
-          python --version
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
@@ -37,7 +23,6 @@ jobs:
         run: |
           cd opt-65816
           make clean
-          make -n
           make
           make tests
           make doc
@@ -45,6 +30,9 @@ jobs:
         run: |
           cd opt-65816
           make clean
-          make -n
-          make
           make valgrind
+      - name: Generate doxygen documentation
+        run: |
+          cd opt-65816
+          make clean
+          make doc

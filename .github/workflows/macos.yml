@@ -9,15 +9,10 @@ jobs:
   macos-latest:
     runs-on: macos-latest
     steps:
-      - name: some checks
+      - name: Install packages
         run: |
-          env
-          alias
-          python3 --version
-          gcc-12 -v
-          cmake --version
-          git -v
           brew install pcre
+          brew install doxygen
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
@@ -28,8 +23,11 @@ jobs:
       - name: Compilation of opt-65816 & tests
         run: |
           cd opt-65816
-          python --version
           make clean
-          CC="gcc-12" CFLAGS+=-I/usr/local/Cellar/pcre/8.45/include make -n
           CC="gcc-12" CFLAGS+=-I/usr/local/Cellar/pcre/8.45/include make
           CC="gcc-12" CFLAGS+=-I/usr/local/Cellar/pcre/8.45/include make tests
+      - name: Generate doxygen documentation
+        run: |
+          cd opt-65816
+          make clean
+          make doc

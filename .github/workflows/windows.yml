@@ -1,19 +1,18 @@
-name: msys2_windows-2019
+name: windows-latest
 
 on:
   push:
     branches:
-      - "main"
       - "develop"
 
 jobs:
-  windows-2019:
-    runs-on: windows-2019
+  windows-latest:
+    runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
     steps:
-      - name: Windows Depends MSYS2
+      - name: Install dependencies
         uses: msys2/setup-msys2@v2
         with:
           update: true
@@ -26,26 +25,6 @@ jobs:
             git
             python
             doxygen
-      - name: Print development tools versions
-        run: |
-          echo "* gcc version:"
-          gcc -v
-          echo
-          echo "* cmake version:"
-          cmake --version
-          echo
-          echo "* git version:"
-          git -v
-          echo
-          echo "* python version:"
-          python --version
-          echo
-          echo "* msys2 version:"
-          uname -a
-          echo
-          echo "* msys2 package versions:"
-          pacman -Qe
-          echo
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
@@ -57,7 +36,10 @@ jobs:
         run: |
           cd opt-65816
           make clean
-          make -n
           make
           make tests
+      - name: Generate doxygen documentation
+        run: |
+          cd opt-65816
+          make clean
           make doc
