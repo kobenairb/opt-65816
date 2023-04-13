@@ -42,3 +42,5 @@ jobs:
           cd opt-65816
           make clean
           make -n
+          make
+          make tests
