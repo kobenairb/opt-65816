@@ -27,18 +27,21 @@ jobs:
             pcre-devel
             git
             python
-      - name: Print development tools version
+      - name: Print development tools versions
         run: |
           gcc -v
           cmake --version
           git -v
+          python --version
+          uname -a
+          pacman -Qe
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
           ref: pcre
           path: opt-65816
           fetch-depth: 0
-      - name: Compilation of opt-65816
+      - name: Compilation of opt-65816 & tests
         run: |
           cd opt-65816
           make clean
