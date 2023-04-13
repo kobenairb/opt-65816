@@ -1,0 +1,33 @@
+name: macos-latest
+
+on:
+  push:
+    branches:
+      - "develop"
+
+jobs:
+  macos-latest:
+    runs-on: macos-latest
+    steps:
+      - name: some checks
+        run: |
+          env
+          alias
+          python3 --version
+          gcc-12 -v
+          cmake --version
+          git -v
+          brew install pcre
+      - name: Check out opt-65816
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          path: opt-65816
+          fetch-depth: 0
+          submodules: true
+      - name: Compilation of opt-65816 & tests
+        run: |
+          cd opt-65816
+          alias gcc='gcc-12'
+          make clean
+          make -n
