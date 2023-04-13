@@ -26,6 +26,7 @@ jobs:
             cmake
             pcre-devel
             git
+            python
       - name: Print development tools version
         run: |
           gcc -v
