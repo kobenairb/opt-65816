@@ -28,6 +28,7 @@ jobs:
       - name: Compilation of opt-65816 & tests
         run: |
           cd opt-65816
+          shopt -s expand_aliases
           alias gcc='gcc-12'
           gcc -v
           alias python='python3'
