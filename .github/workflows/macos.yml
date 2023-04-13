@@ -29,10 +29,9 @@ jobs:
         run: |
           cd opt-65816
           shopt -s expand_aliases
-          alias gcc='gcc-12'
-          gcc -v
           alias python='python3'
           python --version
           make clean
-          make -n
-          make
+          CC="gcc-12" make -n
+          CC="gcc-12" make
+          CC="gcc-12" make tests
