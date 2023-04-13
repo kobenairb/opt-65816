@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS := -Wall -Wextra -O2 -g -pedantic
 LDFLAGS :=
 
-ifeq  ifeq ($(shell uname),Darwin)
+ifeq ($(shell uname),Darwin)
 	LDFLAGS += -lpcre
 else
 	LDFLAGS += -lpcreposix -lpcre
