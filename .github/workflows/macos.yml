@@ -31,3 +31,5 @@ jobs:
           alias gcc='gcc-12'
           make clean
           make -n
+          make
+          make tests
