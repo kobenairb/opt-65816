@@ -78,5 +78,3 @@ The main contributors of the `816-opt` python tool:
 - [@Alekmaul](https://github.com/alekmaul)
 
 And all the other contributors that I forget to name.
-
-- [@Ianmackinnon](https://github.com/ianmackinnon) for allowing me to understand [how groups work](https://gist.github.com/ianmackinnon/3294587) with the **regex.h** library.
