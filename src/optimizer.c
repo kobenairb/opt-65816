@@ -30,6 +30,12 @@ int verbosity()
     return 0;
 }
 
+void PrintVersion(void)
+{
+    printf("816-tcc-opt v%s\n", BINVERSION);
+    printf("built: %s\n", BINDATE);
+}
+
 /**
  * @brief Checks if it touches the accumulator register.
  * @param a The asm instruction.

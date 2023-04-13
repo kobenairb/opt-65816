@@ -1,5 +1,8 @@
+VERSION := 1.0.0
+DATESTRING := $(shell date +%Y%m%d)
+
 CC = gcc
-CFLAGS := -Wall -Wextra -O2 -g -pedantic
+CFLAGS := -Wall -Wextra -O2 -g -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
 LDFLAGS :=
 
 ifeq ($(shell uname),Darwin)
