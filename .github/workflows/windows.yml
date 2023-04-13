@@ -8,7 +8,7 @@ on:
       - "pcre"
 
 jobs:
-  amd64_windows_gcc:
+  windows-2019:
     runs-on: windows-2019
     defaults:
       run:
