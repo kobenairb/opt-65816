@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get install -y build-essential gcc-multilib git cmake wget valgrind
+          sudo apt-get install -y build-essential gcc-multilib git cmake wget valgrind doxygen
       - name: Print development tools versions
         run: |
           echo "* gcc version:"
@@ -40,6 +40,7 @@ jobs:
           make -n
           make
           make tests
+          make doc
       - name: Check memory leaks
         run: |
           cd opt-65816

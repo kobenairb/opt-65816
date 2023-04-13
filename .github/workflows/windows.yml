@@ -26,6 +26,7 @@ jobs:
             pcre-devel
             git
             python
+            doxygen
       - name: Print development tools versions
         run: |
           echo "* gcc version:"
@@ -59,3 +60,4 @@ jobs:
           make -n
           make
           make tests
+          make doc
