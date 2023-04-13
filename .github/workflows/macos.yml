@@ -27,6 +27,7 @@ jobs:
           submodules: true
       - name: Compilation of opt-65816 & tests
         run: |
+          find / -type f -name "pcre.*"
           cd opt-65816
           shopt -s expand_aliases
           alias python='python3'
