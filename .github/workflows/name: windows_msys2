@@ -20,6 +20,8 @@ jobs:
             update: true
             install: >-
               base-devel
+              gcc
+              make
               pcre
               git
       - run: gcc -v
