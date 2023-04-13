@@ -29,8 +29,9 @@ jobs:
         run: |
           cd opt-65816
           alias gcc='gcc-12'
+          gcc -v
           alias python='python3'
+          python --version
           make clean
           make -n
           make
-          make tests
