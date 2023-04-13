@@ -42,4 +42,8 @@ jobs:
           make tests
       - name: Check memory leaks
         run: |
+          cd opt-65816
+          make clean
+          make -n
+          make
           make valgrind
