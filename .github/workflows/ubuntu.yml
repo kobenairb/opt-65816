@@ -33,6 +33,7 @@ jobs:
           ref: ${{ github.head_ref }}
           path: opt-65816
           fetch-depth: 0
+          submodules: true
       - name: Compilation of opt-65816 & tests
         run: |
           cd opt-65816
