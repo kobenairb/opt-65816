@@ -8,7 +8,7 @@ LDFLAGS :=
 ifeq ($(shell uname),Darwin)
 	LDFLAGS += -lpcre
 else
-	LDFLAGS += -lpcreposix -lpcre -Wl,-Bstatic -Wl,-Bdynamic
+	LDFLAGS += -lpcreposix -lpcre
 endif
 
 EXE = 816-tcc-opt
