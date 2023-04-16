@@ -6,7 +6,7 @@ CFLAGS += -Wall -Wextra -O2 -g -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__
 LDFLAGS :=
 
 ifeq ($(shell uname),Darwin)
-	LDFLAGS += -lpcre -Wl,-Bdynamic
+	LDFLAGS += -lpcre
 else
 	LDFLAGS += -lpcreposix -lpcre -Wl,-Bstatic -Wl,-Bdynamic
 endif
