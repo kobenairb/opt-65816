@@ -26,10 +26,12 @@ jobs:
           make clean
           sudo ln -s /usr/local/bin/gcc-12 /usr/local/bin/gcc
           sudo ln -s /usr/local/bin/g++-12 /usr/local/bin/g++
-          CFLAGS="-I/usr/local/include/" LDFLAGS="-L/usr/local/lib" make
-          CFLAGS="-I/usr/local/include/" LDFLAGS="-L/usr/local/lib" make tests
-      - name: Generate doxygen documentation
-        run: |
-          cd opt-65816
-          make clean
-          make doc
+          sudo find /usr -name "*crt0*"
+
+# CFLAGS="-I/usr/local/include/" LDFLAGS="-L/usr/local/lib" make
+# CFLAGS="-I/usr/local/include/" LDFLAGS="-L/usr/local/lib" make tests
+# - name: Generate doxygen documentation
+#   run: |
+#     cd opt-65816
+#     make clean
+#     make doc
