@@ -24,8 +24,10 @@ jobs:
         run: |
           cd opt-65816
           make clean
-          CC="gcc-12" CFLAGS+=-I/usr/local/Cellar/pcre/8.45/include make
-          CC="gcc-12" CFLAGS+=-I/usr/local/Cellar/pcre/8.45/include make tests
+          sudo ln -s /usr/local/bin/gcc-12 /usr/local/bin/gcc
+          sudo ln -s /usr/local/bin/g++-12 /usr/local/bin/g++
+          CFLAGS+=-I/usr/local/include/ make
+          CFLAGS+=-I/usr/local/include/ make tests
       - name: Generate doxygen documentation
         run: |
           cd opt-65816
