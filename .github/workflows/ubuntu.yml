@@ -25,7 +25,6 @@ jobs:
           make clean
           make
           make tests
-          make doc
       - name: Check memory leaks
         run: |
           cd opt-65816
