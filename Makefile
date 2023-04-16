@@ -2,13 +2,13 @@ VERSION := 1.0.0
 DATESTRING := $(shell date +%Y%m%d)
 
 CC := gcc
-CFLAGS += -Wall -Wextra -O2 -g -static -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
+CFLAGS += -Wall -Wextra -O2 -g -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
 LDFLAGS :=
 
 ifeq ($(shell uname),Darwin)
 	LDFLAGS += -lpcre
 else
-	LDFLAGS += -lpcreposix -lpcre
+	LDFLAGS += -static -lpcreposix -lpcre
 endif
 
 EXE = 816-tcc-opt
