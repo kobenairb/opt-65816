@@ -1,14 +1,14 @@
 VERSION := 1.0.0
 DATESTRING := $(shell date +%Y%m%d)
 
-CC ?= gcc
+CC := gcc
 CFLAGS += -Wall -Wextra -O2 -g -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
 LDFLAGS :=
 
 ifeq ($(shell uname),Darwin)
-	LDFLAGS += -lpcre
+	LDFLAGS += -lpcre -Wl,-Bstatic -Wl,-Bdynamic
 else
-	LDFLAGS += -lpcreposix -lpcre
+	LDFLAGS += -lpcreposix -lpcre -Wl,-Bstatic -Wl,-Bdynamic
 endif
 
 EXE = 816-tcc-opt
@@ -28,9 +28,11 @@ endif
 all: $(EXE)$(EXT)
 
 $(EXE)$(EXT): $(OBJECTS)
+	@echo "Compiling $<"
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(OBJ)/%.o: $(SRC)/%.c
+	@echo "Compiling $<"
 	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@ $(LDFLAGS)
 
 ifneq ($(OS),Windows_NT)
