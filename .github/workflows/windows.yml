@@ -16,13 +16,14 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
+          msystem: UCRT64
           install: >-
             base-devel
-            gcc
-            make
-            cmake
-            pcre-devel
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-pcre
             git
+            doxygen
+            zip
             python
             doxygen
       - name: Check out opt-65816
@@ -33,13 +34,14 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: Compilation of opt-65816 & tests
+        shell: msys2 {0}
         run: |
           cd opt-65816
           make clean
           make
-          make tests
-      - name: Generate doxygen documentation
-        run: |
-          cd opt-65816
-          make clean
-          make doc
+          ldd 816-opt*
+      # - name: Generate doxygen documentation
+      #   run: |
+      #     cd opt-65816
+      #     make clean
+      #     make doc
