@@ -22,6 +22,7 @@ jobs:
             base-devel
             mingw-w64-ucrt-x86_64-toolchain
             mingw-w64-ucrt-x86_64-pcre
+            msys2-runtime
             git
             doxygen
             zip
@@ -37,7 +38,6 @@ jobs:
       - name: Compilation of opt-65816 & tests
         run: |
           echo "PATH            = $PATH"
-          echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
           echo "gcc location    = $(which gcc)"
           echo "gcc++ location  = $(which gcc)"
           echo "gcc version     = $(gcc --version)"
