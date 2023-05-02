@@ -27,11 +27,13 @@ OBJ = build
 
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
+OBJECTS += build/libpcre.a build/libpcreposix.a
 
 all: $(EXE)$(EXT)
 
-$(EXE)$(EXT): $(OBJECTS) build/libpcre.a build/libpcreposix.a
+$(EXE)$(EXT): $(OBJECTS)
 	@echo "Linking $<"
+
 	@cp /ucrt64/lib/libpcre.a build/
 	@cp /ucrt64/lib/libpcreposix.a build/
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
