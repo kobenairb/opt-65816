@@ -16,6 +16,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
+          release: true
           msystem: UCRT64
           install: >-
             base-devel
@@ -34,8 +35,13 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: Compilation of opt-65816 & tests
-        shell: msys2 {0}
         run: |
+          echo "PATH            = $PATH"
+          echo "LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
+          echo "gcc location    = $(which gcc)"
+          echo "gcc++ location  = $(which gcc)"
+          echo "gcc version     = $(gcc --version)"
+          echo "gcc++ version   = $(g++ --version)"
           cd opt-65816
           make clean
           make
