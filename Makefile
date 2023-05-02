@@ -13,7 +13,7 @@ ifeq ($(shell uname),Darwin)
 	EXT :=
 else ifeq ($(OS),Windows_NT)
 	CFLAGS  += -I/ucrt64/include
-	LDFLAGS += -L/ucrt64/lib -Wl,-Bstatic -lpcre -lpcreposix -Wl,-Bdynamic
+	LDFLAGS += -L/ucrt64/lib -Wl,-Bstatic -lpcre.dll -lpcreposix.dll -Wl,-Bdynamic
 	EXT := .exe
 else
 	LDFLAGS += -static -lpcre -lpcreposix
@@ -27,15 +27,11 @@ OBJ = build
 
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
-OBJECTS += build/libpcre.a build/libpcreposix.a
 
 all: $(EXE)$(EXT)
 
 $(EXE)$(EXT): $(OBJECTS)
 	@echo "Linking $<"
-
-	@cp /ucrt64/lib/libpcre.a build/
-	@cp /ucrt64/lib/libpcreposix.a build/
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 $(OBJ)/%.o: $(SRC)/%.c
