@@ -13,7 +13,7 @@ ifeq ($(shell uname),Darwin)
 	EXT :=
 else ifeq ($(OS),Windows_NT)
 	CFLAGS  += -I/ucrt64/include
-	LDFLAGS += -static -Wl,--no-undefined  -L/ucrt64/lib -lpcre -lpcreposix
+	LDFLAGS += -L/ucrt64/lib -static -Wl,--export-all-symbols -Wl,--no-undefined Wl,-Bstatic -lpcre -lpcreposix -Wl,-Bdynamic
 	EXT := .exe
 else
 	LDFLAGS += -static -lpcre -lpcreposix
