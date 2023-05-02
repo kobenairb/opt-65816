@@ -13,10 +13,10 @@ ifeq ($(shell uname),Darwin)
 	EXT :=
 else ifeq ($(OS),Windows_NT)
 	CFLAGS  += -I/ucrt64/include
-	LDFLAGS += -static -L/ucrt64/lib -lcpre -lpcreposix
+	LDFLAGS += -static -no-undefined -L/ucrt64/lib -lpcre -lpcreposix
 	EXT := .exe
 else
-	LDFLAGS += -static -lcpre -lpcreposix
+	LDFLAGS += -static -lpcre -lpcreposix
 	EXT :=
 endif
 
