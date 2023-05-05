@@ -21,8 +21,6 @@ jobs:
           install: >-
             base-devel
             mingw-w64-ucrt-x86_64-toolchain
-            mingw-w64-ucrt-x86_64-pcre
-            msys2-runtime
             git
             doxygen
             zip
@@ -45,9 +43,5 @@ jobs:
           cd opt-65816
           make clean
           make
+          make tests
           ldd 816-opt*
-      # - name: Generate doxygen documentation
-      #   run: |
-      #     cd opt-65816
-      #     make clean
-      #     make doc

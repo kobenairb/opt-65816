@@ -20,7 +20,7 @@ for file in tests/samples/*.ps; do
 
     filename=$(basename "${file}")
     echo "Optimizing $filename"
-    echo "./816-tcc-opt ${file} >tests/samples/tmp/${filename}.asm"
+    echo "./816-opt ${file} >tests/samples/tmp/${filename}.asm"
     ./816-tcc-opt "${file}" >"tests/samples/tmp/${filename}.asm"
     echo
 

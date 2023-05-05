@@ -1,4 +1,4 @@
-name: macos-latest
+name: ubuntu-latest
 
 on:
   push:
@@ -6,13 +6,12 @@ on:
       - "develop"
 
 jobs:
-  macos-latest:
-    runs-on: macos-latest
+  ubuntu-latest:
+    runs-on: ubuntu-latest
     steps:
-      - name: Install packages
+      - name: Install dependencies
         run: |
-          brew install pcre
-          brew install doxygen
+          sudo apt-get install -y build-essential gcc-multilib git cmake wget valgrind doxygen
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
@@ -24,10 +23,13 @@ jobs:
         run: |
           cd opt-65816
           make clean
-          sudo ln -s /usr/local/bin/gcc-12 /usr/local/bin/gcc
-          sudo ln -s /usr/local/bin/g++-12 /usr/local/bin/g++
-          CFLAGS+=-I/usr/local/include  make
-          CFLAGS+=-I/usr/local/include  make tests
+          make
+          make tests
+      - name: Check memory leaks
+        run: |
+          cd opt-65816
+          make clean
+          make valgrind
       - name: Generate doxygen documentation
         run: |
           cd opt-65816

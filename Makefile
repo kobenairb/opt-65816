@@ -68,7 +68,7 @@ doc:
 	@doxygen ./Doxyfile
 
 clean:
-	rm -rf ${OBJECTS}
+	rm -rf ${OBJS}
 	rm -f $(EXE)$(EXT)
 
 distclean: clean

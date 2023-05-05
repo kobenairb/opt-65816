@@ -12,7 +12,7 @@ for file in tests/samples/*.ps; do
         --undef-value-errors=no \
         --exit-on-first-error=yes \
         --error-exitcode=1 \
-        ./816-tcc-opt "${file}" >/dev/null; then
+        ./816-opt "${file}" >/dev/null; then
         echo "[PASS]"
     else
         echo "[FAIL]"
