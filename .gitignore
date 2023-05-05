@@ -7,7 +7,7 @@ vgcore.*
 *.bck
 
 # Binary
-816-tcc-opt
+816-opt
 
 # Documentation
 doc/**
