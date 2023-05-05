@@ -1,39 +1,53 @@
-msys_version := $(if $(findstring Msys, $(shell uname -o)),$(word 1, $(subst ., ,$(shell uname -r))),0)
-$(info The version of MSYS you are running is $(msys_version) (0 meaning not MSYS at all))
-
-VERSION := 1.0.0
+# Define version and build date strings
+VERSION    := 1.0.0
 DATESTRING := $(shell date +%Y%m%d)
 
-CC      := gcc
-CFLAGS  := -Wall -Wextra -O2 -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
-LDFLAGS := -pthread
+# Compiler and linker flags
+CC      = gcc
+CFLAGS  += -Wall -O2 -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
+LDFLAGS := -lpthread
 
+# Define the libraries and compilation flags to be used depending on the OS.
 ifeq ($(shell uname),Darwin)
-	LDFLAGS += -lpcre
-	EXT :=
+	EXT     :=
 else ifeq ($(OS),Windows_NT)
-	CFLAGS  += -I/ucrt64/include
-	LDFLAGS += -L/ucrt64/lib -Wl,-Bstatic -lpcre -lpcreposix -Wl,-Bdynamic
-	EXT := .exe
+	ifeq ($(MSYSTEM),MINGW64)
+		LIB_PATH = -L/mingw64/lib
+	else ifeq ($(MSYSTEM),MINGW32)
+		LIB_PATH = -L/mingw32/lib
+	else ifeq ($(MSYSTEM),UCRT64)
+		LIB_PATH = -L/ucrt64/lib
+	else ifeq ($(MSYSTEM),UCRT32)
+		LIB_PATH = -L/ucrt32/lib
+	else
+		$(error PLATFORM is supported or not tested, please choose one the following compilation toolchain: mingw32, mingw64, ucrt32 or ucrt64)
+	endif
+	LDFLAGS += -static -L$(LIB_PATH) -lregex -ltre -lintl -liconv
+	EXT     := .exe
 else
-	LDFLAGS += -static -lpcre -lpcreposix
-	EXT :=
+	LDFLAGS += -static
+	EXT     :=
 endif
 
-EXE = 816-opt
-
-SRC = src
-OBJ = build
-
+# Source and object file locations
+SRC := src
+OBJ := build
 SOURCES := $(wildcard $(SRC)/*.c)
-OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
+OBJS    := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
+# Executable binary file name
+EXE := 816-opt
+
+# Define the default target
 all: $(EXE)$(EXT)
 
-$(EXE)$(EXT): $(OBJECTS)
+# Define the recipe for linking the executable
+$(EXE)$(EXT): $(OBJS)
 	@echo "Linking $<"
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
 
+# Define the recipe for compiling object files
+%.o : %.c
 $(OBJ)/%.o: $(SRC)/%.c
 	@echo "Compiling $<"
 	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@
@@ -61,4 +75,4 @@ distclean: clean
 	rm -f tests/samples/*.log
 	rm -rf doc/html
 
-.PHONY: doc
+.PHONY: all clean install doc
