@@ -11,18 +11,19 @@ LDFLAGS := -lpthread
 ifeq ($(shell uname),Darwin)
 	EXT     :=
 else ifeq ($(OS),Windows_NT)
-	ifeq ($(MSYSTEM),MINGW64)
-		LIB_PATH = -L/mingw64/lib
-	else ifeq ($(MSYSTEM),MINGW32)
-		LIB_PATH = -L/mingw32/lib
-	else ifeq ($(MSYSTEM),UCRT64)
-		LIB_PATH = -L/ucrt64/lib
-	else ifeq ($(MSYSTEM),UCRT32)
-		LIB_PATH = -L/ucrt32/lib
-	else
-		$(error PLATFORM is supported or not tested, please choose one the following compilation toolchain: mingw32, mingw64, ucrt32 or ucrt64)
-	endif
-	LDFLAGS += -static -L$(LIB_PATH) -lregex -ltre -lintl -liconv
+# 	ifeq ($(MSYSTEM),MINGW64)
+# 		LIB_PATH = -L/mingw64/lib
+# 	else ifeq ($(MSYSTEM),MINGW32)
+# 		LIB_PATH = -L/mingw32/lib
+# 	else ifeq ($(MSYSTEM),UCRT64)
+# 		LIB_PATH = -L/ucrt64/lib
+# 	else ifeq ($(MSYSTEM),UCRT32)
+# 		LIB_PATH = -L/ucrt32/lib
+# 	else
+# 		$(error PLATFORM is supported or not tested, please choose one the following compilation toolchain: mingw32, mingw64, ucrt32 or ucrt64)
+# 	endif
+# LDFLAGS += -static -L$(LIB_PATH) -lregex -ltre -lintl -liconv
+	LDFLAGS += -static -lregex -ltre -lintl -liconv
 	EXT     := .exe
 else
 	LDFLAGS += -static
