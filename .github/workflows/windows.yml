@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "develop"
+      - "pcre2"
 
 jobs:
   windows-latest:
