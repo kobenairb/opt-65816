@@ -12,6 +12,7 @@ jobs:
       - name: Install packages
         run: |
           brew install doxygen
+          brew install pcre2
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
