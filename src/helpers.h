@@ -2,7 +2,11 @@
 #define HELPERS_H
 
 #include <ctype.h>
+#ifdef PCRE2_STATIC
+#include <pcre2posix.h>
+#else
 #include <regex.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
