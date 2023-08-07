@@ -270,12 +270,14 @@ char *splitStr(char *str, char *sep, size_t pos)
  * @return A structure (dynArray).
  */
 dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups) {
-    pcre2_code *regexCompiled;
-    PCRE2_SIZE erroffset;
     int groupArray[maxGroups > 0 ? maxGroups * 3 : 2];
     int rc;
 
     dynArray regexgroup = { NULL, 0 };
+    PCRE2_SIZE start, end; // Declare start and end variables
+
+    pcre2_code *regexCompiled;
+    PCRE2_SIZE erroffset;
 
     regexCompiled = pcre2_compile((PCRE2_SPTR)regex, PCRE2_ZERO_TERMINATED, 0, NULL, &erroffset, NULL);
     if (regexCompiled == NULL) {
@@ -302,9 +304,9 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups) {
 
     regexgroup.arr = malloc(sizeof(char *) * maxGroups);
     for (size_t i = 0; i < maxGroups; i++) {
-        PCRE2_SIZE start, end;
-        pcre2_get_ovector_pointer(match_data)[i*2];
-        pcre2_get_ovector_pointer(match_data)[i*2+1];
+        // Get the start and end positions of the matched group
+        start = pcre2_get_ovector_pointer(match_data)[i*2];
+        end = pcre2_get_ovector_pointer(match_data)[i*2+1];
         if (start == PCRE2_UNSET || end == PCRE2_UNSET)
             break;
         const size_t len = end - start;
