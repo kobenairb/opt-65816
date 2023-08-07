@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get install -y build-essential gcc-multilib git cmake wget valgrind doxygen
+          sudo apt-get install -y build-essential gcc-multilib git cmake wget valgrind doxygen libpcre2-dev
       - name: Check out opt-65816
         uses: actions/checkout@v3
         with:
