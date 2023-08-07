@@ -270,14 +270,12 @@ char *splitStr(char *str, char *sep, size_t pos)
  * @return A structure (dynArray).
  */
 dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups) {
-    int groupArray[maxGroups > 0 ? maxGroups * 3 : 2];
-    int rc;
-
     dynArray regexgroup = { NULL, 0 };
-    PCRE2_SIZE start, end; // Declare start and end variables
+    int rc;
 
     pcre2_code *regexCompiled;
     PCRE2_SIZE erroffset;
+    PCRE2_SIZE *ovector;
 
     regexCompiled = pcre2_compile((PCRE2_SPTR)regex, PCRE2_ZERO_TERMINATED, 0, NULL, &erroffset, NULL);
     if (regexCompiled == NULL) {
@@ -294,6 +292,7 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups) {
         exit(EXIT_FAILURE);
     }
 
+    ovector = pcre2_get_ovector_pointer(match_data);
     rc = maxGroups == 0 ? pcre2_match(regexCompiled, (PCRE2_SPTR)string, strlen(string), 0, 0, match_data, NULL)
                         : pcre2_match(regexCompiled, (PCRE2_SPTR)string, strlen(string), 0, 0, match_data, NULL);
     if (rc < 0) {
@@ -304,9 +303,9 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups) {
 
     regexgroup.arr = malloc(sizeof(char *) * maxGroups);
     for (size_t i = 0; i < maxGroups; i++) {
-        // Get the start and end positions of the matched group
-        start = pcre2_get_ovector_pointer(match_data)[i*2];
-        end = pcre2_get_ovector_pointer(match_data)[i*2+1];
+        PCRE2_SIZE start, end;
+        start = ovector[i*2];
+        end = ovector[i*2+1];
         if (start == PCRE2_UNSET || end == PCRE2_UNSET)
             break;
         const size_t len = end - start;
