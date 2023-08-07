@@ -271,7 +271,7 @@ char *splitStr(char *str, char *sep, size_t pos)
  */
 #include <pcre2.h>
 
-dynArray pcre2MatchGroups(char *string, char *regex, const size_t maxGroups)
+dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
 {
     /*
         Inspired by Ianmackinnon:
