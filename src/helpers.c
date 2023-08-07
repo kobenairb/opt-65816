@@ -269,72 +269,55 @@ char *splitStr(char *str, char *sep, size_t pos)
  * @param maxGroups The maximum number of groups to match.
  * @return A structure (dynArray).
  */
-dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
-{
-    /*
-        Inspired by Ianmackinnon:
-        https://gist.github.com/ianmackinnon/3294587
-    */
+dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups) {
+    pcre2_code *regexCompiled;
+    PCRE2_SIZE erroffset;
+    int groupArray[maxGroups > 0 ? maxGroups * 3 : 2];
+    int rc;
 
-    regex_t regexCompiled;
-    regmatch_t groupArray[maxGroups];
+    dynArray regexgroup = { NULL, 0 };
 
-    dynArray regexgroup;
-    regexgroup.used = 0;
-
-    int re = regcomp(&regexCompiled, regex, REG_EXTENDED);
-
-    if (re)
-    {
-        fprintf(stderr, "Could not compile regular expression.\n");
-        exit(EXIT_FAILURE);
-    };
-
-    re = regexec(&regexCompiled, string, maxGroups, groupArray, 0);
-
-    if (!re)
-    {
-        size_t len, g;
-        char *stringCopy = malloc(strlen(string) + 1);
-        strcpy(stringCopy, string);
-
-        regexgroup.arr = malloc(maxGroups * sizeof(char *));
-
-        for (g = 0; g < maxGroups; g++)
-        {
-            if ((size_t)groupArray[g].rm_so == (size_t)-1)
-            {
-                break; // No more groups
-            }
-
-            len = groupArray[g].rm_eo - groupArray[g].rm_so;
-
-            /* allocate storage for line */
-            regexgroup.arr[regexgroup.used] = malloc(len + 1);
-            memcpy(regexgroup.arr[regexgroup.used], stringCopy + groupArray[g].rm_so, len);
-            regexgroup.arr[regexgroup.used][len] = '\0';
-            regexgroup.used += 1;
-        }
-
-        free(stringCopy);
-        regfree(&regexCompiled);
-
-        return regexgroup;
-    }
-    else if (re == REG_NOMATCH)
-    {
-        regfree(&regexCompiled);
-
-        regexgroup.arr = NULL;
-        return regexgroup;
-    }
-    else
-    {
-        char msgbuf[100];
-        regerror(re, &regexCompiled, msgbuf, sizeof(msgbuf));
-        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+    regexCompiled = pcre2_compile((PCRE2_SPTR)regex, PCRE2_ZERO_TERMINATED, 0, NULL, &erroffset, NULL);
+    if (regexCompiled == NULL) {
+        PCRE2_UCHAR buffer[256];
+        pcre2_get_error_message(erroffset, buffer, sizeof(buffer));
+        fprintf(stderr, "Could not compile regular expression: %s\n", buffer);
         exit(EXIT_FAILURE);
     }
+
+    pcre2_match_data *match_data = pcre2_match_data_create_from_pattern(regexCompiled, NULL);
+    if (!match_data) {
+        fprintf(stderr, "Failed to create match data.\n");
+        pcre2_code_free(regexCompiled);
+        exit(EXIT_FAILURE);
+    }
+
+    rc = maxGroups == 0 ? pcre2_match(regexCompiled, (PCRE2_SPTR)string, strlen(string), 0, 0, match_data, NULL)
+                        : pcre2_match(regexCompiled, (PCRE2_SPTR)string, strlen(string), 0, 0, match_data, NULL);
+    if (rc < 0) {
+        pcre2_code_free(regexCompiled);
+        pcre2_match_data_free(match_data);
+        return regexgroup;
+    }
+
+    regexgroup.arr = malloc(sizeof(char *) * maxGroups);
+    for (size_t i = 0; i < maxGroups; i++) {
+        PCRE2_SIZE start, end;
+        pcre2_get_ovector_pointer(match_data)[i*2];
+        pcre2_get_ovector_pointer(match_data)[i*2+1];
+        if (start == PCRE2_UNSET || end == PCRE2_UNSET)
+            break;
+        const size_t len = end - start;
+        regexgroup.arr[i] = malloc(len + 1);
+        memcpy(regexgroup.arr[i], string + start, len);
+        regexgroup.arr[i][len] = '\0';
+        regexgroup.used++;
+    }
+
+    pcre2_code_free(regexCompiled);
+    pcre2_match_data_free(match_data);
+
+    return regexgroup;
 }
 
 /**
