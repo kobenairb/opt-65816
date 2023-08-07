@@ -269,54 +269,86 @@ char *splitStr(char *str, char *sep, size_t pos)
  * @param maxGroups The maximum number of groups to match.
  * @return A structure (dynArray).
  */
-dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups) {
-    dynArray regexgroup = { NULL, 0 };
+#include <pcre2.h>
+
+dynArray pcre2MatchGroups(char *string, char *regex, const size_t maxGroups)
+{
+    /*
+        Inspired by Ianmackinnon:
+        https://gist.github.com/ianmackinnon/3294587
+    */
+
+    int errorcode;
+    PCRE2_SIZE erroroffset;
+    pcre2_code *regexCompiled;
+    pcre2_match_data *matchData;
+    PCRE2_SIZE *ovector;
     int rc;
 
-    pcre2_code *regexCompiled;
-    PCRE2_SIZE erroffset;
-    PCRE2_SIZE *ovector;
+    dynArray regexgroup;
+    regexgroup.used = 0;
 
-    regexCompiled = pcre2_compile((PCRE2_SPTR)regex, PCRE2_ZERO_TERMINATED, 0, NULL, &erroffset, NULL);
-    if (regexCompiled == NULL) {
+    regexCompiled = pcre2_compile(
+        (PCRE2_SPTR)regex,        /* the pattern */
+        PCRE2_ZERO_TERMINATED,    /* indicates pattern is zero-terminated */
+        0,                        /* default options */
+        &errorcode,               /* for error code */
+        &erroroffset,             /* for error offset */
+        NULL                      /* use default compile context */
+    );
+
+    if (regexCompiled == NULL)
+    {
         PCRE2_UCHAR buffer[256];
-        pcre2_get_error_message(erroffset, buffer, sizeof(buffer));
+        pcre2_get_error_message(errorcode, buffer, sizeof(buffer));
         fprintf(stderr, "Could not compile regular expression: %s\n", buffer);
         exit(EXIT_FAILURE);
     }
 
-    pcre2_match_data *match_data = pcre2_match_data_create_from_pattern(regexCompiled, NULL);
-    if (!match_data) {
-        fprintf(stderr, "Failed to create match data.\n");
-        pcre2_code_free(regexCompiled);
+    matchData = pcre2_match_data_create(maxGroups, NULL);
+
+    rc = pcre2_match(
+        regexCompiled,             /* the compiled pattern */
+        (PCRE2_SPTR)string,        /* the subject string */
+        strlen(string),            /* the length of the subject string */
+        0,                         /* start offset in the subject */
+        0,                         /* default options */
+        matchData,                 /* block for storing the result */
+        NULL                       /* use default match context */
+    );
+
+    if (rc < 0)
+    {
+        if (rc == PCRE2_ERROR_NOMATCH)
+        {
+            pcre2_code_free(regexCompiled);
+            pcre2_match_data_free(matchData);
+
+            regexgroup.arr = NULL;
+            return regexgroup;
+        }
+
+        PCRE2_UCHAR buffer[256];
+        pcre2_get_error_message(rc, buffer, sizeof(buffer));
+        fprintf(stderr, "Regex match failed: %s\n", buffer);
         exit(EXIT_FAILURE);
     }
 
-    ovector = pcre2_get_ovector_pointer(match_data);
-    rc = maxGroups == 0 ? pcre2_match(regexCompiled, (PCRE2_SPTR)string, strlen(string), 0, 0, match_data, NULL)
-                        : pcre2_match(regexCompiled, (PCRE2_SPTR)string, strlen(string), 0, 0, match_data, NULL);
-    if (rc < 0) {
-        pcre2_code_free(regexCompiled);
-        pcre2_match_data_free(match_data);
-        return regexgroup;
+    ovector = pcre2_get_ovector_pointer(matchData);
+    size_t g;
+    for (g = 0; g < (size_t)rc; g++)
+    {
+        PCRE2_SIZE len = ovector[2 * g + 1] - ovector[2 * g];
+
+        /* allocate storage for line */
+        regexgroup.arr[regexgroup.used] = malloc(len + 1);
+        memcpy(regexgroup.arr[regexgroup.used], string + ovector[2 * g], len);
+        regexgroup.arr[regexgroup.used][len] = '\0';
+        regexgroup.used += 1;
     }
 
-    regexgroup.arr = malloc(sizeof(char *) * maxGroups);
-    for (size_t i = 0; i < maxGroups; i++) {
-        PCRE2_SIZE start, end;
-        start = ovector[i*2];
-        end = ovector[i*2+1];
-        if (start == PCRE2_UNSET || end == PCRE2_UNSET)
-            break;
-        const size_t len = end - start;
-        regexgroup.arr[i] = malloc(len + 1);
-        memcpy(regexgroup.arr[i], string + start, len);
-        regexgroup.arr[i][len] = '\0';
-        regexgroup.used++;
-    }
-
+    pcre2_match_data_free(matchData);
     pcre2_code_free(regexCompiled);
-    pcre2_match_data_free(match_data);
 
     return regexgroup;
 }
