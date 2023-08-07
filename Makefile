@@ -4,20 +4,20 @@ DATESTRING := $(shell date +%Y%m%d)
 
 # Compiler and compiler flags
 CC      := gcc
-CFLAGS  += -Wall -O2 -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
+CFLAGS  += -Wall -O2 -pedantic -DPCRE2_STATIC -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
 LDFLAGS := -lpthread
 
 # Define the libraries and compilation flags to be used depending on the OS.
 ifeq ($(shell uname),Darwin)
-    LDFLAGS := -pthread
-	EXT     :=
+    LDFLAGS := -pthread -lpcre
+    CFLAGS  += -I/usr/local/include
+    EXT     :=
 else ifeq ($(OS),Windows_NT)
-	CFLAGS  += -DPCRE2_STATIC
-	LDFLAGS += -lpthread -static -lpcre2-posix -lpcre2-8 -liconv
-	EXT     :=.exe
+    LDFLAGS += -lpthread -static -lpcre2-posix -lpcre2-8 -liconv
+    EXT     :=.exe
 else
-	LDFLAGS += -lpthread -static
-	EXT     :=
+    LDFLAGS += -lpthread -static -lpcreposix -lpcre
+    EXT     :=
 endif
 
 # Source and object file locations
