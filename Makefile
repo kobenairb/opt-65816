@@ -2,30 +2,21 @@
 VERSION    := 1.0.0
 DATESTRING := $(shell date +%Y%m%d)
 
-# Compiler and linker flags
-CC      = gcc
+# Compiler and compiler flags
+CC      := gcc
 CFLAGS  += -Wall -O2 -pedantic -D__BUILD_DATE="\"$(DATESTRING)\"" -D__BUILD_VERSION="\"$(VERSION)\""
 LDFLAGS := -lpthread
 
 # Define the libraries and compilation flags to be used depending on the OS.
 ifeq ($(shell uname),Darwin)
+    LDFLAGS := -pthread
 	EXT     :=
 else ifeq ($(OS),Windows_NT)
-	ifeq ($(MSYSTEM),MINGW64)
-		LIB_PATH = -L/mingw64/lib
-	else ifeq ($(MSYSTEM),MINGW32)
-		LIB_PATH = -L/mingw32/lib
-	else ifeq ($(MSYSTEM),UCRT64)
-		LIB_PATH = -L/ucrt64/lib
-	else ifeq ($(MSYSTEM),UCRT32)
-		LIB_PATH = -L/ucrt32/lib
-	else
-		$(error PLATFORM is supported or not tested, please choose one the following compilation toolchain: mingw32, mingw64, ucrt32 or ucrt64)
-	endif
-	LDFLAGS += -static -L$(LIB_PATH) -lregex -ltre -lintl -liconv
-	EXT     := .exe
+	CFLAGS  += -DPCRE2_STATIC
+	LDFLAGS += -lpthread -static -lpcre2-posix -lpcre2-8 -liconv
+	EXT     :=.exe
 else
-	LDFLAGS += -static
+	LDFLAGS += -lpthread -static
 	EXT     :=
 endif
 
