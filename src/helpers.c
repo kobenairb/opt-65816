@@ -287,6 +287,7 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
 
     dynArray regexgroup;
     regexgroup.used = 0;
+    regexgroup.arr = malloc(maxGroups * sizeof(char *));
 
     regexCompiled = pcre2_compile(
         (PCRE2_SPTR)regex,        /* the pattern */
@@ -324,7 +325,6 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
             pcre2_code_free(regexCompiled);
             pcre2_match_data_free(matchData);
 
-            regexgroup.arr = NULL;
             return regexgroup;
         }
 
