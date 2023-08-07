@@ -3,7 +3,7 @@
 
 #include <ctype.h>
 #ifdef PCRE2_STATIC
-#include <pcre2posix.h>
+#include <pcre2.h>
 #else
 #include <regex.h>
 #endif
