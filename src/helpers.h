@@ -3,7 +3,7 @@
 
 #include <ctype.h>
 #ifdef PCRE2_STATIC
-#define PCRE2_CODE_UNIT_WIDTH 16
+#define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
 #else
 #include <regex.h>
