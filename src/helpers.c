@@ -269,8 +269,6 @@ char *splitStr(char *str, char *sep, size_t pos)
  * @param maxGroups The maximum number of groups to match.
  * @return A structure (dynArray).
  */
-#include <pcre2.h>
-
 dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
 {
     /*
@@ -285,9 +283,9 @@ dynArray regexMatchGroups(char *string, char *regex, const size_t maxGroups)
     PCRE2_SIZE *ovector;
     int rc;
 
-    dynArray regexgroup;
+dynArray regexgroup;
     regexgroup.used = 0;
-    regexgroup.arr = malloc(maxGroups * sizeof(char *));
+    regexgroup.arr = (char**)malloc(sizeof(char*) * maxGroups); // Allocate memory for the arr pointer
 
     regexCompiled = pcre2_compile(
         (PCRE2_SPTR)regex,        /* the pattern */
